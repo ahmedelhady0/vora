@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vora - سلة المشتريات</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="container max-w-3xl mx-auto p-6 md:p-8">
+        
+        <div class="flex justify-between items-center border-b-2 border-pink-100 pb-6 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-pink-700">🛒 سلة المشتريات</h1>
+                <p class="text-gray-500 mt-1">راجع عطورك المفضلة وأكمل طلبك</p>
+            </div>
+            <a href="home.html" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-200 transition-all">
+                ← العودة للرئيسية
+            </a>
+        </div>
+
+        <div id="cartContent" class="space-y-4">
+            <p class="text-gray-500 text-center py-12">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>
+        </div>
+
+        <div id="checkoutForm" class="hidden mt-8 pt-8 border-t-2 border-pink-100 space-y-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">📍 تفاصيل الشحن والتوصيل</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="customerName" class="input-field w-full" placeholder="الاسم بالكامل">
+                <input type="tel" id="customerPhone" class="input-field w-full" placeholder="رقم الهاتف">
+            </div>
+            
+            <input type="text" id="customerAddress" class="input-field w-full" placeholder="العنوان بالتفصيل (المدينة / الشارع / المبنى)">
+
+            <div class="bg-pink-50 p-6 rounded-2xl mt-6 space-y-2">
+                <div class="flex justify-between text-gray-600">
+                    <span>إجمالي المنتجات:</span>
+                    <span id="subtotalPrice">0 ج.م</span>
+                </div>
+                <div class="flex justify-between text-gray-600">
+                    <span>مصاريف الشحن:</span>
+                    <span class="text-green-600 font-medium">مكافأة (شحن مجاني)</span>
+                </div>
+                <div class="flex justify-between text-xl font-bold text-pink-700 pt-2 border-t border-pink-200">
+                    <span>المجموع النهائي:</span>
+                    <span id="totalPrice">0 ج.م</span>
+                </div>
+            </div>
+
+            <button onclick="submitOrder()" class="btn-primary w-full py-4 text-lg mt-6 shadow-lg shadow-pink-200">
+                🚀 تأكيد الطلب وإرساله
+            </button>
+        </div>
+
+    </div>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
+            <p id="messageText" class="text-lg font-medium"></p>
+            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+        </div>
+    </div>
+
+    <script type="module" src="cart.js"></script>
+</body>
+</html>
