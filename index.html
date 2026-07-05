@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vora - عطور فاخرة</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex items-center justify-center">
+    <div class="container max-w-md p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold title-gradient">VORA</h1>
+            <p class="text-lg text-pink-600">عطور فاخرة • أناقة لا تنتهي</p>
+        </div>
+
+        <div class="space-y-4">
+            <input type="text" id="username" class="input-field w-full" placeholder="اسم المستخدم">
+            <input type="password" id="password" class="input-field w-full" placeholder="كلمة المرور">
+            
+            <button onclick="signIn()" class="btn-primary w-full py-4 text-lg">تسجيل الدخول</button>
+            <button onclick="signUp()" class="bg-white border-2 border-pink-300 w-full py-4 text-lg rounded-2xl">إنشاء حساب جديد</button>
+        </div>
+    </div>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
+            <p id="messageText" class="text-lg"></p>
+            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+        </div>
+    </div>
+
+    <script type="module" src="auth.js"></script>
+</body>
+</html>
