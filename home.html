@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vora - الرئيسية</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="container max-w-5xl mx-auto p-6 md:p-8">
+        
+        <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-pink-100 pb-6 mb-8 gap-4">
+            <div>
+                <h1 class="text-4xl font-bold text-pink-700">VORA PERFUMES</h1>
+                <p class="text-gray-500 mt-1">مرحباً بك في عالم الأناقة الفاخرة، <span id="welcomeName" class="font-bold text-pink-600"></span></p>
+            </div>
+            
+            <div class="flex flex-wrap gap-3 items-center" id="navActions">
+                <a href="cart.html" class="bg-pink-100 text-pink-700 px-5 py-2.5 rounded-xl font-medium hover:bg-pink-200 transition-all flex items-center gap-2">
+                    🛒 السلة <span id="cartCount" class="bg-pink-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </a>
+                <button onclick="logout()" class="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition-all">تسجيل الخروج</button>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-[#c25a80] to-[#f0a8c0] rounded-3xl p-8 text-white mb-10 text-center md:text-right flex flex-col justify-center min-h-[200px]">
+            <h2 class="text-3xl font-bold mb-2">مجموعة عطور VORA الحصرية</h2>
+            <p class="text-pink-50 max-w-md">اكتشف روائح ساحرة تعبر عن شخصيتك وتدوم طويلاً.</p>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">✨ تشكيلتنا المميزة</h3>
+            <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <p class="text-gray-500 text-center col-span-full py-12">جاري تحميل العطور الفاخرة...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
+            <p id="messageText" class="text-lg font-medium"></p>
+            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+        </div>
+    </div>
+
+    <script type="module" src="home.js"></script>
+</body>
+</html>
