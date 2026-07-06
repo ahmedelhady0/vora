@@ -4,7 +4,13 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU
 async function callGet(params) {
     const url = new URL(WEB_APP_URL);
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-    const res = await fetch(url);
+    
+    const res = await fetch(url, { 
+        method: 'GET',
+        mode: 'cors'
+    });
+    
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     return data;
@@ -13,8 +19,12 @@ async function callGet(params) {
 async function callPost(body) {
     const res = await fetch(WEB_APP_URL, {
         method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
+    
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
 }
 
