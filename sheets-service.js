@@ -1,7 +1,7 @@
-// sheets-service.js - متوافق تماماً مع بنية Google Apps Script الفاخرة لـ Vora
+// sheets-service.js - النسخة المستقرة والخالية من مشاكل CORS تماماً لـ Vora
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
-// دالة GET الأساسية
+// دالة GET الأساسية (تستخدم للمنتجات والطلبات)
 async function callGet(params) {
     const url = new URL(WEB_APP_URL);
     Object.entries(params).forEach(([k, v]) => {
@@ -23,7 +23,7 @@ async function callGet(params) {
     }
 }
 
-// دالة POST الأساسية (تستخدم text/plain لتجاوز قيود الـ Preflight المعقدة مع جوجل)
+// دالة POST الأساسية (تستخدم لتجاوز قيود الـ CORS والـ Preflight المعقدة في متصفحات الكروم وسفاري)
 async function callPost(body) {
     try {
         const res = await fetch(WEB_APP_URL, {
@@ -59,8 +59,9 @@ export async function placeOrder(orderData) {
 }
 
 // ==================== المستخدمين والتحقق ====================
+// تم تحويلها هنا إلى دالة POST لضمان تخطي قيود الـ CORS بنجاح أثناء تسجيل الدخول
 export async function getUserRole(email) {
-    return callGet({ action: 'getUserRole', email: email });
+    return callPost({ action: 'getUserRole', email: email });
 }
 
 export async function registerUser(userData) {
