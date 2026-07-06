@@ -1,9 +1,7 @@
-// sheets-service.js - Vora Perfumes (مع Proxy لـ CORS)
+// sheets-service.js - متوافق تماماً مع بنية Google Apps Script الفاخرة لـ Vora
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
-const PROXY = "https://corsproxy.io/?";
-
-// دالة GET مع Proxy
+// دالة GET الأساسية
 async function callGet(params) {
     const url = new URL(WEB_APP_URL);
     Object.entries(params).forEach(([k, v]) => {
@@ -11,7 +9,10 @@ async function callGet(params) {
     });
 
     try {
-        const res = await fetch(PROXY + encodeURIComponent(url.toString()));
+        const res = await fetch(url.toString(), {
+            method: 'GET',
+            mode: 'cors'
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.error) throw new Error(data.error);
@@ -22,48 +23,51 @@ async function callGet(params) {
     }
 }
 
-// دالة POST مع Proxy
+// دالة POST الأساسية (تستخدم text/plain لتجاوز قيود الـ Preflight المعقدة مع جوجل)
 async function callPost(body) {
     try {
         const res = await fetch(WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(body)
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        return data;
     } catch (err) {
         console.error("POST Error:", err);
         throw err;
     }
 }
 
-// ==================== Products ====================
+// ==================== المنتجات ====================
 export async function getProducts() {
     const data = await callGet({ action: 'getProducts' });
     return data.products || [];
 }
 
-// ==================== Orders ====================
-export async function getOrders(email = null) {
-    const data = await callGet({ action: 'getOrders', email });
+// ==================== الطلبات ====================
+export async function getOrders() {
+    const data = await callGet({ action: 'getOrders' });
     return data.orders || [];
 }
 
-export async function placeOrder(order) {
-    return callPost({ action: 'placeOrder', ...order });
+export async function placeOrder(orderData) {
+    return callPost({ action: 'placeOrder', ...orderData });
 }
 
-// ==================== Users ====================
+// ==================== المستخدمين والتحقق ====================
 export async function getUserRole(email) {
-    return callGet({ action: 'getUserRole', email });
+    return callGet({ action: 'getUserRole', email: email });
 }
 
 export async function registerUser(userData) {
     return callPost({ action: 'registerUser', ...userData });
 }
 
-// ==================== Admin ====================
+// ==================== لوحة الإدارة ====================
 export async function addProduct(product) {
     return callPost({ action: 'addProduct', ...product });
 }
