@@ -1,14 +1,17 @@
-// auth.js - Updated
+// auth.js - Fixed Version
 import { auth, usernameToEmail, showMessage, hideMessage } from "./firebase-config.js";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { registerUser, getUserRole } from "./sheets-service.js";
 
 window.signIn = async function() {
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value;
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    
+    const user = usernameInput.value.trim();
+    const pass = passwordInput.value;
 
     if (!user || !pass) {
-        return showMessage("يرجى إدخال اسم المستخدم وكلمة المرور", "⚠️");
+        return showMessage("يرجى ملء اسم المستخدم وكلمة المرور", "⚠️");
     }
 
     showMessage("جاري تسجيل الدخول...", "⏳");
@@ -27,9 +30,9 @@ window.signIn = async function() {
         
         hideMessage();
         window.location.href = "home.html";
-    } catch(err) {
-        console.error(err);
-        showMessage("خطأ في اسم المستخدم أو كلمة المرور", "❌");
+    } catch (err) {
+        console.error("Login Error:", err);
+        showMessage("اسم المستخدم أو كلمة المرور غير صحيحة", "❌");
     }
 };
 
@@ -38,7 +41,7 @@ window.signUp = async function() {
     const pass = document.getElementById('password').value;
 
     if (!user || pass.length < 6) {
-        return showMessage("اسم المستخدم مطلوب وكلمة المرور 6 أحرف على الأقل", "⚠️");
+        return showMessage("اسم المستخدم مطلوب\nوكلمة المرور يجب أن تكون 6 أحرف على الأقل", "⚠️");
     }
 
     showMessage("جاري إنشاء الحساب...", "⏳");
@@ -46,24 +49,15 @@ window.signUp = async function() {
     try {
         const email = usernameToEmail(user);
         await createUserWithEmailAndPassword(auth, email, pass);
+        
         await registerUser({ email, username: user, role: 'customer' });
         
-        showMessage("✅ تم إنشاء الحساب بنجاح!\nيمكنك تسجيل الدخول الآن", "🎉");
-    } catch(err) {
-        console.error(err);
-        showMessage("هذا المستخدم موجود بالفعل", "⚠️");
+        showMessage("✅ تم إنشاء الحساب بنجاح!\nيمكنك الآن تسجيل الدخول", "🎉");
+    } catch (err) {
+        console.error("Signup Error:", err);
+        showMessage("هذا الاسم مستخدم بالفعل\nجرب اسم آخر", "⚠️");
     }
 };
 
-// تحسين عرض الرسائل
-export function showMessage(text, icon = "ℹ️") {
-    const box = document.getElementById('messageBox');
-    const messageText = document.getElementById('messageText');
-    const messageIcon = document.getElementById('messageIcon');
-
-    if (messageIcon) messageIcon.innerHTML = `<span class="text-4xl">${icon}</span>`;
-    if (messageText) messageText.textContent = text;
-
-    box.classList.remove('hidden');
-    box.classList.add('flex');
-}
+// Export hideMessage to be used from HTML
+window.hideMessage = hideMessage;
