@@ -1,4 +1,4 @@
-// auth.js - Fixed Version
+// auth.js - النسخة المستقرة والخالية من الأخطاء
 import { auth, usernameToEmail, showMessage, hideMessage } from "./firebase-config.js";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { registerUser, getUserRole } from "./sheets-service.js";
@@ -18,10 +18,13 @@ window.signIn = async function() {
 
     try {
         const email = usernameToEmail(user);
+        // 1. التحقق من الحساب عبر Firebase Auth
         const cred = await signInWithEmailAndPassword(auth, email, pass);
         
+        // 2. جلب دور المستخدم من شيت جوجل
         const res = await getUserRole(cred.user.email);
         
+        // 3. تخزين بيانات الجلسة محلياً
         localStorage.setItem('vora_user', JSON.stringify({
             email: cred.user.email,
             username: user,
@@ -29,6 +32,7 @@ window.signIn = async function() {
         }));
         
         hideMessage();
+        // 4. التوجه للرئيسية مباشرة
         window.location.href = "home.html";
     } catch (err) {
         console.error("Login Error:", err);
@@ -48,16 +52,22 @@ window.signUp = async function() {
 
     try {
         const email = usernameToEmail(user);
+        // 1. إنشاء المستخدم في Firebase
         await createUserWithEmailAndPassword(auth, email, pass);
         
-        await registerUser({ email, username: user, role: 'customer' });
+        // 2. تسجيل المستخدم في شيت جوجل
+        const response = await registerUser({ email, username: user, role: 'customer' });
         
-        showMessage("✅ تم إنشاء الحساب بنجاح!\nيمكنك الآن تسجيل الدخول", "🎉");
+        if (response.success) {
+            showMessage("✅ تم إنشاء الحساب بنجاح!\nيمكنك الآن تسجيل الدخول", "🎉");
+        } else {
+            showMessage(`خطأ أثناء الحفظ: ${response.error}`, "⚠️");
+        }
     } catch (err) {
         console.error("Signup Error:", err);
-        showMessage("هذا الاسم مستخدم بالفعل\nجرب اسم آخر", "⚠️");
+        showMessage("هذا الاسم مستخدم بالفعل أو حدث خطأ في الشبكة", "⚠️");
     }
 };
 
-// Export hideMessage to be used from HTML
+// إتاحة دالة الإغلاق للـ HTML
 window.hideMessage = hideMessage;
