@@ -1,7 +1,7 @@
 // auth.js - النسخة المستقرة والخالية من الأخطاء
 import { auth, usernameToEmail, showMessage, hideMessage } from "./firebase-config.js";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { registerUser, getUserRole } from "./sheets-v2.js";
+import { registerUser, getUserRole } from "./sheets-service.js";
 
 window.signIn = async function() {
     const usernameInput = document.getElementById('username');
