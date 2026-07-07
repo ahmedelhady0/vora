@@ -1,38 +1,462 @@
-/* styles.css */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+/* styles.css — Vora Perfumes design system */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Color tokens */
+    --ivory: #FBF6EF;
+    --paper: #FFFFFF;
+    --wine: #6B1830;
+    --wine-deep: #45101F;
+    --wine-soft: #8C3050;
+    --gold: #B68A46;
+    --gold-soft: #E4C989;
+    --gold-mist: #F3E7CE;
+    --charcoal: #2A1F1C;
+    --muted: #8A7A72;
+
+    /* Type tokens */
+    --font-display: 'Amiri', serif;
+    --font-body: 'Cairo', sans-serif;
+}
 
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Cairo', sans-serif;
-    background: linear-gradient(135deg, #fce8f0 0%, #f0a8c0 100%);
+    font-family: var(--font-body);
+    background: var(--ivory);
+    color: var(--charcoal);
     direction: rtl;
     min-height: 100vh;
 }
 
+/* ==================== Layout shells ==================== */
 .container {
-    background: rgba(255,255,255,0.95);
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(194,90,128,0.15);
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: 0 30px 60px -20px rgba(69, 16, 31, 0.18);
+    border: 1px solid rgba(182, 138, 70, 0.15);
 }
 
-.input-field {
-    border: 2px solid #f0a8c0;
-    border-radius: 16px;
-    padding: 14px;
+/* ==================== Header ==================== */
+.site-header {
+    background: linear-gradient(135deg, var(--wine-deep), var(--wine));
+    border-radius: 4px;
+    padding: 28px 36px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-bottom: 3px solid var(--gold);
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #c25a80, #9c3d5f);
-    color: white;
-    border-radius: 16px;
-    padding: 14px 32px;
+.brand-logo {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--ivory);
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.brand-tagline {
+    color: var(--gold-soft);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.welcome-name {
+    color: var(--gold-soft);
     font-weight: 700;
 }
 
-.star {
-    color: #ffd700;
+/* ==================== Buttons ==================== */
+.btn-primary {
+    background: var(--wine);
+    color: var(--ivory);
+    border-radius: 3px;
+    padding: 14px 32px;
+    font-weight: 700;
+    font-family: var(--font-body);
+    border: 1px solid var(--gold);
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+.btn-primary:hover {
+    background: var(--wine-deep);
+    transform: translateY(-1px);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--ivory);
+    border: 1px solid rgba(228, 201, 137, 0.5);
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+    background: rgba(228, 201, 137, 0.12);
+    border-color: var(--gold);
+}
+
+.btn-cart {
+    background: rgba(228, 201, 137, 0.15);
+    color: var(--gold-soft);
+    border: 1px solid rgba(228, 201, 137, 0.4);
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+.btn-cart:hover {
+    background: rgba(228, 201, 137, 0.25);
+}
+
+.btn-icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--wine);
+    color: var(--ivory);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    flex-shrink: 0;
+}
+.btn-icon-circle:hover {
+    background: var(--wine-deep);
+    transform: scale(1.06);
+}
+
+/* ==================== Inputs ==================== */
+.input-field {
+    border: 1.5px solid rgba(182, 138, 70, 0.35);
+    background: var(--paper);
+    border-radius: 3px;
+    padding: 14px;
+    font-family: var(--font-body);
+    color: var(--charcoal);
+    transition: border-color 0.2s ease;
+}
+.input-field:focus {
+    outline: none;
+    border-color: var(--wine);
+}
+
+/* ==================== Hero ==================== */
+.hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 32px;
+    background: linear-gradient(160deg, var(--wine-deep) 0%, var(--wine) 60%, var(--wine-soft) 100%);
+    border-radius: 4px;
+    padding: 48px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-eyebrow {
+    color: var(--gold-soft);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    color: var(--ivory);
+    line-height: 1.3;
+    margin: 0 0 16px;
+}
+
+.hero-desc {
+    color: rgba(251, 246, 239, 0.85);
+    font-size: 1rem;
+    max-width: 420px;
+    margin-bottom: 28px;
+    line-height: 1.8;
+}
+
+.hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.hero-visual::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(228, 201, 137, 0.35) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* ==================== Fragrance Pyramid (signature section) ==================== */
+.pyramid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--paper);
+    border: 1px solid var(--gold-mist);
+    border-radius: 4px;
+    margin: 32px 0 48px;
+    overflow: hidden;
+}
+
+.pyramid-col {
+    padding: 28px 24px;
+    text-align: center;
+    border-inline-start: 1px solid var(--gold-mist);
+}
+.pyramid-col:first-child {
+    border-inline-start: none;
+}
+
+.pyramid-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.pyramid-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--wine-deep);
+    margin-bottom: 6px;
+}
+
+.pyramid-desc {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+/* ==================== Section headers ==================== */
+.section-eyebrow {
+    color: var(--gold);
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    color: var(--wine-deep);
+    margin: 0 0 28px;
+}
+
+/* ==================== Product grid & cards ==================== */
+.product-card {
+    background: var(--paper);
+    border: 1px solid var(--gold-mist);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -18px rgba(69, 16, 31, 0.25);
+}
+
+.product-image {
+    height: 220px;
+    background: linear-gradient(160deg, var(--gold-mist) 0%, var(--ivory) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.product-image svg {
+    width: 64px;
+    height: 64px;
+    color: var(--wine);
+    opacity: 0.75;
+}
+
+.product-badge {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 12px;
+    background: var(--wine);
+    color: var(--gold-soft);
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-weight: 700;
+}
+
+.product-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.product-category {
+    color: var(--gold);
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.product-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--charcoal);
+    margin: 0;
+}
+
+.product-desc {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    min-height: 2.6em;
+}
+
+.product-rating {
+    color: var(--gold);
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--gold-mist);
+}
+
+.product-price {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--wine);
+    font-weight: 700;
+}
+
+.product-price small {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* ==================== Empty / loading states ==================== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-family: var(--font-body);
+}
+.empty-state .empty-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--wine-deep);
+    margin-bottom: 8px;
+}
+
+/* ==================== Login page ==================== */
+.login-shell {
+    background: radial-gradient(circle at 30% 20%, rgba(228,201,137,0.25), transparent 55%), var(--ivory);
+}
+
+.login-card {
+    background: var(--paper);
+    border: 1px solid var(--gold-mist);
+}
+
+.login-mark {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--wine-deep), var(--wine));
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.login-mark svg {
+    width: 34px;
+    height: 34px;
+    color: var(--gold-soft);
+}
+
+.login-title {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    color: var(--wine-deep);
+    letter-spacing: 2px;
+}
+
+.login-tagline {
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* ==================== Misc shared ==================== */
+.star {
+    color: var(--gold);
+}
+
+.divider-gold {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border: none;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+    }
+    .hero-visual {
+        display: none;
+    }
+    .pyramid {
+        grid-template-columns: 1fr;
+    }
+    .pyramid-col {
+        border-inline-start: none;
+        border-top: 1px solid var(--gold-mist);
+    }
+    .pyramid-col:first-child {
+        border-top: none;
+    }
 }
