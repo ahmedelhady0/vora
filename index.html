@@ -7,13 +7,20 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center p-4">
+<body class="login-shell min-h-screen flex items-center justify-center p-4">
 
-    <div class="container max-w-md w-full p-10">
+    <div class="container login-card max-w-md w-full p-10">
         <div class="text-center mb-10">
-            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-pink-600 to-rose-600 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-xl">🌹</div>
-            <h1 class="text-5xl font-bold text-gray-900 tracking-tighter">VORA</h1>
-            <p class="text-pink-600 mt-2 text-lg">عطور فاخرة • أناقة لا تنتهي</p>
+            <div class="login-mark">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="24" y="4" width="16" height="8" rx="1.5" fill="currentColor" opacity="0.8"/>
+                    <path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z"
+                          stroke="currentColor" stroke-width="2" fill="none"/>
+                    <line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+                </svg>
+            </div>
+            <h1 class="login-title">VORA</h1>
+            <p class="login-tagline mt-2">عطور فاخرة · أناقة لا تنتهي</p>
         </div>
 
         <div class="space-y-5">
@@ -23,29 +30,31 @@
             <div>
                 <input type="password" id="password" class="input-field w-full" placeholder="كلمة المرور">
             </div>
-            
-            <button onclick="signIn()" 
-                    class="btn-primary w-full py-4 text-lg font-semibold shadow-lg">
+
+            <button onclick="signIn()"
+                    class="btn-primary w-full py-4 text-lg font-semibold">
                 تسجيل الدخول
             </button>
-            
-            <button onclick="signUp()" 
-                    class="w-full py-4 text-lg font-medium border-2 border-pink-200 hover:border-pink-300 bg-white rounded-2xl transition-all">
+
+            <button onclick="signUp()"
+                    class="w-full py-4 text-lg font-medium border-2 rounded-3px transition-all"
+                    style="border-color: var(--gold-mist); background: var(--paper); border-radius: 3px;">
                 إنشاء حساب جديد
             </button>
         </div>
 
-        <p class="text-center text-gray-500 text-sm mt-8">
+        <hr class="divider-gold my-8">
+
+        <p class="text-center text-sm" style="color: var(--muted);">
             تجربة حساب تجريبي: admin / 123456
         </p>
     </div>
 
-    <!-- Message Modal - Improved -->
     <div id="messageBox" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50">
         <div class="bg-white rounded-3xl p-8 max-w-xs w-full text-center shadow-2xl">
             <div id="messageIcon" class="mx-auto w-16 h-16 mb-4"></div>
             <p id="messageText" class="text-lg font-medium text-gray-800"></p>
-            <button onclick="hideMessage()" 
+            <button onclick="hideMessage()"
                     class="mt-8 btn-primary w-full py-3.5">
                 إغلاق
             </button>
