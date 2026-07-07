@@ -1,102 +1,87 @@
-// home.js
-import { getProducts } from "./sheets-service.js";
-import { showMessage, hideMessage } from "./firebase-config.js";
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vora - الرئيسية</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 md:p-8">
 
-// التحقق من الجلسة والصلاحيات عند فتح الصفحة
-const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData) {
-    window.location.href = "index.html";
-}
+    <div class="container max-w-5xl mx-auto p-6 md:p-10">
 
-document.addEventListener("DOMContentLoaded", () => {
-    // عرض اسم المستخدم في الترحيب
-    document.getElementById('welcomeName').textContent = userData.username;
+        <!-- Header -->
+        <div class="site-header">
+            <div>
+                <h1 class="brand-logo">VORA</h1>
+                <p class="brand-tagline">مرحباً بك، <span id="welcomeName" class="welcome-name"></span></p>
+            </div>
+            <div class="flex flex-wrap gap-3 items-center" id="navActions">
+                <a href="cart.html" class="btn-cart">
+                    🛍️ السلة <span id="cartCount" class="bg-black/20 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                </a>
+                <button onclick="logout()" class="btn-ghost">تسجيل الخروج</button>
+            </div>
+        </div>
 
-    // إذا كان الأدمن، إظهار زر لوحة التحكم في الهيدر
-    if (userData.role === 'admin' || userData.role === 'manager') {
-        const navActions = document.getElementById('navActions');
-        const adminBtn = document.createElement('a');
-        adminBtn.href = "admin.html";
-        adminBtn.className = "bg-rose-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-rose-700 transition-all";
-        adminBtn.textContent = "💼 لوحة الإدارة";
-        navActions.insertBefore(adminBtn, navActions.firstChild);
-    }
+        <!-- Hero -->
+        <div class="hero">
+            <div>
+                <p class="hero-eyebrow">تشكيلة الخريف ٢٠٢٦</p>
+                <h2 class="hero-title">عطور VORA<br>حيث تبدأ الأناقة</h2>
+                <p class="hero-desc">كل عطر من VORA رحلة من ثلاث طبقات — تفتح بلمسة منعشة، وتستقر على قلب دافئ، وتترك أثراً يدوم. اكتشف الرائحة التي تحمل توقيعك.</p>
+                <a href="#productsSection" class="btn-primary inline-block">استكشف المجموعة ←</a>
+            </div>
+            <div class="hero-visual">
+                <svg viewBox="0 0 120 200" width="140" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="45" y="10" width="30" height="18" rx="3" fill="#E4C989"/>
+                    <rect x="52" y="0" width="16" height="14" rx="2" fill="#B68A46"/>
+                    <path d="M35 30 Q35 28 40 28 L80 28 Q85 28 85 30 L90 60 Q92 70 92 85 L92 185 Q92 195 82 195 L38 195 Q28 195 28 185 L28 85 Q28 70 30 60 Z"
+                          fill="#FBF6EF" stroke="#B68A46" stroke-width="2.5"/>
+                    <rect x="32" y="90" width="56" height="70" fill="#8C3050" opacity="0.85"/>
+                    <line x1="28" y1="90" x2="92" y2="90" stroke="#B68A46" stroke-width="1.5"/>
+                </svg>
+            </div>
+        </div>
 
-    updateCartCount();
-    loadProducts();
-});
+        <!-- Fragrance pyramid: signature section -->
+        <div class="pyramid">
+            <div class="pyramid-col">
+                <p class="pyramid-label">مقدمة العطر</p>
+                <h4 class="pyramid-title">Top Notes</h4>
+                <p class="pyramid-desc">أول ما يلامس حاسة الشم — لمسات حمضية ومنعشة تفتح التجربة.</p>
+            </div>
+            <div class="pyramid-col">
+                <p class="pyramid-label">قلب العطر</p>
+                <h4 class="pyramid-title">Heart Notes</h4>
+                <p class="pyramid-desc">جوهر الشخصية — زهور ومكونات دافئة تظهر بعد الدقائق الأولى.</p>
+            </div>
+            <div class="pyramid-col">
+                <p class="pyramid-label">قاعدة العطر</p>
+                <h4 class="pyramid-title">Base Notes</h4>
+                <p class="pyramid-desc">الأثر الذي يبقى لساعات — خشبيات وعنبر يمنحان العمق والثبات.</p>
+            </div>
+        </div>
 
-// جلب المنتجات من شيت الاكسيل وعرضها
-async function loadProducts() {
-    const container = document.getElementById('productsContainer');
-    try {
-        const products = await getProducts();
-        container.innerHTML = ""; // تنظيف رسالة التحميل
+        <!-- Products -->
+        <div id="productsSection">
+            <p class="section-eyebrow">تشكيلتنا</p>
+            <h3 class="section-title">المميزة من VORA</h3>
+            <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <p class="text-gray-500 text-center col-span-full py-12">جاري تحميل العطور الفاخرة...</p>
+            </div>
+        </div>
 
-        if (products.length === 0) {
-            container.innerHTML = `<p class="text-gray-500 text-center col-span-full py-12">لا توجد عطور متوفرة حالياً في المخزن.</p>`;
-            return;
-        }
+    </div>
 
-        products.forEach(prod => {
-            // حساب نجوم التقييم بناءً على القيمة القادمة من الشيت
-            const rating = parseFloat(prod.rating) || 0;
-            const stars = "⭐".repeat(Math.round(rating)) || "لا توجد تقييمات";
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
+            <p id="messageText" class="text-lg font-medium"></p>
+            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+        </div>
+    </div>
 
-            const card = document.createElement('div');
-            card.className = "bg-white p-5 rounded-2xl border border-pink-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between";
-            card.innerHTML = `
-                <div>
-                    <div class="h-48 bg-pink-50 rounded-xl mb-4 flex items-center justify-center text-pink-300 font-bold text-lg">
-                        📸 صورة العطر (${prod.category || 'Vora'})
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-800 mb-1">${prod.name}</h4>
-                    <p class="text-sm text-gray-500 mb-2">${prod.description || ''}</p>
-                    <div class="flex items-center gap-1 text-sm text-amber-500 mb-4">
-                        <span>${stars}</span>
-                        <span class="text-gray-400 text-xs">(${prod.ratingCount || 0})</span>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between mt-4">
-                    <span class="text-xl font-bold text-pink-700">${prod.price} ج.م</span>
-                    <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="bg-pink-600 text-white text-sm px-4 py-2 rounded-xl font-medium hover:bg-pink-700 transition-all">
-                        🛒 أضف للسلة
-                    </button>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    } catch (err) {
-        container.innerHTML = `<p class="text-red-500 text-center col-span-full py-12">حدث خطأ أثناء تحميل المنتجات. يرجى إعادة المحاولة.</p>`;
-    }
-}
-
-// دالة إضافة المنتجات للسلة المؤقتة
-window.addToCart = function(id, name, price) {
-    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    const itemIndex = cart.findIndex(item => item.id === id);
-
-    if (itemIndex > -1) {
-        cart[itemIndex].qty += 1;
-    } else {
-        cart.push({ id, name, price, qty: 1 });
-    }
-
-    localStorage.setItem('vora_cart', JSON.stringify(cart));
-    updateCartCount();
-    showMessage(`تم إضافة عطر (${name}) إلى سلتك بنجاح!`);
-};
-
-function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    document.getElementById('cartCount').textContent = totalQty;
-}
-
-window.logout = function() {
-    localStorage.removeItem('vora_user');
-    localStorage.removeItem('vora_cart');
-    window.location.href = "index.html";
-};
-
-window.hideMessage = hideMessage;
+    <script type="module" src="home.js"></script>
+</body>
+</html>
