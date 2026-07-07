@@ -2,8 +2,6 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
 // دالة GET - نداء مباشر بدون Proxy
-// (corsproxy.io بقى بيقصر الاستخدام المجاني على دومينات تطوير معينة زي
-// localhost/ngrok/GitHub.io، ومش شامل دومينات إنتاج زي Netlify - فبيرجع 403)
 async function callGet(params) {
     const url = new URL(WEB_APP_URL);
     Object.entries(params).forEach(([k, v]) => {
@@ -22,10 +20,8 @@ async function callGet(params) {
     }
 }
 
-// دالة POST مع Proxy
+// دالة POST
 // ملاحظة: بنستخدم text/plain بدل application/json عشان نتجنب الـ CORS preflight
-// (OPTIONS request) اللي الـ Apps Script مش بيقدر يستجيبله صح من المتصفح.
-// جوجل آبس سكريبت لسه بيقرأ المحتوى بنفس الطريقة (JSON.parse على e.postData.contents)
 async function callPost(body) {
     try {
         const res = await fetch(WEB_APP_URL, {
