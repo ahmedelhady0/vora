@@ -1,9 +1,9 @@
-// sheets-service.js - Vora Perfumes (مع Proxy لـ CORS)
+// sheets-service.js - Vora Perfumes
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
-const PROXY = "https://corsproxy.io/?";
-
-// دالة GET مع Proxy
+// دالة GET - نداء مباشر بدون Proxy
+// (corsproxy.io بقى بيقصر الاستخدام المجاني على دومينات تطوير معينة زي
+// localhost/ngrok/GitHub.io، ومش شامل دومينات إنتاج زي Netlify - فبيرجع 403)
 async function callGet(params) {
     const url = new URL(WEB_APP_URL);
     Object.entries(params).forEach(([k, v]) => {
@@ -11,7 +11,7 @@ async function callGet(params) {
     });
 
     try {
-        const res = await fetch(PROXY + encodeURIComponent(url.toString()));
+        const res = await fetch(url.toString());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.error) throw new Error(data.error);
