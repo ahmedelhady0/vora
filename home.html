@@ -9,29 +9,65 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <div class="container max-w-5xl mx-auto p-6 md:p-8">
-        
-        <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-pink-100 pb-6 mb-8 gap-4">
+    <div class="container max-w-5xl mx-auto p-6 md:p-10">
+
+        <!-- Header -->
+        <div class="site-header">
             <div>
-                <h1 class="text-4xl font-bold text-pink-700">VORA PERFUMES</h1>
-                <p class="text-gray-500 mt-1">مرحباً بك في عالم الأناقة الفاخرة، <span id="welcomeName" class="font-bold text-pink-600"></span></p>
+                <h1 class="brand-logo">VORA</h1>
+                <p class="brand-tagline">مرحباً بك، <span id="welcomeName" class="welcome-name"></span></p>
             </div>
-            
             <div class="flex flex-wrap gap-3 items-center" id="navActions">
-                <a href="cart.html" class="bg-pink-100 text-pink-700 px-5 py-2.5 rounded-xl font-medium hover:bg-pink-200 transition-all flex items-center gap-2">
-                    🛒 السلة <span id="cartCount" class="bg-pink-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                <a href="cart.html" class="btn-cart">
+                    🛍️ السلة <span id="cartCount" class="bg-black/20 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
                 </a>
-                <button onclick="logout()" class="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-xl font-medium hover:bg-gray-200 transition-all">تسجيل الخروج</button>
+                <button onclick="logout()" class="btn-ghost">تسجيل الخروج</button>
             </div>
         </div>
 
-        <div class="bg-gradient-to-r from-[#c25a80] to-[#f0a8c0] rounded-3xl p-8 text-white mb-10 text-center md:text-right flex flex-col justify-center min-h-[200px]">
-            <h2 class="text-3xl font-bold mb-2">مجموعة عطور VORA الحصرية</h2>
-            <p class="text-pink-50 max-w-md">اكتشف روائح ساحرة تعبر عن شخصيتك وتدوم طويلاً.</p>
+        <!-- Hero -->
+        <div class="hero">
+            <div>
+                <p class="hero-eyebrow">تشكيلة الخريف ٢٠٢٦</p>
+                <h2 class="hero-title">عطور VORA<br>حيث تبدأ الأناقة</h2>
+                <p class="hero-desc">كل عطر من VORA رحلة من ثلاث طبقات — تفتح بلمسة منعشة، وتستقر على قلب دافئ، وتترك أثراً يدوم. اكتشف الرائحة التي تحمل توقيعك.</p>
+                <a href="#productsSection" class="btn-primary inline-block">استكشف المجموعة ←</a>
+            </div>
+            <div class="hero-visual">
+                <svg viewBox="0 0 120 200" width="140" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="45" y="10" width="30" height="18" rx="3" fill="#E4C989"/>
+                    <rect x="52" y="0" width="16" height="14" rx="2" fill="#B68A46"/>
+                    <path d="M35 30 Q35 28 40 28 L80 28 Q85 28 85 30 L90 60 Q92 70 92 85 L92 185 Q92 195 82 195 L38 195 Q28 195 28 185 L28 85 Q28 70 30 60 Z"
+                          fill="#FBF6EF" stroke="#B68A46" stroke-width="2.5"/>
+                    <rect x="32" y="90" width="56" height="70" fill="#8C3050" opacity="0.85"/>
+                    <line x1="28" y1="90" x2="92" y2="90" stroke="#B68A46" stroke-width="1.5"/>
+                </svg>
+            </div>
         </div>
 
-        <div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">✨ تشكيلتنا المميزة</h3>
+        <!-- Fragrance pyramid: signature section -->
+        <div class="pyramid">
+            <div class="pyramid-col">
+                <p class="pyramid-label">مقدمة العطر</p>
+                <h4 class="pyramid-title">Top Notes</h4>
+                <p class="pyramid-desc">أول ما يلامس حاسة الشم — لمسات حمضية ومنعشة تفتح التجربة.</p>
+            </div>
+            <div class="pyramid-col">
+                <p class="pyramid-label">قلب العطر</p>
+                <h4 class="pyramid-title">Heart Notes</h4>
+                <p class="pyramid-desc">جوهر الشخصية — زهور ومكونات دافئة تظهر بعد الدقائق الأولى.</p>
+            </div>
+            <div class="pyramid-col">
+                <p class="pyramid-label">قاعدة العطر</p>
+                <h4 class="pyramid-title">Base Notes</h4>
+                <p class="pyramid-desc">الأثر الذي يبقى لساعات — خشبيات وعنبر يمنحان العمق والثبات.</p>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div id="productsSection">
+            <p class="section-eyebrow">تشكيلتنا</p>
+            <h3 class="section-title">المميزة من VORA</h3>
             <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <p class="text-gray-500 text-center col-span-full py-12">جاري تحميل العطور الفاخرة...</p>
             </div>
