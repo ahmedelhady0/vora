@@ -26,13 +26,17 @@ window.switchTab = function(tabId) {
 
     // تغيير نمط الأزرار النشطة
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('text-pink-700', 'border-b-2', 'border-pink-600', 'font-bold');
-        btn.classList.add('text-gray-500', 'font-medium');
+        btn.style.color = 'var(--muted)';
+        btn.style.borderBottom = 'none';
+        btn.classList.remove('font-bold');
+        btn.classList.add('font-medium');
     });
 
     const activeBtn = document.getElementById(`btn-${tabId}`);
-    activeBtn.classList.remove('text-gray-500', 'font-medium');
-    activeBtn.classList.add('text-pink-700', 'border-b-2', 'border-pink-600', 'font-bold');
+    activeBtn.classList.remove('font-medium');
+    activeBtn.classList.add('font-bold');
+    activeBtn.style.color = 'var(--wine)';
+    activeBtn.style.borderBottom = '2px solid var(--wine)';
 };
 
 // جلب وعرض الأوردرات الواردة للمشرفين
@@ -49,15 +53,16 @@ async function loadAdminOrders() {
 
         orders.forEach(order => {
             const row = document.createElement('tr');
-            row.className = "border-b border-pink-50 hover:bg-pink-50/50 transition-all";
+            row.className = "transition-all";
+            row.style.borderBottom = "1px solid var(--gold-mist)";
             row.innerHTML = `
                 <td class="p-4 text-sm text-gray-600">${order.date || ''}</td>
-                <td class="p-4 font-bold text-gray-800">${order.customerName}</td>
+                <td class="p-4 font-bold" style="color: var(--charcoal);">${order.customerName}</td>
                 <td class="p-4 text-gray-700" style="direction: ltr; text-align: right;">${order.customerPhone}</td>
                 <td class="p-4 text-sm text-gray-600 max-w-xs truncate" title="${order.items}">${order.items}</td>
-                <td class="p-4 font-bold text-pink-700">${order.total} ج.م</td>
+                <td class="p-4 font-bold" style="color: var(--wine);">${order.total} ج.م</td>
                 <td class="p-4">
-                    <span class="inline-block px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800">
+                    <span class="inline-block px-3 py-1 text-xs font-bold rounded-full" style="background: var(--gold-mist); color: var(--wine-deep);">
                         ${order.status || 'قيد المراجعة'}
                     </span>
                 </td>
