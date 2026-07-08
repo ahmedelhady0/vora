@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - عملية الدفع الآمنة</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gradient-to-b from-stone-50 to-amber-50">
+
+    <!-- Header -->
+    <div class="bg-white border-b border-stone-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold">V</div>
+                <span class="font-bold text-stone-900">VORA</span>
+            </div>
+            <button onclick="window.location.href='home.html'" class="text-stone-600 hover:text-stone-900">← العودة</button>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Checkout -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Step 1: Shipping -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8 space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <h2 class="text-2xl font-bold text-stone-900">📍 معلومات التوصيل</h2>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <input type="text" id="customerName" placeholder="الاسم الكامل" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <input type="tel" id="customerPhone" placeholder="رقم الهاتف (مثال: 201xxxxxxxxx)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <textarea id="customerAddress" placeholder="العنوان بالتفصيل (المحافظة / المدينة / الشارع / المبنى)" rows="3" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <select id="governorate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                                <option value="">اختر المحافظة</option>
+                                <option value="cairo">القاهرة</option>
+                                <option value="giza">الجيزة</option>
+                                <option value="alexandria">الإسكندرية</option>
+                                <option value="mansoura">المنصورة</option>
+                                <option value="assiut">أسيوط</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                            <input type="date" id="deliveryDate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8 space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <h2 class="text-2xl font-bold text-stone-900">💳 طريقة الدفع</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Payment Methods -->
+                        <div class="space-y-3">
+                            <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="paymentMethod" value="card" checked class="w-5 h-5 text-amber-600">
+                                <span class="mr-3 font-semibold text-stone-900">💳 بطاقة ائتمان / تحويل بنكي</span>
+                            </label>
+                            <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="paymentMethod" value="vodafone" class="w-5 h-5 text-amber-600">
+                                <span class="mr-3 font-semibold text-stone-900">📱 فودافون كاش</span>
+                            </label>
+                            <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="paymentMethod" value="cash" class="w-5 h-5 text-amber-600">
+                                <span class="mr-3 font-semibold text-stone-900">💰 الدفع عند الاستلام</span>
+                            </label>
+                        </div>
+
+                        <!-- Stripe Card Element -->
+                        <div id="cardContainer" class="p-4 border border-stone-300 rounded-lg bg-stone-50">
+                            <div id="card-element" class="p-3 bg-white rounded border border-stone-200"></div>
+                            <div id="card-errors" class="text-red-600 text-sm mt-2"></div>
+                        </div>
+
+                        <!-- Vodafone Input -->
+                        <div id="vodafoneContainer" class="hidden">
+                            <input type="tel" id="vodafoneNumber" placeholder="رقم فودافون كاش (11 رقم)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                            <p class="text-xs text-stone-500 mt-2">ستتلقى رسالة لتأكيد الدفع على هاتفك</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8">
+                    <h3 class="text-xl font-bold text-stone-900 mb-4">📦 ملخص الطلب</h3>
+                    <div id="orderItems" class="space-y-3 border-b border-stone-200 pb-4 mb-4">
+                        <!-- Items will be loaded here -->
+                    </div>
+                    <div class="space-y-2 text-stone-700">
+                        <div class="flex justify-between">
+                            <span>المجموع الفرعي:</span>
+                            <span id="subtotal">0 ج.م</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>مصاريف الشحن:</span>
+                            <span id="shippingCost">مجاني</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-lg text-stone-900 pt-4 border-t border-stone-200">
+                            <span>المجموع النهائي:</span>
+                            <span id="total" class="text-amber-600">0 ج.م</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="submitOrder()" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold text-lg rounded-lg hover:shadow-lg transform hover:scale-105 transition">
+                    ✓ تأكيد الطلب
+                </button>
+            </div>
+
+            <!-- Order Preview (Sticky) -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24 bg-white rounded-xl shadow-sm border border-stone-200 p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-stone-900">🛍️ تفاصيل سريعة</h3>
+                    <div id="sidebarItems" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Items preview -->
+                    </div>
+                    <div class="pt-4 border-t border-stone-200 space-y-2">
+                        <div class="flex justify-between text-stone-600">
+                            <span>عدد الأصناف:</span>
+                            <span id="itemCount">0</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-amber-600 text-lg">
+                            <span>المجموع:</span>
+                            <span id="sidebarTotal">0 ج.م</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl space-y-4">
+            <div id="messageIcon" class="text-4xl">✓</div>
+            <p id="messageText" class="text-lg font-medium text-stone-800"></p>
+            <button onclick="hideMessage()" class="w-full py-2 bg-amber-600 text-white rounded-lg font-semibold">حسناً</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 text-center">
+            <div class="animate-spin text-4xl mb-4">⏳</div>
+            <p id="loadingText" class="font-semibold text-stone-900">جاري معالجة طلبك...</p>
+        </div>
+    </div>
+
+    <script type="module" src="checkout.js"></script>
+</body>
+</html>
