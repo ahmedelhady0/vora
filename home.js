@@ -59,6 +59,7 @@ async function loadProducts() {
                 <div class="product-image">
                     ${isNew ? '<span class="product-badge">جديد</span>' : ''}
                     ${BOTTLE_SVG}
+                    <button class="product-quickadd" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})">إضافة سريعة للسلة +</button>
                 </div>
                 <div class="product-body">
                     <span class="product-category">${prod.category || 'VORA'}</span>
@@ -95,6 +96,7 @@ window.addToCart = function(id, name, price) {
 
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
+    renderCartDrawer();
     showMessage(`تم إضافة عطر (${name}) إلى سلتك بنجاح!`);
 };
 
@@ -103,6 +105,77 @@ function updateCartCount() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('cartCount').textContent = totalQty;
 }
+
+// ==================== Cart Drawer ====================
+window.openCartDrawer = function() {
+    renderCartDrawer();
+    document.getElementById('cartDrawer').classList.add('open');
+    document.getElementById('cartDrawerOverlay').classList.add('open');
+};
+
+window.closeCartDrawer = function() {
+    document.getElementById('cartDrawer').classList.remove('open');
+    document.getElementById('cartDrawerOverlay').classList.remove('open');
+};
+
+function renderCartDrawer() {
+    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    const body = document.getElementById('cartDrawerBody');
+    const footer = document.getElementById('cartDrawerFooter');
+
+    if (cart.length === 0) {
+        body.innerHTML = `
+            <div class="cart-drawer__empty">
+                <p class="empty-title">سلتك فارغة</p>
+                <p>أضف عطرك المفضل من التشكيلة عشان تبدأ طلبك.</p>
+            </div>`;
+        footer.classList.add('hidden');
+        return;
+    }
+
+    footer.classList.remove('hidden');
+    body.innerHTML = "";
+
+    let total = 0;
+    cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        const row = document.createElement('div');
+        row.className = "cart-drawer__item";
+        row.innerHTML = `
+            <div class="cart-drawer__item-icon">${BOTTLE_SVG}</div>
+            <div class="cart-drawer__item-info">
+                <p class="cart-drawer__item-name">${item.name}</p>
+                <p class="cart-drawer__item-price">${item.price} ج.م</p>
+                <div class="cart-drawer__qty">
+                    <button onclick="changeDrawerQty(${index}, -1)">−</button>
+                    <span>${item.qty}</span>
+                    <button onclick="changeDrawerQty(${index}, 1)">+</button>
+                </div>
+            </div>
+            <button class="cart-drawer__remove" onclick="removeDrawerItem(${index})" title="حذف">🗑️</button>
+        `;
+        body.appendChild(row);
+    });
+
+    document.getElementById('cartDrawerTotal').textContent = `${total} ج.م`;
+}
+
+window.changeDrawerQty = function(index, change) {
+    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    cart[index].qty += change;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    localStorage.setItem('vora_cart', JSON.stringify(cart));
+    updateCartCount();
+    renderCartDrawer();
+};
+
+window.removeDrawerItem = function(index) {
+    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('vora_cart', JSON.stringify(cart));
+    updateCartCount();
+    renderCartDrawer();
+};
 
 window.logout = function() {
     localStorage.removeItem('vora_user');
