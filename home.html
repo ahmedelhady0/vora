@@ -17,6 +17,10 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">V</div>
                 <span class="text-2xl font-bold text-stone-900 tracking-wider">VORA</span>
             </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-amber-600 font-bold transition">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium">المتجر</a>
+            </div>
             <div class="flex items-center gap-6">
                 <button onclick="document.getElementById('searchBox').classList.toggle('hidden')" class="text-stone-700 hover:text-amber-600 transition">🔍</button>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition group">
@@ -48,7 +52,7 @@
                         عطور فاخرة مستوردة بأفضل الأسعار. كل رائحة تحكي قصة، كل عطر هوية.
                     </p>
                     <div class="flex gap-4 pt-4">
-                        <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
+                        <button onclick="window.location.href='shop.html'" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
                             تسوق الآن
                         </button>
                         <button class="px-8 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition">
@@ -102,6 +106,11 @@
             </div>
             <div id="productsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Products will be loaded here -->
+            </div>
+            <div class="text-center mt-12">
+                <a href="shop.html" class="inline-block px-8 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition">
+                    عرض كل التشكيلة →
+                </a>
             </div>
         </div>
     </section>
