@@ -1,119 +1,204 @@
-<!doctype html>
-<html class="no-js" lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#00163a">
-    
-    <link rel="canonical" href="https://og-perfume.com/">
-    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - عطور فاخرة | اكتشف توقيعك العطري</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-stone-50 to-amber-50">
 
-    <title>OG Perfumes | عطور أصلية بأفضل الأسعار في مصر</title>
-    <meta name="description" content="تسوق عطور أصلية 100% مع شحن سريع لجميع المحافظات داخل مصر. اكتشف أفضل الأسعار والعروض الحصرية.">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">V</div>
+                <span class="text-2xl font-bold text-stone-900 tracking-wider">VORA</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <button onclick="document.getElementById('searchBox').classList.toggle('hidden')" class="text-stone-700 hover:text-amber-600 transition">🔍</button>
+                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
+                    🛍️
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </button>
+                <button onclick="logout()" class="text-stone-700 hover:text-red-600 transition text-sm">🚪 خروج</button>
+            </div>
+        </div>
+        <!-- Search Box -->
+        <div id="searchBox" class="hidden bg-stone-50 border-t border-stone-200 p-4">
+            <input type="text" id="searchInput" placeholder="ابحث عن عطرك المفضل..." class="w-full max-w-md px-4 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+    </nav>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:site_name" content="OG Perfumes">
-    <meta property="og:url" content="https://og-perfume.com/">
-    <meta property="og:title" content="OG Perfumes | عطور أصلية في مصر">
-    <meta property="og:type" content="website">
-    <meta property="og:description" content="عطور أصلية 100% بأفضل الأسعار مع شحن لكافة أنحاء مصر.">
-    <meta property="og:image" content="https://og-perfume.com/cdn/shop/files/WhatsApp_Image_2025-02-19_at_01.01.01_2a66qwewqewqeqb570.jpg?v=1768581080">
-    <meta property="og:image:secure_url" content="https://og-perfume.com/cdn/shop/files/WhatsApp_Image_2025-02-19_at_01.01.01_2a66qwewqewqeqb570.jpg?v=1768581080">
-    <meta property="og:image:width" content="501">
-    <meta property="og:image:height" content="501">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="space-y-6 animate-fadeInUp">
+                    <div class="inline-block">
+                        <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">✨ مجموعة استثنائية</span>
+                    </div>
+                    <h1 class="text-5xl lg:text-6xl font-bold text-stone-900 leading-tight">
+                        اكتشف توقيعك <span class="text-amber-600">العطري</span>
+                    </h1>
+                    <p class="text-xl text-stone-600 leading-relaxed max-w-lg">
+                        عطور فاخرة مستوردة بأفضل الأسعار. كل رائحة تحكي قصة، كل عطر هوية.
+                    </p>
+                    <div class="flex gap-4 pt-4">
+                        <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition">
+                            تسوق الآن
+                        </button>
+                        <button class="px-8 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition">
+                            اعرف أكثر
+                        </button>
+                    </div>
+                </div>
+                <!-- Right Visual -->
+                <div class="relative h-96 animate-fadeInUp animation-delay-200">
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-100 to-transparent rounded-3xl"></div>
+                    <div class="absolute top-12 right-12 w-48 h-64 bg-gradient-to-br from-amber-300 to-amber-500 rounded-2xl opacity-20 blur-3xl"></div>
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="24" y="4" width="16" height="8" rx="1.5" fill="#d97706" opacity="0.8"/>
+                        <path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z" stroke="#d97706" stroke-width="2" fill="none"/>
+                        <line x1="15" y1="34" x2="49" y2="34" stroke="#d97706" stroke-width="1.5" opacity="0.7"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="OG Perfumes">
-    <meta name="twitter:description" content="Original Perfumes Shipping all over Egypt Best Prices">
+    <!-- Features Section -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
+                    <div class="text-4xl">🚚</div>
+                    <h3 class="font-bold text-lg text-stone-900">شحن سريع</h3>
+                    <p class="text-stone-600 text-sm">توصيل إلى جميع المحافظات خلال 48 ساعة</p>
+                </div>
+                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
+                    <div class="text-4xl">💳</div>
+                    <h3 class="font-bold text-lg text-stone-900">دفع آمن</h3>
+                    <p class="text-stone-600 text-sm">تشفير عالي وطرق دفع متعددة</p>
+                </div>
+                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
+                    <div class="text-4xl">🎁</div>
+                    <h3 class="font-bold text-lg text-stone-900">تغليف فاخر</h3>
+                    <p class="text-stone-600 text-sm">عطرك يستحق تغليفاً يليق به</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Google Verification & Shopify Injection Start -->
-    <script>window.performance && window.performance.mark && window.performance.mark('shopify.content_for_header.start');</script>
-    <meta name="google-site-verification" content="RFZqjI57Q5TVEf-ZnlOiKBDjl5TuT9_O-p8eOh0gsVk">
-    <meta id="shopify-digital-wallet" name="shopify-digital-wallet" content="/72307704007/digital_wallets/dialog">
-    <script async="async" src="/checkouts/internal/preloads.js?locale=en-EG"></script>
-    
-    <script id="shopify-features" type="application/json">
-        {"accessToken":"1648a8dceffdb40bc1e61abda277e5e3","betas":["rich-media-storefront-analytics"],"domain":"og-perfume.com","predictiveSearch":true,"shopId":72307704007,"locale":"en"}
-    </script>
-    
-    <script>
-        var Shopify = Shopify || {};
-        Shopify.shop = "zgwjmy-1e.myshopify.com";
-        Shopify.locale = "en";
-        Shopify.currency = {"active":"EGP","rate":"1.0"};
-        Shopify.country = "EG";
-        Shopify.theme = {"name":"Ella Modified Theme","id":157785227463,"schema_name":"Ella","schema_version":"6.7.6","role":"main"};
-        Shopify.cdnHost = "og-perfume.com/cdn";
-    </script>
+    <!-- Best Sellers -->
+    <section id="products" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-stone-900 mb-4">الأكثر مبيعاً ⭐</h2>
+                <p class="text-stone-600 text-lg">تشكيلة مختارة بعناية من أفضل العطور</p>
+            </div>
+            <div id="productsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
 
-    <!-- استدعاء خط عربي فاخر واحترافي يناسب براندات العطور + خط Inter الإنجليزي -->
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Why Choose VORA -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-amber-900 to-stone-900 text-white">
+        <div class="max-w-4xl mx-auto text-center space-y-8">
+            <h2 class="text-4xl font-bold">لماذا تختار VORA؟</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+                <div class="space-y-3">
+                    <div class="text-3xl">✓</div>
+                    <h3 class="font-bold text-lg">عطور أصلية 100%</h3>
+                    <p class="text-amber-50">مصادر موثوقة وضمان الأصالة</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="text-3xl">✓</div>
+                    <h3 class="font-bold text-lg">أسعار تنافسية</h3>
+                    <p class="text-amber-50">أفضل الأسعار مع جودة عالية</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="text-3xl">✓</div>
+                    <h3 class="font-bold text-lg">دعم عملاء 24/7</h3>
+                    <p class="text-amber-50">فريق متخصص دائماً في خدمتك</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="text-3xl">✓</div>
+                    <h3 class="font-bold text-lg">ضمان الرضا</h3>
+                    <p class="text-amber-50">استرجاع بدون شروط خلال 14 يوم</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- نظام التصميم ومتغيرات الـ CSS لثيم Ella بعد التطوير الاحترافي والتوسيع السحري -->
+    <!-- Cart Drawer -->
+    <div id="cartDrawerOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-40 transition-all" onclick="closeCartDrawer()"></div>
+    <div id="cartDrawer" class="fixed right-0 top-0 h-screen w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+        <div class="sticky top-0 bg-gradient-to-b from-white to-stone-50 p-6 border-b border-stone-200">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-stone-900">🛍️ سلتك</h3>
+                <button onclick="closeCartDrawer()" class="text-2xl">✕</button>
+            </div>
+        </div>
+        <div id="cartDrawerBody" class="p-6 space-y-4"></div>
+        <div id="cartDrawerFooter" class="hidden sticky bottom-0 bg-gradient-to-t from-stone-50 border-t border-stone-200 p-6 space-y-4">
+            <div class="flex justify-between text-lg font-bold text-stone-900 pb-4 border-b border-stone-200">
+                <span>المجموع:</span>
+                <span id="cartDrawerTotal">0 ج.م</span>
+            </div>
+            <button onclick="goToCheckout()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition">
+                انتقل للدفع
+            </button>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all">
+        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl border border-stone-100 space-y-4 animate-scaleIn">
+            <div id="messageIcon" class="mx-auto text-4xl"></div>
+            <p id="messageText" class="text-base font-medium text-stone-800 leading-relaxed"></p>
+            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">
+                حسناً
+            </button>
+        </div>
+    </div>
+
     <style>
-        :root {
-            /* تطبيق خط Alexandria الراقي ليتغير مظهر متجرك العربي بالكامل */
-            --font-family-1: 'Alexandria', sans-serif;
-            --font-family-2: 'Alexandria', sans-serif;
-            --font-body-family: 'Alexandria', sans-serif;
-            --font-body-size: 14px;
-            --font-body-weight: 400;
-            --body-line-height: 26px;
-            
-            /* ألوان الهوية البصرية للمتجر */
-            --color-text: #232323;
-            --color-global: #232323;
-            --color-white: #FFFFFF;
-            --color-black: #202020;
-            --color-background: #ffffff;
-            
-            /* أزرار المتجر الأساسية */
-            --btn-1-color: #ffffff;
-            --btn-1-bg: #00163a; /* الكحلي الملكي الداكن */
-            --btn-1-border: #00163a;
-            --btn-1-color-hover: #232323;
-            --btn-1-bg-hover: #ffffff;
-            --btn-1-border-hover: #232323;
-            --btn-1-border-radius: 30px;
-            
-            /* أسعار المنتجات وعلامات التخفيض */
-            --product-title-color: #00163a;
-            --product-price-color: #00163a;
-            --product-sale-price-color: #e73e45;
-            --sale-badge-bg: #e73e45;
-            --new-badge-bg: #075ee2;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        /* كود التوسيع السحري: ليتنفس المتجر ويمتد بعرض شاشات العرض الفاخرة بدلاً من الانضغاط في المنتصف */
-        .container, .page-width, .header-pc, .wrapper-container, .main-content .container {
-            max-width: 1440px !important; 
-            width: 100% !important;
-            padding-left: 24px !important;
-            padding-right: 24px !important;
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        
-        /* تحسين الخلفية العامة لتصبح مريحة وبسيطة وجذابة (Aesthetic Minimalism) */
-        body {
-            background-color: #fcfbfa !important; /* لون كريمي عاجي ناعم يبرز صور زجاجات العطور */
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
         }
-        
-        /* ضبط تباعد العناوين لجعل مظهرها سيمبل وأنيق */
-        h1, h2, h3, h4, .product-title {
-            letter-spacing: 0.01em !important;
-            font-weight: 500 !important;
+        .animation-delay-200 {
+            animation-delay: 0.2s;
+        }
+        .animate-scaleIn {
+            animation: scaleIn 0.3s ease-out;
         }
     </style>
 
-    <!-- ملفات التنسيق الأساسية الخاصة بـ Shopify -->
-    <link href="//og-perfume.com/cdn/shop/t/9/assets/base.css?v=84970157901927775051781466300" rel="stylesheet" type="text/css" media="all" />
-    <link href="//og-perfume.com/cdn/shop/t/9/assets/fade-up-animation.css?v=148448505227430981271781466368" rel="stylesheet" type="text/css" media="all" />
-    <link href="//og-perfume.com/cdn/shop/t/9/assets/layout_rtl.css?v=132227056091312279901781466402" rel="stylesheet" type="text/css" media="all" />
-    <link href="//og-perfume.com/cdn/shop/t/9/assets/animated.css?v=91884483947907798981781466298" rel="stylesheet" type="text/css" media="all" />
-    <link href="//og-perfume.com/cdn/shop/t/9/assets/component-card.css?v=84890900002460790781781466313" rel="stylesheet" type="text/css" media="all" />
-
-    <script id="shopify-cfh-end">window.performance && window.performance.mark && window.performance.mark('shopify.content_for_header.end');</script>
-</head>
+    <script type="module" src="home.js"></script>
+</body>
+</html>
