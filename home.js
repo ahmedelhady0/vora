@@ -18,17 +18,6 @@ if (!userData) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('welcomeName').textContent = userData.username;
-
-    if (userData.role === 'admin' || userData.role === 'manager') {
-        const navActions = document.getElementById('navActions');
-        const adminBtn = document.createElement('a');
-        adminBtn.href = "admin.html";
-        adminBtn.className = "btn-primary";
-        adminBtn.textContent = "لوحة الإدارة";
-        navActions.insertBefore(adminBtn, navActions.firstChild);
-    }
-
     updateCartCount();
     loadProducts();
 });
@@ -41,9 +30,10 @@ async function loadProducts() {
 
         if (products.length === 0) {
             container.innerHTML = `
-                <div class="empty-state col-span-full">
-                    <p class="empty-title">لا توجد عطور بعد</p>
-                    <p>هنا هتظهر تشكيلة VORA بمجرد ما يتم إضافتها من لوحة الإدارة.</p>
+                <div class="col-span-full text-center py-16 space-y-4">
+                    <p class="text-4xl">🎁</p>
+                    <p class="text-2xl font-bold text-stone-900">لا توجد عطور بعد</p>
+                    <p class="text-stone-600">هنا هتظهر تشكيلة VORA بمجرد ما يتم إضافتها من لوحة الإدارة.</p>
                 </div>`;
             return;
         }
@@ -51,27 +41,42 @@ async function loadProducts() {
         products.forEach((prod, index) => {
             const rating = parseFloat(prod.rating) || 0;
             const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
-            const isNew = index === 0; // أول منتج مُضاف يُعرض كأحدث إصدار
+            const isNew = index === 0;
+            
+            // حساب نسبة الخصم إن وجدت
+            const discount = prod.discount ? Math.round((prod.discount / prod.originalPrice) * 100) : 0;
 
             const card = document.createElement('div');
-            card.className = "product-card";
+            card.className = "product-card group";
             card.innerHTML = `
-                <div class="product-image">
-                    ${isNew ? '<span class="product-badge">جديد</span>' : ''}
-                    ${BOTTLE_SVG}
-                    <button class="product-quickadd" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})">إضافة سريعة للسلة +</button>
-                </div>
-                <div class="product-body">
-                    <span class="product-category">${prod.category || 'VORA'}</span>
-                    <h4 class="product-name">${prod.name}</h4>
-                    <p class="product-desc">${prod.description || ''}</p>
-                    <div class="product-rating">
-                        <span>${stars}</span>
-                        <span class="text-gray-400 text-xs">(${prod.ratingCount || 0})</span>
+                <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-amber-50 to-stone-50 p-8 h-64 flex items-center justify-center transform transition-transform duration-300 group-hover:scale-105">
+                    ${isNew ? '<span class="absolute top-3 right-3 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold">جديد ✨</span>' : ''}
+                    ${discount > 0 ? `<span class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">-${discount}%</span>` : ''}
+                    <div class="w-full h-full text-amber-600 opacity-80 hover:opacity-100 transition">
+                        ${BOTTLE_SVG}
                     </div>
-                    <div class="product-footer">
-                        <span class="product-price">${prod.price} <small>ج.م</small></span>
-                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="btn-icon-circle" title="أضف للسلة">
+                    <button class="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition pb-4" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})">
+                        <span class="bg-amber-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg">إضافة للسلة +</span>
+                    </button>
+                </div>
+                <div class="pt-6 space-y-3">
+                    <span class="inline-block text-xs font-bold text-amber-600 uppercase tracking-widest">${prod.category || 'VORA'}</span>
+                    <h3 class="text-lg font-bold text-stone-900 line-clamp-2">${prod.name}</h3>
+                    <p class="text-sm text-stone-600 line-clamp-2">${prod.description || 'عطر فاخر من مجموعة VORA'}</p>
+                    <div class="flex items-center justify-between pt-2">
+                        <div class="text-yellow-500 text-sm">${stars}</div>
+                        <span class="text-xs text-stone-500">(${prod.ratingCount || 0})</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-stone-200">
+                        <div>
+                            ${prod.discount ? `
+                                <p class="text-xs text-stone-500 line-through">${prod.originalPrice} ج.م</p>
+                                <p class="text-xl font-bold text-amber-600">${prod.price} ج.م</p>
+                            ` : `
+                                <p class="text-xl font-bold text-amber-600">${prod.price} ج.م</p>
+                            `}
+                        </div>
+                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-10 h-10 bg-amber-100 hover:bg-amber-600 text-amber-600 hover:text-white rounded-full flex items-center justify-center transition text-lg">
                             🛍️
                         </button>
                     </div>
@@ -80,7 +85,8 @@ async function loadProducts() {
             container.appendChild(card);
         });
     } catch (err) {
-        container.innerHTML = `<p class="text-red-500 text-center col-span-full py-12">حدث خطأ أثناء تحميل المنتجات. يرجى إعادة المحاولة.</p>`;
+        console.error('Error loading products:', err);
+        container.innerHTML = `<p class="text-red-500 text-center col-span-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
     }
 }
 
@@ -97,7 +103,7 @@ window.addToCart = function(id, name, price) {
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     renderCartDrawer();
-    showMessage(`تم إضافة عطر (${name}) إلى سلتك بنجاح!`);
+    showMessage(`✓ تمت إضافة "${name}" إلى السلة!`);
 };
 
 function updateCartCount() {
@@ -109,13 +115,22 @@ function updateCartCount() {
 // ==================== Cart Drawer ====================
 window.openCartDrawer = function() {
     renderCartDrawer();
-    document.getElementById('cartDrawer').classList.add('open');
-    document.getElementById('cartDrawerOverlay').classList.add('open');
+    document.getElementById('cartDrawer').classList.remove('translate-x-full');
+    document.getElementById('cartDrawerOverlay').classList.remove('hidden');
 };
 
 window.closeCartDrawer = function() {
-    document.getElementById('cartDrawer').classList.remove('open');
-    document.getElementById('cartDrawerOverlay').classList.remove('open');
+    document.getElementById('cartDrawer').classList.add('translate-x-full');
+    document.getElementById('cartDrawerOverlay').classList.add('hidden');
+};
+
+window.goToCheckout = function() {
+    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    if (cart.length === 0) {
+        showMessage('⚠️ السلة فارغة. أضف منتجات أولاً');
+        return;
+    }
+    window.location.href = 'checkout.html';
 };
 
 function renderCartDrawer() {
@@ -125,9 +140,10 @@ function renderCartDrawer() {
 
     if (cart.length === 0) {
         body.innerHTML = `
-            <div class="cart-drawer__empty">
-                <p class="empty-title">سلتك فارغة</p>
-                <p>أضف عطرك المفضل من التشكيلة عشان تبدأ طلبك.</p>
+            <div class="text-center py-12 space-y-4">
+                <div class="text-4xl">🛍️</div>
+                <p class="font-bold text-stone-900 text-lg">سلتك فارغة</p>
+                <p class="text-stone-600 text-sm">أضف عطرك المفضل لتبدأ التسوق</p>
             </div>`;
         footer.classList.add('hidden');
         return;
@@ -140,19 +156,21 @@ function renderCartDrawer() {
     cart.forEach((item, index) => {
         total += item.price * item.qty;
         const row = document.createElement('div');
-        row.className = "cart-drawer__item";
+        row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0";
         row.innerHTML = `
-            <div class="cart-drawer__item-icon">${BOTTLE_SVG}</div>
-            <div class="cart-drawer__item-info">
-                <p class="cart-drawer__item-name">${item.name}</p>
-                <p class="cart-drawer__item-price">${item.price} ج.م</p>
-                <div class="cart-drawer__qty">
-                    <button onclick="changeDrawerQty(${index}, -1)">−</button>
-                    <span>${item.qty}</span>
-                    <button onclick="changeDrawerQty(${index}, 1)">+</button>
+            <div class="w-16 h-16 bg-gradient-to-br from-amber-50 to-stone-50 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0">
+                ${BOTTLE_SVG}
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold text-stone-900">${item.name}</p>
+                <p class="text-sm text-stone-600">${item.price} ج.م</p>
+                <div class="flex items-center gap-2 mt-2">
+                    <button onclick="changeDrawerQty(${index}, -1)" class="w-6 h-6 border border-stone-300 rounded hover:bg-stone-100">−</button>
+                    <span class="w-6 text-center font-semibold">${item.qty}</span>
+                    <button onclick="changeDrawerQty(${index}, 1)" class="w-6 h-6 border border-stone-300 rounded hover:bg-stone-100">+</button>
                 </div>
             </div>
-            <button class="cart-drawer__remove" onclick="removeDrawerItem(${index})" title="حذف">🗑️</button>
+            <button class="text-red-500 hover:text-red-700 text-xl" onclick="removeDrawerItem(${index})">🗑️</button>
         `;
         body.appendChild(row);
     });
