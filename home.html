@@ -18,9 +18,9 @@
                 <p class="brand-tagline">مرحباً بك، <span id="welcomeName" class="welcome-name"></span></p>
             </div>
             <div class="flex flex-wrap gap-3 items-center" id="navActions">
-                <a href="cart.html" class="btn-cart">
+                <button onclick="openCartDrawer()" class="btn-cart">
                     🛍️ السلة <span id="cartCount" class="bg-black/20 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
-                </a>
+                </button>
                 <button onclick="logout()" class="btn-ghost">تسجيل الخروج</button>
             </div>
         </div>
@@ -73,6 +73,23 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cartDrawerOverlay" class="cart-drawer-overlay" onclick="closeCartDrawer()"></div>
+    <div id="cartDrawer" class="cart-drawer">
+        <div class="cart-drawer__header">
+            <span class="cart-drawer__title">🛍️ سلتك</span>
+            <button class="cart-drawer__close" onclick="closeCartDrawer()">×</button>
+        </div>
+        <div id="cartDrawerBody" class="cart-drawer__body"></div>
+        <div id="cartDrawerFooter" class="cart-drawer__footer hidden">
+            <div class="cart-drawer__total">
+                <span>الإجمالي:</span>
+                <span id="cartDrawerTotal">0 ج.م</span>
+            </div>
+            <a href="cart.html" class="btn-primary w-full py-3.5 block text-center">استكمال الطلب ←</a>
+        </div>
     </div>
 
     <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
