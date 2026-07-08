@@ -38,62 +38,48 @@ async function loadProducts() {
             return;
         }
 
-        products.forEach((prod, index) => {
+        // على الصفحة الرئيسية بنعرض معاينة سريعة بس (أول 4 منتجات)، والتشكيلة كاملة موجودة في shop.html
+        const bestSellers = products.slice(0, 4);
+
+        bestSellers.forEach((prod, index) => {
             const rating = parseFloat(prod.rating) || 0;
             const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
             const isNew = index === 0;
-            
+
             // حساب نسبة الخصم إن وجدت
             const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
 
             const card = document.createElement('div');
             card.className = "product-card group";
             card.innerHTML = `
-                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 to-stone-50 p-6 h-80 flex items-center justify-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl">
-                    ${isNew ? '<span class="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg">جديد ✨</span>' : ''}
-                    ${discount > 0 ? `<span class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg">-${discount}%</span>` : ''}
-                    
-                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    
+                <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-50 to-stone-50 p-4 h-40 sm:h-48 flex items-center justify-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                    ${isNew ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow">جديد ✨</span>' : ''}
+                    ${discount > 0 ? `<span class="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow">-${discount}%</span>` : ''}
+
                     <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
                         ${BOTTLE_SVG}
                     </div>
                 </div>
-                
-                <div class="pt-6 space-y-3">
-                    <div class="flex items-start justify-between gap-2">
+
+                <div class="pt-3 space-y-1.5">
+                    <span class="inline-block text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-0.5 rounded-full">${prod.category || 'VORA'}</span>
+
+                    <h3 class="text-sm font-bold text-stone-900 line-clamp-1 leading-tight">${prod.name}</h3>
+
+                    <div class="flex items-center gap-1">
+                        <span class="text-yellow-500 text-xs">${stars}</span>
+                        <span class="text-[10px] text-stone-400">(${prod.ratingCount || 0})</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
                         <div>
-                            <span class="inline-block text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full">${prod.category || 'VORA'}</span>
+                            ${prod.discount && prod.originalPrice ? `
+                                <p class="text-[10px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
+                            ` : ``}
+                            <p class="text-base font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
                         </div>
-                        <span class="inline-block text-xs font-bold text-stone-500">الماركة</span>
-                    </div>
-                    
-                    <h3 class="text-lg font-bold text-stone-900 line-clamp-2 leading-tight">${prod.name}</h3>
-                    
-                    <p class="text-sm text-stone-600 line-clamp-2 h-10">${prod.description || 'عطر فاخر من مجموعة VORA'}</p>
-                    
-                    <div class="flex items-center gap-2 pt-1">
-                        <span class="text-yellow-500 text-sm font-semibold">${stars}</span>
-                        <span class="text-xs text-stone-400">(${prod.ratingCount || 0})</span>
-                    </div>
-                    
-                    <div class="bg-gradient-to-r from-stone-100 to-stone-50 rounded-xl p-4 space-y-3 pt-4 border-t border-stone-200">
-                        <div class="flex items-end justify-between">
-                            <div>
-                                ${prod.discount && prod.originalPrice ? `
-                                    <p class="text-xs text-stone-400 line-through mb-1">${prod.originalPrice} ج.م</p>
-                                    <p class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
-                                ` : `
-                                    <p class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
-                                `}
-                            </div>
-                            <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg">
-                                🛍️
-                            </button>
-                        </div>
-                        
-                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-full py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-semibold rounded-lg transition-all duration-300 text-sm shadow-md hover:shadow-lg">
-                            إضافة للسلة +
+                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-md flex-shrink-0">
+                            🛍️
                         </button>
                     </div>
                 </div>
