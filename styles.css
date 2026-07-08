@@ -1,372 +1,175 @@
-/* styles.css — Vora Perfumes Premium Design System */
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;800&display=swap');
+/* استيراد خطوط فاخرة: Alexandria للنصوص العربية، و Playfair للبراند والإنجليزية */
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 :root {
-    /* Color tokens */
-    --ivory: #FDFBF7;
-    --paper: #FFFFFF;
-    --wine: #6B1830;
-    --wine-deep: #420B1A;
-    --wine-soft: #8C3050;
-    --gold: #B68A46;
-    --gold-soft: #E4C989;
-    --gold-mist: #F5ebd6;
-    --charcoal: #231B19;
-    --muted: #8A7A72;
-
-    /* Type tokens */
-    --font-display: 'Amiri', serif;
-    --font-body: 'Cairo', sans-serif;
-}
-
-* {
-    box-sizing: border-box;
-    scroll-behavior: smooth;
+    --bg-premium: #fcfbfa;       /* خلفية كريمي ناعمة مريحة للعين */
+    --text-main: #1a1919;        /* أسود فاخر هادئ وليس حاد */
+    --text-muted: #706e6b;       /* رمادي دافئ للنصوص الثانوية */
+    --accent-gold: #c5a880;      /* ذهبي مطفي للعطور */
+    --accent-dark: #111111;
 }
 
 body {
-    font-family: var(--font-body);
-    background: var(--ivory);
-    color: var(--charcoal);
-    direction: rtl;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+    background-color: var(--bg-premium);
+    color: var(--text-main);
+    font-family: 'Alexandria', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
 }
 
-/* ==================== Layout shells ==================== */
-.container {
-    background: var(--paper);
-    border-radius: 24px;
-    box-shadow: 0 30px 70px -20px rgba(69, 16, 31, 0.06), 0 4px 20px -2px rgba(182, 138, 70, 0.03);
-    border: 1px solid rgba(182, 138, 70, 0.12);
-}
-
-/* ==================== Header ==================== */
+/* الهيدر - احترافي ونظيف */
 .site-header {
-    background: linear-gradient(135deg, var(--wine-deep), var(--wine));
-    border-radius: 18px;
-    padding: 24px 32px;
-    margin-bottom: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    box-shadow: 0 10px 30px -10px rgba(69, 16, 31, 0.3);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #f0ede9;
+    margin-bottom: 4rem;
 }
 
 .brand-logo {
-    font-family: var(--font-display);
+    font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: 2px;
-    margin: 0;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 0.2em;
+    color: var(--text-main);
+    line-height: 1;
 }
 
 .brand-tagline {
-    color: var(--gold-soft);
-    font-size: 0.95rem;
-    font-weight: 300;
-    margin-top: 2px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
 }
 
-/* ==================== Buttons ==================== */
-.btn-primary {
-    background: linear-gradient(135deg, var(--wine), var(--wine-deep));
-    color: var(--ivory);
-    border-radius: 12px;
-    padding: 14px 32px;
+.welcome-name {
+    color: var(--text-main);
     font-weight: 600;
-    font-family: var(--font-body);
-    border: 1px solid rgba(182, 138, 70, 0.3);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 12px rgba(69, 16, 31, 0.15);
-}
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(69, 16, 31, 0.25);
-    filter: brightness(1.1);
-}
-.btn-primary:active {
-    transform: translateY(0);
 }
 
-.btn-ghost {
-    background: transparent;
-    color: var(--ivory);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-family: var(--font-body);
+/* الأزرار الفاخرة */
+.btn-primary {
+    background-color: var(--accent-dark);
+    color: #ffffff;
+    padding: 0.85rem 2rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
+    border: 1px solid var(--accent-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
-.btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--gold-soft);
-    color: var(--gold-soft);
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: var(--accent-dark);
+    transform: translateY(-2px);
 }
 
 .btn-cart {
-    background: rgba(245, 235, 214, 0.15);
-    color: var(--gold-soft);
-    border: 1px solid rgba(245, 235, 214, 0.25);
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid #e0dbd5;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
+
 .btn-cart:hover {
-    background: var(--gold-soft);
-    color: var(--wine-deep);
+    border-color: var(--text-main);
+    background-color: #f5f3f0;
 }
 
-.btn-icon-circle {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: var(--ivory);
-    color: var(--wine);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--gold-mist);
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
-}
-.btn-icon-circle:hover {
-    background: var(--wine);
-    color: var(--ivory);
-    transform: scale(1.1);
+.btn-ghost {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    transition: color 0.2s;
 }
 
-/* ==================== Inputs ==================== */
-.input-field {
-    border: 1.5px solid rgba(182, 138, 70, 0.2);
-    background: #FAFAFA;
-    border-radius: 12px;
-    padding: 16px;
-    font-family: var(--font-body);
-    color: var(--charcoal);
-    transition: all 0.25s ease;
-}
-.input-field:focus {
-    outline: none;
-    border-color: var(--wine);
-    background: #FFFFFF;
-    box-shadow: 0 0 0 4px rgba(107, 24, 48, 0.08);
+.btn-ghost:hover {
+    color: #e63946;
 }
 
-/* ==================== Hero ==================== */
+/* قسم الهيرو (البانر الرئيسي) */
 .hero {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
+    gap: 4rem;
     align-items: center;
-    gap: 40px;
-    background: linear-gradient(150deg, var(--wine-deep) 0%, var(--wine) 70%);
-    border-radius: 24px;
-    padding: 60px;
-    margin-bottom: 40px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(69, 16, 31, 0.15);
+    padding: 3rem 0;
+    margin-bottom: 6rem;
 }
-.hero::after {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -20%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(228, 201, 137, 0.15) 0%, transparent 70%);
-    pointer-events: none;
+
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+    }
+    .hero-visual {
+        justify-content: center;
+    }
 }
 
 .hero-eyebrow {
-    color: var(--gold-soft);
     font-size: 0.85rem;
-    letter-spacing: 2px;
-    font-weight: 700;
-    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .hero-title {
-    font-family: var(--font-display);
-    font-size: 3.2rem;
-    color: #FFFFFF;
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 400;
     line-height: 1.2;
-    margin: 0 0 20px;
+    margin-bottom: 1.5rem;
 }
 
 .hero-desc {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-muted);
     font-size: 1.05rem;
-    max-width: 480px;
-    margin-bottom: 32px;
-    line-height: 1.8;
+    max-w: 540px;
+    margin-bottom: 2.5rem;
 }
 
-/* ==================== Fragrance Pyramid ==================== */
+.hero-visual {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-visual svg {
+    width: 100%;
+    max-width: 220px;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.05));
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* هرم العطور (مقدمة، قلب، قاعدة) */
 .pyramid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    background: #FFFFFF;
-    border: 1px solid rgba(182, 138, 70, 0.15);
-    border-radius: 16px;
-    margin: 40px 0 60px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    gap: 2rem;
+    padding: 4rem 2rem;
+    background-color: #f5f3f0;
+    margin-bottom: 6rem;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .pyramid {
+        grid-template-columns: 1fr;
+        padding: 2.5rem 1.5rem;
+    }
 }
 
 .pyramid-col {
-    padding: 36px 28px;
     text-align: center;
-    transition: background 0.3s ease;
-}
-.pyramid-col:hover {
-    background: rgba(245, 235, 214, 0.2);
-}
-.pyramid-col:not(:last-child) {
-    border-left: 1px solid var(--gold-mist);
-}
-
-.pyramid-label {
-    font-size: 0.75rem;
-    letter-spacing: 1.5px;
-    color: var(--gold);
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.pyramid-title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    color: var(--wine-deep);
-    margin-bottom: 10px;
-}
-
-/* ==================== Product cards ==================== */
-.product-card {
-    background: var(--paper);
-    border: 1px solid rgba(182, 138, 70, 0.12);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 30px 50px -15px rgba(69, 16, 31, 0.12);
-    border-color: rgba(182, 138, 70, 0.3);
-}
-
-.product-image {
-    height: 260px;
-    background: linear-gradient(180deg, #FDFBF7 0%, #F5EBD6 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-.product-image svg {
-    width: 80px;
-    height: 80px;
-    color: var(--wine);
-    opacity: 0.85;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.product-card:hover .product-image svg {
-    transform: scale(1.15) rotate(-4deg);
-}
-
-.product-quickadd {
-    position: absolute;
-    bottom: 0;
-    inset-inline: 0;
-    background: rgba(66, 11, 26, 0.95);
-    backdrop-filter: blur(4px);
-    color: var(--gold-soft);
-    text-align: center;
-    padding: 14px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: pointer;
-    border: none;
-    width: 100%;
-}
-.product-card:hover .product-quickadd {
-    transform: translateY(0);
-}
-
-.product-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: var(--wine);
-    color: var(--gold-soft);
-    font-size: 0.75rem;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.product-body {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-}
-
-.product-name {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    color: var(--charcoal);
-    margin: 0;
-    font-weight: 700;
-}
-
-.product-price {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    color: var(--wine);
-    font-weight: 700;
-}
-
-/* ==================== Login page specific ==================== */
-.login-shell {
-    background: radial-gradient(circle at 10% 10%, rgba(245,235,214,0.4), transparent 45%), 
-                radial-gradient(circle at 90% 90%, rgba(107,24,48,0.04), transparent 45%), 
-                var(--ivory);
-}
-.login-card {
-    border-radius: 28px;
-    box-shadow: 0 40px 90px -20px rgba(69, 16, 31, 0.08);
-}
-
-/* ==================== Cart Drawer ==================== */
-.cart-drawer {
-    width: 440px;
-    border-radius: 24px 0 0 24px;
-}
-
-/* Responsive fixes */
-@media (max-width: 768px) {
-    .hero { grid-template-columns: 1fr; padding: 40px 24px; }
-    .hero-visual { display: none; }
-    .pyramid { grid-template-columns: 1fr; }
-    .pyramid-col:not(:last-child) { border-left: none; border-bottom: 1px solid var(--gold-mist); }
-}
+    padding: 1rem
