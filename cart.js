@@ -29,11 +29,12 @@ function renderCart() {
 
     cart.forEach((item, index) => {
         const row = document.createElement('div');
-        row.className = "bg-white p-4 rounded-xl border border-pink-100 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm";
+        row.className = "bg-white p-4 rounded border flex flex-col sm:flex-row justify-between items-center gap-4";
+        row.style.borderColor = "var(--gold-mist)";
         row.innerHTML = `
             <div class="flex-1 text-center sm:text-right">
-                <h4 class="text-lg font-bold text-gray-800">${item.name}</h4>
-                <p class="text-sm text-pink-600 font-medium">${item.price} ج.م</p>
+                <h4 class="text-lg font-bold" style="font-family: var(--font-display); color: var(--charcoal);">${item.name}</h4>
+                <p class="text-sm font-medium" style="color: var(--wine);">${item.price} ج.م</p>
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="changeQty(${index}, -1)" class="w-8 h-8 bg-gray-100 text-gray-700 rounded-full font-bold flex items-center justify-center hover:bg-gray-200">-</button>
