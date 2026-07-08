@@ -10,28 +10,26 @@
 <body class="p-4 md:p-8">
 
     <div class="container max-w-6xl mx-auto p-6 md:p-8">
-        
-        <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-pink-100 pb-6 mb-8 gap-4">
+
+        <div class="site-header">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">💼 لوحة الإدارة والتحكم (Vora)</h1>
-                <p class="text-gray-500 mt-1">إدارة المنتجات، متابعة الطلبات، وتعديل صلاحيات المستخدمين</p>
+                <h1 class="brand-logo" style="font-size:1.8rem;">💼 لوحة الإدارة</h1>
+                <p class="brand-tagline">إدارة المنتجات، متابعة الطلبات، وتعديل صلاحيات المستخدمين</p>
             </div>
-            <a href="home.html" class="bg-pink-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-pink-700 transition-all">
-                ← العودة للمتجر الرئيسية
-            </a>
+            <a href="home.html" class="btn-ghost">← العودة للمتجر الرئيسية</a>
         </div>
 
-        <div class="flex gap-4 border-b border-gray-200 mb-8 overflow-x-auto pb-2">
-            <button onclick="switchTab('orders-tab')" id="btn-orders-tab" class="tab-btn active px-6 py-2.5 font-bold text-pink-700 border-b-2 border-pink-600 transition-all">📦 الطلبات الواردة</button>
-            <button onclick="switchTab('products-tab')" id="btn-products-tab" class="tab-btn px-6 py-2.5 font-medium text-gray-500 hover:text-pink-600 transition-all">✨ إضافة عطر جديد</button>
+        <div class="flex gap-4 mb-8 overflow-x-auto pb-2" style="border-bottom: 1px solid var(--gold-mist);">
+            <button onclick="switchTab('orders-tab')" id="btn-orders-tab" class="tab-btn active px-6 py-2.5 font-bold transition-all" style="color: var(--wine); border-bottom: 2px solid var(--wine);">📦 الطلبات الواردة</button>
+            <button onclick="switchTab('products-tab')" id="btn-products-tab" class="tab-btn px-6 py-2.5 font-medium transition-all" style="color: var(--muted);">✨ إضافة عطر جديد</button>
         </div>
 
         <div id="orders-tab" class="tab-content block">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">قائمة الطلبات الحالية (من جوجل شيت)</h3>
-            <div class="overflow-x-auto bg-white rounded-2xl border border-pink-100">
+            <h3 class="section-title" style="font-size:1.3rem;">قائمة الطلبات الحالية (من جوجل شيت)</h3>
+            <div class="overflow-x-auto bg-white rounded" style="border: 1px solid var(--gold-mist);">
                 <table class="w-full text-right border-collapse">
                     <thead>
-                        <tr class="bg-pink-50 text-pink-700 border-b border-pink-100">
+                        <tr style="background: var(--gold-mist); color: var(--wine-deep);">
                             <th class="p-4">التاريخ</th>
                             <th class="p-4">العميل</th>
                             <th class="p-4">الهاتف</th>
@@ -42,7 +40,7 @@
                     </thead>
                     <tbody id="adminOrdersTable">
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-gray-500">جاري سحب الطلبات من النظام...</td>
+                            <td colspan="6" class="p-8 text-center" style="color: var(--muted);">جاري سحب الطلبات من النظام...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -50,22 +48,22 @@
         </div>
 
         <div id="products-tab" class="tab-content hidden max-w-xl">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">إضافة عطر جديد للمخزن (Inventory)</h3>
+            <h3 class="section-title" style="font-size:1.3rem;">إضافة عطر جديد للمخزن (Inventory)</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">اسم العطر</label>
+                    <label class="block font-medium mb-1" style="color: var(--charcoal);">اسم العطر</label>
                     <input type="text" id="prodName" class="input-field w-full" placeholder="مثال: Vora Luxury Oud">
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">الفئة / المجموعة</label>
+                    <label class="block font-medium mb-1" style="color: var(--charcoal);">الفئة / المجموعة</label>
                     <input type="text" id="prodCategory" class="input-field w-full" placeholder="مثال: عطور شرقية / عطور فرنسية">
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">السعر (ج.م)</label>
+                    <label class="block font-medium mb-1" style="color: var(--charcoal);">السعر (ج.م)</label>
                     <input type="number" id="prodPrice" class="input-field w-full" placeholder="مثال: 1250">
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">وصف العطر ومكوناته</label>
+                    <label class="block font-medium mb-1" style="color: var(--charcoal);">وصف العطر ومكوناته</label>
                     <textarea id="prodDesc" class="input-field w-full h-24 resize-none" placeholder="اكتب المكونات العليا والوسطى والقاعدة..."></textarea>
                 </div>
                 <button onclick="addNewProduct()" class="btn-primary w-full py-3.5 mt-2">
