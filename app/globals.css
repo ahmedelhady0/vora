@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+* {
+  @apply font-alexandria;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-gradient-to-b from-stone-50 to-amber-50;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-stone-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-amber-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-amber-700;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f5f5f4 25%, #e7e5e4 50%, #f5f5f4 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-playfair font-bold;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-100;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 border-2 border-amber-600 text-amber-600 font-bold rounded-lg transition-all duration-300 hover:bg-amber-50;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 text-stone-600 hover:text-amber-600 transition-colors duration-300;
+}
+
+/* Forms */
+.input-field {
+  @apply w-full px-4 py-3 border border-stone-300 rounded-lg font-alexandria focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all;
+}
+
+/* Cards */
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-stone-200 p-6 transition-all duration-300 hover:shadow-lg;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  @apply bg-stone-200 animate-pulse rounded;
+}
