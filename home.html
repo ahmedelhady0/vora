@@ -20,7 +20,6 @@
     <meta property="og:title" content="OG Perfumes | عطور أصلية في مصر">
     <meta property="og:type" content="website">
     <meta property="og:description" content="عطور أصلية 100% بأفضل الأسعار مع شحن لكافة أنحاء مصر.">
-    <!-- نصيحة: قم بتغيير اسم ملف الصورة في Shopify لاحقاً ليكون صديقاً للـ SEO -->
     <meta property="og:image" content="https://og-perfume.com/cdn/shop/files/WhatsApp_Image_2025-02-19_at_01.01.01_2a66qwewqewqeqb570.jpg?v=1768581080">
     <meta property="og:image:secure_url" content="https://og-perfume.com/cdn/shop/files/WhatsApp_Image_2025-02-19_at_01.01.01_2a66qwewqewqeqb570.jpg?v=1768581080">
     <meta property="og:image:width" content="501">
@@ -51,18 +50,19 @@
         Shopify.cdnHost = "og-perfume.com/cdn";
     </script>
 
-    <!-- استدعاء الخطوط بالطريقة الصحيحة والأسرع للمتصفح -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- استدعاء خط عربي فاخر واحترافي يناسب براندات العطور + خط Inter الإنجليزي -->
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- نظام التصميم ومتغيرات الـ CSS لثيم Ella -->
+    <!-- نظام التصميم ومتغيرات الـ CSS لثيم Ella بعد التطوير الاحترافي والتوسيع السحري -->
     <style>
         :root {
-            --font-family-1: 'Inter', sans-serif;
-            --font-family-2: 'Inter', sans-serif;
-            --font-body-family: 'Inter', sans-serif;
+            /* تطبيق خط Alexandria الراقي ليتغير مظهر متجرك العربي بالكامل */
+            --font-family-1: 'Alexandria', sans-serif;
+            --font-family-2: 'Alexandria', sans-serif;
+            --font-body-family: 'Alexandria', sans-serif;
             --font-body-size: 14px;
             --font-body-weight: 400;
-            --body-line-height: 24px;
+            --body-line-height: 26px;
             
             /* ألوان الهوية البصرية للمتجر */
             --color-text: #232323;
@@ -83,18 +83,36 @@
             /* أسعار المنتجات وعلامات التخفيض */
             --product-title-color: #00163a;
             --product-price-color: #00163a;
-            --product-sale-price-color: #e73e45; /* الأحمر الخاص بالتخفيضات */
+            --product-sale-price-color: #e73e45;
             --sale-badge-bg: #e73e45;
             --new-badge-bg: #075ee2;
         }
+
+        /* كود التوسيع السحري: ليتنفس المتجر ويمتد بعرض شاشات العرض الفاخرة بدلاً من الانضغاط في المنتصف */
+        .container, .page-width, .header-pc, .wrapper-container, .main-content .container {
+            max-width: 1440px !important; 
+            width: 100% !important;
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+        }
+        
+        /* تحسين الخلفية العامة لتصبح مريحة وبسيطة وجذابة (Aesthetic Minimalism) */
+        body {
+            background-color: #fcfbfa !important; /* لون كريمي عاجي ناعم يبرز صور زجاجات العطور */
+        }
+        
+        /* ضبط تباعد العناوين لجعل مظهرها سيمبل وأنيق */
+        h1, h2, h3, h4, .product-title {
+            letter-spacing: 0.01em !important;
+            font-weight: 500 !important;
+        }
     </style>
 
-    <!-- ملفات التنسيق الأساسية الخاصة بـ Shopify (تأكد من وجودها بالترتيب) -->
+    <!-- ملفات التنسيق الأساسية الخاصة بـ Shopify -->
     <link href="//og-perfume.com/cdn/shop/t/9/assets/base.css?v=84970157901927775051781466300" rel="stylesheet" type="text/css" media="all" />
     <link href="//og-perfume.com/cdn/shop/t/9/assets/fade-up-animation.css?v=148448505227430981271781466368" rel="stylesheet" type="text/css" media="all" />
     <link href="//og-perfume.com/cdn/shop/t/9/assets/layout_rtl.css?v=132227056091312279901781466402" rel="stylesheet" type="text/css" media="all" />
     <link href="//og-perfume.com/cdn/shop/t/9/assets/animated.css?v=91884483947907798981781466298" rel="stylesheet" type="text/css" media="all" />
-    <!-- تم إصلاح السطر المقطوع هنا -->
     <link href="//og-perfume.com/cdn/shop/t/9/assets/component-card.css?v=84890900002460790781781466313" rel="stylesheet" type="text/css" media="all" />
 
     <script id="shopify-cfh-end">window.performance && window.performance.mark && window.performance.mark('shopify.content_for_header.end');</script>
