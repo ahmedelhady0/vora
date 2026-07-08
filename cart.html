@@ -10,47 +10,45 @@
 <body class="p-4 md:p-8">
 
     <div class="container max-w-3xl mx-auto p-6 md:p-8">
-        
-        <div class="flex justify-between items-center border-b-2 border-pink-100 pb-6 mb-8">
+
+        <div class="site-header">
             <div>
-                <h1 class="text-3xl font-bold text-pink-700">🛒 سلة المشتريات</h1>
-                <p class="text-gray-500 mt-1">راجع عطورك المفضلة وأكمل طلبك</p>
+                <h1 class="brand-logo" style="font-size:1.8rem;">🛍️ السلة</h1>
+                <p class="brand-tagline">راجع عطورك المفضلة وأكمل طلبك</p>
             </div>
-            <a href="home.html" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-200 transition-all">
-                ← العودة للرئيسية
-            </a>
+            <a href="home.html" class="btn-ghost">← العودة للرئيسية</a>
         </div>
 
         <div id="cartContent" class="space-y-4">
-            <p class="text-gray-500 text-center py-12">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>
+            <p class="text-center py-12" style="color: var(--muted);">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>
         </div>
 
-        <div id="checkoutForm" class="hidden mt-8 pt-8 border-t-2 border-pink-100 space-y-4">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">📍 تفاصيل الشحن والتوصيل</h3>
-            
+        <div id="checkoutForm" class="hidden mt-8 pt-8 space-y-4" style="border-top: 1px solid var(--gold-mist);">
+            <h3 class="section-title" style="font-size:1.4rem; margin-bottom:16px;">📍 تفاصيل الشحن والتوصيل</h3>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" id="customerName" class="input-field w-full" placeholder="الاسم بالكامل">
                 <input type="tel" id="customerPhone" class="input-field w-full" placeholder="رقم الهاتف">
             </div>
-            
+
             <input type="text" id="customerAddress" class="input-field w-full" placeholder="العنوان بالتفصيل (المدينة / الشارع / المبنى)">
 
-            <div class="bg-pink-50 p-6 rounded-2xl mt-6 space-y-2">
-                <div class="flex justify-between text-gray-600">
+            <div class="p-6 rounded mt-6 space-y-2" style="background: var(--gold-mist);">
+                <div class="flex justify-between" style="color: var(--charcoal);">
                     <span>إجمالي المنتجات:</span>
                     <span id="subtotalPrice">0 ج.م</span>
                 </div>
-                <div class="flex justify-between text-gray-600">
+                <div class="flex justify-between" style="color: var(--charcoal);">
                     <span>مصاريف الشحن:</span>
-                    <span class="text-green-600 font-medium">مكافأة (شحن مجاني)</span>
+                    <span class="font-medium" style="color: var(--wine);">مكافأة (شحن مجاني)</span>
                 </div>
-                <div class="flex justify-between text-xl font-bold text-pink-700 pt-2 border-t border-pink-200">
+                <div class="flex justify-between text-xl font-bold pt-2" style="color: var(--wine-deep); border-top: 1px solid var(--gold);">
                     <span>المجموع النهائي:</span>
                     <span id="totalPrice">0 ج.م</span>
                 </div>
             </div>
 
-            <button onclick="submitOrder()" class="btn-primary w-full py-4 text-lg mt-6 shadow-lg shadow-pink-200">
+            <button onclick="submitOrder()" class="btn-primary w-full py-4 text-lg mt-6">
                 🚀 تأكيد الطلب وإرساله
             </button>
         </div>
