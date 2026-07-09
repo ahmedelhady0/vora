@@ -80,6 +80,9 @@ window.addNewProduct = async function() {
     const category = document.getElementById('prodCategory').value.trim();
     const price = parseFloat(document.getElementById('prodPrice').value);
     const description = document.getElementById('prodDesc').value.trim();
+    const image = document.getElementById('prodImage').value.trim();
+    const originalPriceRaw = document.getElementById('prodOriginalPrice').value;
+    const originalPrice = originalPriceRaw ? parseFloat(originalPriceRaw) : null;
 
     if (!name || !category || !price) {
         return showMessage("يرجى ملء الحقول الأساسية: الاسم، الفئة، والسعر");
@@ -91,6 +94,9 @@ window.addNewProduct = async function() {
         category,
         price,
         description,
+        image: image || "",
+        originalPrice: originalPrice || "",
+        discount: originalPrice && originalPrice > price ? true : "",
         rating: 5,      // تقييم افتراضي ابتدائي للمنتج الجديد
         ratingCount: 1  // عدد التقييمات الابتدائية
     };
@@ -106,7 +112,9 @@ window.addNewProduct = async function() {
             document.getElementById('prodCategory').value = "";
             document.getElementById('prodPrice').value = "";
             document.getElementById('prodDesc').value = "";
-            
+            document.getElementById('prodImage').value = "";
+            document.getElementById('prodOriginalPrice').value = "";
+
             // تحديث الجدول احتياطياً والعودة لتبويب الطلبات
             switchTab('orders-tab');
             loadAdminOrders();
