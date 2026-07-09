@@ -156,7 +156,7 @@ function renderProducts() {
 
     if (allProducts.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full text-center py-16 space-y-4">
+            <div class="text-center py-16 space-y-4">
                 <p class="text-4xl">🎁</p>
                 <p class="text-2xl font-bold text-stone-900">لا توجد عطور بعد</p>
                 <p class="text-stone-600">هنا هتظهر تشكيلة VORA بمجرد ما يتم إضافتها من لوحة الإدارة.</p>
@@ -166,7 +166,7 @@ function renderProducts() {
 
     if (filtered.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full text-center py-16 space-y-4">
+            <div class="text-center py-16 space-y-4">
                 <p class="text-4xl">🔍</p>
                 <p class="text-2xl font-bold text-stone-900">لا توجد نتائج مطابقة</p>
                 <p class="text-stone-600">جرّب تغيير الفلاتر أو كلمة البحث</p>
@@ -175,66 +175,68 @@ function renderProducts() {
         return;
     }
 
-    filtered.forEach((prod, index) => {
-        const rating = parseFloat(prod.rating) || 0;
-        const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
-        const isNew = allProducts.indexOf(prod) === 0;
-        const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
-
-        const card = document.createElement('div');
-        card.className = "product-card group animate-fadeInUp";
-        card.innerHTML = `
-            <div class="relative overflow-hidden rounded-2xl bg-white border border-stone-200 p-6 h-80 flex items-center justify-center transform transition-all duration-300 group-hover:shadow-2xl">
-                ${isNew ? '<span class="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg">جديد ✨</span>' : ''}
-                ${discount > 0 ? `<span class="absolute top-4 left-4 bg-red-600 text-white px-4 py-2 rounded text-xs font-bold shadow-lg">Sale</span>` : ''}
-
-                ${prod.image ? `
-                    <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all" style="display:none;">
-                        ${BOTTLE_SVG}
-                    </div>
-                ` : `
-                    <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
-                        ${BOTTLE_SVG}
-                    </div>
-                `}
-            </div>
-
-            <div class="pt-6 space-y-3">
-                <div class="flex items-start justify-between gap-2">
-                    <span class="text-xs font-bold text-stone-500 uppercase tracking-widest italic">${prod.category || 'VORA'}</span>
-                </div>
-
-                <h3 class="text-lg font-bold text-stone-900 line-clamp-2 leading-tight italic" style="font-family: 'Playfair Display', serif;">${prod.name}</h3>
-
-                <p class="text-sm text-stone-600 line-clamp-2 h-10">${prod.description || 'عطر فاخر من مجموعة VORA'}</p>
-
-                <div class="flex items-center gap-2 pt-1">
-                    <span class="text-yellow-500 text-sm font-semibold">${stars}</span>
-                    <span class="text-xs text-stone-400">(${prod.ratingCount || 0})</span>
-                </div>
-
-                <div class="flex items-center justify-between pt-4 border-t border-stone-200">
-                    <div>
-                        ${prod.discount && prod.originalPrice ? `
-                            <p class="text-xs text-stone-400 line-through mb-1">${prod.originalPrice} ج.م</p>
-                            <p class="text-2xl font-bold text-red-600">${prod.price} ج.م</p>
-                        ` : `
-                            <p class="text-2xl font-bold text-stone-900">${prod.price} ج.م</p>
-                        `}
-                    </div>
-                    <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg">
-                        🛍️
-                    </button>
-                </div>
-
-                <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-full py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-semibold rounded-lg transition-all duration-300 text-sm shadow-md hover:shadow-lg">
-                    إضافة للسلة +
-                </button>
-            </div>
-        `;
-        container.appendChild(card);
+    // تجميع المنتجات حسب الفئة/الماركة، بنفس ترتيب ظهورها الأول في الشيت
+    const groups = new Map();
+    filtered.forEach(prod => {
+        const key = prod.category || 'VORA';
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(prod);
     });
+
+    groups.forEach((products, categoryName) => {
+        const section = document.createElement('div');
+        section.className = "category-section";
+        section.innerHTML = `
+            <h2 class="category-section-title text-base md:text-lg font-bold italic text-stone-900 mb-1">${categoryName}</h2>
+            <div class="h-px bg-stone-900 w-full mb-6"></div>
+            <div class="flex gap-6 md:gap-8 overflow-x-auto pb-3 -mx-1 px-1"></div>
+        `;
+        const row = section.querySelector('div.flex');
+
+        products.forEach(prod => {
+            row.appendChild(buildProductTile(prod));
+        });
+
+        container.appendChild(section);
+    });
+}
+
+function buildProductTile(prod) {
+    const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
+
+    const tile = document.createElement('div');
+    tile.className = "flex-shrink-0 w-40 sm:w-48 text-center group";
+    tile.innerHTML = `
+        <div class="relative h-48 sm:h-56 flex items-end justify-center mb-3">
+            ${discount > 0 ? `<span class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">Sale</span>` : ''}
+
+            ${prod.image ? `
+                <img src="${prod.image}" alt="${prod.name}" class="relative z-[1] max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="w-full h-full text-amber-600 opacity-80" style="display:none;">${BOTTLE_SVG}</div>
+            ` : `
+                <div class="w-full h-full text-amber-600 opacity-80">${BOTTLE_SVG}</div>
+            `}
+            <div class="product-tile-shadow"></div>
+        </div>
+
+        <p class="text-[11px] font-bold italic uppercase tracking-wide text-stone-800">${prod.category || 'VORA'}</p>
+        <p class="text-sm italic text-stone-700 line-clamp-1 mt-0.5" style="font-family: 'Playfair Display', serif;">${prod.name}</p>
+        <p class="text-xs text-stone-400 mt-0.5 line-clamp-1">${prod.description ? prod.description.slice(0, 24) : 'Full Size'}</p>
+
+        <div class="mt-1.5">
+            ${prod.discount && prod.originalPrice ? `
+                <p class="text-xs text-stone-400 line-through">LE ${prod.originalPrice}</p>
+                <p class="text-sm font-bold text-red-600">LE ${prod.price}</p>
+            ` : `
+                <p class="text-sm font-bold text-stone-900">LE ${prod.price}</p>
+            `}
+        </div>
+
+        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="mt-2 text-xs font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2 transition">
+            + إضافة للسلة
+        </button>
+    `;
+    return tile;
 }
 
 window.resetFilters = function() {
