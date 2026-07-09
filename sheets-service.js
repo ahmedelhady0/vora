@@ -43,7 +43,11 @@ export async function getProducts() {
         return remote;
     }
 
-    // لو مفيش ولا local ولا remote، نرجع array فاضي
+    // لو مفيش ولا local ولا remote، نستخدم fallback data من الملف الثابت
+    if (window.__FALLBACK_PRODUCTS && window.__FALLBACK_PRODUCTS.length > 0) {
+        STORE.products = window.__FALLBACK_PRODUCTS;
+        return window.__FALLBACK_PRODUCTS;
+    }
     return [];
 }
 

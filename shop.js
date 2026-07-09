@@ -71,6 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+function getSettings() {
+    const local = JSON.parse(localStorage.getItem('vora_settings'));
+    if (local) return local;
+    return window.__FALLBACK_SETTINGS || {};
+}
+
 // ===== Brand Slider =====
 function initBrandSlider() {
     const track = document.getElementById('brandTrack');
@@ -92,7 +98,7 @@ function debounce(fn, delay) {
 
 // ===== Load Logo from Settings =====
 function loadLogo() {
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     if (s.logo) {
         ['navLogo', 'footerLogo', 'mobileLogo'].forEach(id => {
             const el = document.getElementById(id);
@@ -108,7 +114,7 @@ function loadLogo() {
 
 // ===== Footer Contact from Settings =====
 function applyFooterSettings() {
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     const wa = document.getElementById('footerWhatsapp');
     const em = document.getElementById('footerEmail');
     if (wa) wa.textContent = t('footerWhatsappLabel') + ' ' + (s.whatsapp || '01000000000');

@@ -18,6 +18,12 @@ if (userData && (userData.role === 'admin' || userData.role === 'manager')) {
     });
 }
 
+function getSettings() {
+    const local = JSON.parse(localStorage.getItem('vora_settings'));
+    if (local) return local;
+    return window.__FALLBACK_SETTINGS || {};
+}
+
 let slideshowInterval = null;
 let currentSlide = 0;
 
@@ -70,7 +76,7 @@ window.showMessage = function(msg) {
 function loadBanners() {
     const grid = document.getElementById('bannerGrid');
     if (!grid) return;
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     const arDefaults = [
         { tag: '🧬 جديد', title: 'أحدث العطور', subtitle: 'اكتشف تشكيلتنا الجديدة كلياً' },
         { tag: '🔥 تخفيضات', title: 'عروض خاصة', subtitle: 'خصم يصل إلى 50% على تشكيلة محددة' },
@@ -112,7 +118,7 @@ function loadBanners() {
 
 // ===== Hero Section Dynamic =====
 function loadHeroSettings() {
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     document.getElementById('heroBadgeText').textContent = s.heroBadge || t('heroBadge');
     document.getElementById('heroTitleText').textContent = s.heroTitle || t('heroTitle');
     document.getElementById('heroSubText').textContent = s.heroSubtitle || t('heroSubtitle');
@@ -135,7 +141,7 @@ document.addEventListener('langchange', () => {
 
 // ===== Load Logo from Settings =====
 function loadLogo() {
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     if (s.logo) {
         ['navLogo', 'footerLogo', 'mobileLogo'].forEach(id => {
             const el = document.getElementById(id);
@@ -151,7 +157,7 @@ function loadLogo() {
 
 // ===== Footer Contact from Settings =====
 function applyFooterSettings() {
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     const wa = document.getElementById('footerWhatsapp');
     const em = document.getElementById('footerEmail');
     if (wa) wa.textContent = t('footerWhatsappLabel') + ' ' + (s.whatsapp || '01000000000');
@@ -214,7 +220,7 @@ function initSlideshow() {
     const container = document.getElementById('heroSlideshow');
     const dotsEl = document.getElementById('heroDots');
     if (!container) return;
-    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const s = getSettings();
     const images = s.slideshowImages || [];
     if (images.length === 0) {
         container.innerHTML = '<div class="hero-slide active" style="background:linear-gradient(160deg, #3a1a2a 0%, #2a0f1a 40%, #3a1a2a 100%);"></div>';

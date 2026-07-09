@@ -474,4 +474,28 @@ window.saveSettings = function() {
     showMessage("✅ تم حفظ جميع الإعدادات بنجاح!");
 };
 
+window.downloadBackup = function() {
+    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const data = {
+        products: products,
+        settings: settings
+    };
+    const jsContent = `// VORA Fallback Data - تم التصدير في ${new Date().toLocaleDateString('ar-EG')}
+window.__FALLBACK_PRODUCTS = ${JSON.stringify(products, null, 2)};
+
+window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
+`;
+    const blob = new Blob([jsContent], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fallback-data.js';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showMessage('✅ تم تحميل ملف النسخة الاحتياطية! ارفعه على GitHub مع الموقع.');
+};
+
 window.hideMessage = hideMessage;
