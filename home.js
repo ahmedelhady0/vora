@@ -30,7 +30,7 @@ async function loadProducts() {
 
         if (products.length === 0) {
             container.innerHTML = `
-                <div class="col-span-full text-center py-16 space-y-4">
+                <div class="w-full text-center py-16 space-y-4">
                     <p class="text-4xl">🎁</p>
                     <p class="text-2xl font-bold text-stone-900">لا توجد عطور بعد</p>
                     <p class="text-stone-600">هنا هتظهر تشكيلة VORA بمجرد ما يتم إضافتها من لوحة الإدارة.</p>
@@ -50,35 +50,35 @@ async function loadProducts() {
             const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
 
             const card = document.createElement('div');
-            card.className = "product-card group";
+            card.className = "product-card group w-[150px] sm:w-[180px] flex-shrink-0";
             card.innerHTML = `
-                <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-50 to-stone-50 p-4 h-40 sm:h-48 flex items-center justify-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
-                    ${isNew ? '<span class="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow">جديد ✨</span>' : ''}
-                    ${discount > 0 ? `<span class="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow">-${discount}%</span>` : ''}
+                <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-amber-50 to-stone-50 p-3 h-32 sm:h-36 flex items-center justify-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                    ${isNew ? '<span class="absolute top-1.5 right-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full text-[9px] font-bold shadow">جديد</span>' : ''}
+                    ${discount > 0 ? `<span class="absolute top-1.5 left-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white px-1.5 py-0.5 rounded-full text-[9px] font-bold shadow">-${discount}%</span>` : ''}
 
                     <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
                         ${BOTTLE_SVG}
                     </div>
                 </div>
 
-                <div class="pt-3 space-y-1.5">
-                    <span class="inline-block text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-0.5 rounded-full">${prod.category || 'VORA'}</span>
+                <div class="pt-2 space-y-1">
+                    <span class="inline-block text-[9px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-full">${prod.category || 'VORA'}</span>
 
-                    <h3 class="text-sm font-bold text-stone-900 line-clamp-1 leading-tight">${prod.name}</h3>
+                    <h3 class="text-xs font-bold text-stone-900 line-clamp-1 leading-tight">${prod.name}</h3>
 
                     <div class="flex items-center gap-1">
-                        <span class="text-yellow-500 text-xs">${stars}</span>
-                        <span class="text-[10px] text-stone-400">(${prod.ratingCount || 0})</span>
+                        <span class="text-yellow-500 text-[10px]">${stars}</span>
+                        <span class="text-[9px] text-stone-400">(${prod.ratingCount || 0})</span>
                     </div>
 
-                    <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center justify-between pt-0.5">
                         <div>
                             ${prod.discount && prod.originalPrice ? `
-                                <p class="text-[10px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
+                                <p class="text-[9px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
                             ` : ``}
-                            <p class="text-base font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
+                            <p class="text-sm font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
                         </div>
-                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-md flex-shrink-0">
+                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-7 h-7 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-md flex-shrink-0 text-xs">
                             🛍️
                         </button>
                     </div>
@@ -88,7 +88,7 @@ async function loadProducts() {
         });
     } catch (err) {
         console.error('Error loading products:', err);
-        container.innerHTML = `<p class="text-red-500 text-center col-span-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
+        container.innerHTML = `<p class="text-red-500 text-center w-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
     }
 }
 
