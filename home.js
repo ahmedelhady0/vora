@@ -52,17 +52,24 @@ async function loadProducts() {
             const card = document.createElement('div');
             card.className = "product-card group w-[150px] sm:w-[180px] flex-shrink-0";
             card.innerHTML = `
-                <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-amber-50 to-stone-50 p-3 h-32 sm:h-36 flex items-center justify-center transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                <div class="relative overflow-hidden rounded-lg bg-white border border-stone-200 p-3 h-32 sm:h-36 flex items-center justify-center transform transition-all duration-300 group-hover:shadow-lg">
                     ${isNew ? '<span class="absolute top-1.5 right-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full text-[9px] font-bold shadow">جديد</span>' : ''}
-                    ${discount > 0 ? `<span class="absolute top-1.5 left-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white px-1.5 py-0.5 rounded-full text-[9px] font-bold shadow">-${discount}%</span>` : ''}
+                    ${discount > 0 ? `<span class="absolute top-1.5 left-1.5 bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold shadow">Sale</span>` : ''}
 
-                    <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
-                        ${BOTTLE_SVG}
-                    </div>
+                    ${prod.image ? `
+                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all" style="display:none;">
+                            ${BOTTLE_SVG}
+                        </div>
+                    ` : `
+                        <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
+                            ${BOTTLE_SVG}
+                        </div>
+                    `}
                 </div>
 
                 <div class="pt-2 space-y-1">
-                    <span class="inline-block text-[9px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-full">${prod.category || 'VORA'}</span>
+                    <span class="block text-[9px] font-bold text-stone-500 uppercase tracking-widest italic">${prod.category || 'VORA'}</span>
 
                     <h3 class="text-xs font-bold text-stone-900 line-clamp-1 leading-tight">${prod.name}</h3>
 
@@ -76,7 +83,7 @@ async function loadProducts() {
                             ${prod.discount && prod.originalPrice ? `
                                 <p class="text-[9px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
                             ` : ``}
-                            <p class="text-sm font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">${prod.price} ج.م</p>
+                            <p class="text-sm font-bold ${discount > 0 ? 'text-red-600' : 'text-stone-900'}">${prod.price} ج.م</p>
                         </div>
                         <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-7 h-7 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-md flex-shrink-0 text-xs">
                             🛍️
