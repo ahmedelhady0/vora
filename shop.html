@@ -7,41 +7,73 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
 </head>
 <body class="bg-white">
+
+    <!-- Page Loader -->
+    <div id="pageLoader">
+        <div class="loader-logo">VORA</div>
+        <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu">
+        <div class="menu-header">
+            <span>VORA</span>
+            <button onclick="closeMobileMenu()">✕</button>
+        </div>
+        <a href="home.html">🏠 الرئيسية</a>
+        <a href="shop.html" class="active">🛍️ المتجر</a>
+        <a href="admin.html" id="adminNavMobile" class="hidden">⚙️ الإدارة</a>
+        <a href="#" onclick="logout(); closeMobileMenu();" style="margin-top:auto;color:rgba(255,255,255,0.4);">🚪 خروج</a>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="searchOverlay">
+        <button class="search-close" onclick="closeSearchOverlay()">✕</button>
+        <div class="search-wrap">
+            <input type="text" id="searchOverlayInput" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن عطر..." oninput="liveSearch(this.value)" autofocus>
+            <div id="searchOverlayResults" class="search-results"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
-            <a href="home.html" class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">V</div>
-                <span class="text-2xl font-bold text-stone-900 tracking-wider">VORA</span>
-            </a>
+            <div class="flex items-center gap-3">
+                <button onclick="openMobileMenu()" class="md:hidden text-stone-700 text-xl">☰</button>
+                <a href="home.html" id="navLogo" class="flex items-center gap-2">
+                    <span class="text-xl font-bold text-stone-900 tracking-wider" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
+            </div>
             <div class="hidden md:flex items-center gap-8">
-                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium">الرئيسية</a>
-                <a href="shop.html" class="text-amber-600 font-bold transition">المتجر</a>
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop">المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
-            <div class="flex items-center gap-6">
-                <button onclick="document.getElementById('searchBox').classList.toggle('hidden'); document.getElementById('shopSearch').focus();" class="text-stone-700 hover:text-amber-600 transition">🔍</button>
-                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition group">
-                    <span class="text-2xl group-hover:scale-125 transition">🛍️</span>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg">0</span>
+            <div class="flex items-center gap-5">
+                <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
+                <button onclick="toggleLang()" class="text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
+                    <span class="text-xl">🛍️</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
                 </button>
-                <button onclick="logout()" class="text-stone-700 hover:text-red-600 transition text-sm font-semibold">🚪 خروج</button>
+                <button onclick="logout()" class="text-stone-500 hover:text-red-600 transition text-xs font-semibold hidden sm:inline">🚪</button>
             </div>
-        </div>
-        <!-- Search Box -->
-        <div id="searchBox" class="hidden bg-stone-50 border-t border-stone-200 p-4 animate-slideDown">
-            <input type="text" id="shopSearch" placeholder="ابحث عن عطرك المفضل..." class="w-full max-w-md px-4 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
         </div>
     </nav>
 
     <!-- Page Header -->
     <section class="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto text-center space-y-3">
-            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">✨ تشكيلة كاملة</span>
-            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900">متجر VORA</h1>
-            <p class="text-stone-600 text-lg max-w-xl mx-auto">تصفح جميع عطورنا الفاخرة، وفلتر حسب الفئة والسعر لتجد توقيعك العطري</p>
+            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle">✨ تشكيلة كاملة</span>
+            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">متجر VORA</h1>
+            <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc">تصفح جميع عطورنا الفاخرة، وفلتر حسب الفئة والسعر لتجد توقيعك العطري</p>
         </div>
     </section>
 
@@ -57,18 +89,18 @@
                 <div class="flex flex-col sm:flex-row gap-3 lg:w-auto">
                     <!-- Price Range -->
                     <div class="flex items-center gap-2">
-                        <input type="number" id="minPrice" placeholder="من (ج.م)" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <input type="number" id="minPrice" data-i18n-placeholder="shopMinPrice" placeholder="أقل سعر" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                         <span class="text-stone-400">—</span>
-                        <input type="number" id="maxPrice" placeholder="إلى (ج.م)" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <input type="number" id="maxPrice" data-i18n-placeholder="shopMaxPrice" placeholder="أقصى سعر" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <!-- Sort -->
                     <select id="sortSelect" class="px-3 py-2 rounded-lg border border-stone-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <option value="default">الترتيب: الأحدث</option>
-                        <option value="price-asc">السعر: من الأقل للأعلى</option>
-                        <option value="price-desc">السعر: من الأعلى للأقل</option>
+                        <option value="default" data-i18n="shopDefault">الترتيب: الأحدث</option>
+                        <option value="price-asc" data-i18n="shopPriceLow">السعر: من الأقل للأعلى</option>
+                        <option value="price-desc" data-i18n="shopPriceHigh">السعر: من الأعلى للأقل</option>
                         <option value="rating-desc">الأعلى تقييماً</option>
-                        <option value="name-asc">الاسم: أ - ي</option>
+                        <option value="name-asc" data-i18n="shopName">الاسم: أ - ي</option>
                     </select>
 
                     <button onclick="window.resetFilters()" class="px-4 py-2 rounded-lg border-2 border-stone-200 text-stone-600 text-sm font-semibold hover:border-amber-400 hover:text-amber-600 transition whitespace-nowrap">
@@ -80,6 +112,8 @@
             <p id="resultsCount" class="text-sm text-stone-500"></p>
         </div>
     </section>
+
+    <input type="text" id="shopSearch" class="hidden">
 
     <!-- Products Grid -->
     <section class="py-10 px-4 sm:px-6 lg:px-8">
@@ -124,6 +158,18 @@
             <button onclick="closeCartDrawer()" class="w-full py-2 border-2 border-stone-200 text-stone-900 font-semibold rounded-lg hover:border-stone-300 transition">
                 متابعة التسوق
             </button>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="quick-view-modal">
+        <div class="overlay" onclick="closeQuickView()"></div>
+        <div class="content">
+            <button class="close-btn" onclick="closeQuickView()">✕</button>
+            <div class="modal-grid">
+                <div class="modal-image"></div>
+                <div class="modal-info"></div>
+            </div>
         </div>
     </div>
 
@@ -207,6 +253,70 @@
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.18) 0%, transparent 70%);
         }
     </style>
+
+    <!-- Brand Logo Slider -->
+    <section class="brand-slider-section py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="section-divider mb-8"><span data-i18n="brandVora">علاماتنا التجارية</span></div>
+            <div class="brand-track-wrap">
+                <div class="brand-track" id="brandTrack"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div>
+            <h3 data-i18n="footerSubscribe">اشترك في النشرة البريدية</h3>
+            <p data-i18n="footerSubtitle">احصل على عروض حصرية وتنبيهات بأحدث العطور أولاً</p>
+            <div class="newsletter-form">
+                <input type="email" data-i18n-placeholder="footerEmail" placeholder="بريدك الإلكتروني" id="newsletterEmail">
+                <button onclick="subscribeNewsletter()" data-i18n="footerSubBtn">اشتراك</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#3a1a2a] text-[#9c7c8c] border-t border-[#2a0f1a]">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-2" id="footerLogo">
+                        <span class="text-base font-bold text-white tracking-wider" style="font-family: 'Playfair Display', serif;">VORA</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-[#666]" data-i18n="footerDesc">عطور فاخرة تجمع بين الأصالة والحداثة.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerQuickLinks">روابط سريعة</h4>
+                    <ul class="space-y-1.5 text-xs">
+                        <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
+                        <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
+                        <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerContact">تواصل معنا</h4>
+                    <ul class="space-y-1.5 text-xs">
+                        <li id="footerWhatsapp">واتساب: 01000000000</li>
+                        <li id="footerEmail">بريد: info@vora.com</li>
+                        <li id="footerInstagram">انستجرام: v0ra.eg</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerPaymentTitle">طرق الدفع</h4>
+                    <ul class="space-y-1.5 text-xs">
+                        <li data-i18n="footerVisa">💳 فيزا / ماستركارد</li>
+                        <li data-i18n="footerVodafoneCash">📱 فودافون كاش</li>
+                        <li data-i18n="footerInstaPay">🏦 إنستا باي</li>
+                        <li data-i18n="footerCod">💰 الدفع عند الاستلام</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[#2a0f1a] pt-4 text-center text-[10px] text-[#8c6c7c]">
+                © 2026 VORA. <span data-i18n="footerRights">جميع الحقوق محفوظة</span>.
+            </div>
+        </div>
+    </footer>
 
     <script type="module" src="shop.js"></script>
 </body>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="bg-gradient-to-b from-stone-50 to-amber-50">
@@ -36,17 +37,39 @@
                     <div class="space-y-4">
                         <input type="text" id="customerName" placeholder="الاسم الكامل" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                         <input type="tel" id="customerPhone" placeholder="رقم الهاتف (مثال: 201xxxxxxxxx)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <input type="email" id="customerEmail" placeholder="البريد الإلكتروني (لتأكيد الطلب)" dir="ltr" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                         <textarea id="customerAddress" placeholder="العنوان بالتفصيل (المحافظة / المدينة / الشارع / المبنى)" rows="3" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
                         
                         <div class="grid grid-cols-2 gap-4">
-                            <select id="governorate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                            <select id="governorate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500" onchange="updateShipping()">
                                 <option value="">اختر المحافظة</option>
-                                <option value="cairo">القاهرة</option>
-                                <option value="giza">الجيزة</option>
-                                <option value="alexandria">الإسكندرية</option>
-                                <option value="mansoura">المنصورة</option>
-                                <option value="assiut">أسيوط</option>
-                                <option value="other">أخرى</option>
+                                <option value="القاهرة">القاهرة</option>
+                                <option value="الجيزة">الجيزة</option>
+                                <option value="الإسكندرية">الإسكندرية</option>
+                                <option value="الدقهلية">الدقهلية</option>
+                                <option value="الشرقية">الشرقية</option>
+                                <option value="القليوبية">القليوبية</option>
+                                <option value="كفر الشيخ">كفر الشيخ</option>
+                                <option value="الغربية">الغربية</option>
+                                <option value="المنوفية">المنوفية</option>
+                                <option value="البحيرة">البحيرة</option>
+                                <option value="الإسماعيلية">الإسماعيلية</option>
+                                <option value="السويس">السويس</option>
+                                <option value="بني سويف">بني سويف</option>
+                                <option value="الفيوم">الفيوم</option>
+                                <option value="المنيا">المنيا</option>
+                                <option value="أسيوط">أسيوط</option>
+                                <option value="سوهاج">سوهاج</option>
+                                <option value="قنا">قنا</option>
+                                <option value="الأقصر">الأقصر</option>
+                                <option value="أسوان">أسوان</option>
+                                <option value="البحر الأحمر">البحر الأحمر</option>
+                                <option value="الوادي الجديد">الوادي الجديد</option>
+                                <option value="مطروح">مطروح</option>
+                                <option value="شمال سيناء">شمال سيناء</option>
+                                <option value="جنوب سيناء">جنوب سيناء</option>
+                                <option value="دمياط">دمياط</option>
+                                <option value="بورسعيد">بورسعيد</option>
                             </select>
                             <input type="date" id="deliveryDate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
                         </div>
@@ -72,6 +95,10 @@
                                 <span class="mr-3 font-semibold text-stone-900">📱 فودافون كاش</span>
                             </label>
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="paymentMethod" value="instapay" class="w-5 h-5 text-amber-600">
+                                <span class="mr-3 font-semibold text-stone-900">🏦 إنستا باي</span>
+                            </label>
+                            <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="cash" class="w-5 h-5 text-amber-600">
                                 <span class="mr-3 font-semibold text-stone-900">💰 الدفع عند الاستلام</span>
                             </label>
@@ -87,6 +114,13 @@
                         <div id="vodafoneContainer" class="hidden">
                             <input type="tel" id="vodafoneNumber" placeholder="رقم فودافون كاش (11 رقم)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
                             <p class="text-xs text-stone-500 mt-2">ستتلقى رسالة لتأكيد الدفع على هاتفك</p>
+                        </div>
+
+                        <!-- InstaPay Info -->
+                        <div id="instapayContainer" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="font-semibold text-stone-900 mb-2">🏦 بيانات إنستا باي:</p>
+                            <p id="instapayDisplay" class="text-stone-700 text-sm">جاري التحميل...</p>
+                            <p class="text-xs text-stone-500 mt-2">بعد التحويل، أرسل صورة الإيصال على واتساب</p>
                         </div>
                     </div>
                 </div>
@@ -104,7 +138,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span>مصاريف الشحن:</span>
-                            <span id="shippingCost">مجاني</span>
+                            <span id="shippingCost">اختر المحافظة</span>
                         </div>
                         <div class="flex justify-between font-bold text-lg text-stone-900 pt-4 border-t border-stone-200">
                             <span>المجموع النهائي:</span>

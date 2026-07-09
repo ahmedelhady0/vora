@@ -3,61 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vora - تسجيل الدخول الفاخر</title>
+    <title>VORA - عطور فاخرة</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+    <style>
+        body { background: #3a1a2a; }
+        .login-card { background: rgba(255,255,255,0.97); border: 1px solid var(--primary); box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+        .login-mark { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); width: 72px; height: 72px; border-radius: 16px; }
+        .login-input { background: #fce8f0; border: 1px solid #f0d0d8; border-radius: 10px; padding: 14px 16px; font-size: 15px; width: 100%; transition: all 0.3s; }
+        .login-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194,90,128,0.12); outline: none; }
+        .btn-gold { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 10px; padding: 14px; font-size: 16px; font-weight: 600; width: 100%; cursor: pointer; transition: all 0.3s; }
+        .btn-gold:hover { box-shadow: 0 8px 24px rgba(194,90,128,0.35); transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; transition: all 0.3s; }
+        .btn-outline:hover { background: rgba(194,90,128,0.08); }
+        .rose-divider { border: none; border-top: 1px solid rgba(194,90,128,0.2); margin: 24px 0; }
+    </style>
 </head>
-<body class="login-shell min-h-screen flex items-center justify-center p-4">
-
-    <div class="container login-card max-w-md w-full p-8 md:p-12">
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="login-card max-w-sm w-full p-8 md:p-10 rounded-2xl">
         <div class="text-center mb-8">
-            <div class="login-mark shadow-lg">
-                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="login-mark mx-auto flex items-center justify-center text-white" id="loginLogo">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8">
                     <rect x="24" y="4" width="16" height="8" rx="1.5" fill="currentColor" opacity="0.8"/>
-                    <path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z"
-                          stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z" stroke="currentColor" stroke-width="2" fill="none"/>
                     <line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
                 </svg>
             </div>
-            <h1 class="login-title tracking-widest">VORA</h1>
-            <p class="login-tagline mt-1">عطور فاخرة · أناقة لا تنتهي</p>
+            <h1 class="text-3xl font-bold tracking-[0.15em] text-[#3a1a2a] mt-4" style="font-family: 'Playfair Display', serif;" id="loginTitle">VORA</h1>
+            <p class="text-sm text-[#9c7c8c] mt-1" data-i18n="loginWelcome">عطور فاخرة · أناقة لا تنتهي</p>
         </div>
-
-        <div class="space-y-4">
-            <div>
-                <input type="text" id="username" class="input-field w-full" placeholder="اسم المستخدم">
-            </div>
-            <div>
-                <input type="password" id="password" class="input-field w-full" placeholder="كلمة المرور">
-            </div>
-
-            <button onclick="signIn()" class="btn-primary w-full py-4 text-base tracking-wide mt-2">
-                تسجيل الدخول
-            </button>
-
-            <button onclick="signUp()" class="w-full py-3.5 text-sm font-semibold rounded-xl transition-all border border-amber-200 text-amber-800 bg-amber-50/50 hover:bg-amber-50">
-                إنشاء حساب جديد
-            </button>
+        <script>
+            const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+            if (s.logo) {
+                const logoDiv = document.getElementById('loginLogo');
+                if (logoDiv) logoDiv.innerHTML = '<img src="' + s.logo + '" alt="VORA" style="height:32px;width:auto;">';
+            }
+            if (s.loginTitle) {
+                const titleEl = document.getElementById('loginTitle');
+                if (titleEl) titleEl.textContent = s.loginTitle;
+            }
+        </script>
+        <div class="space-y-3">
+            <input type="text" id="username" class="login-input" data-i18n-placeholder="loginUsername" placeholder="اسم المستخدم">
+            <input type="password" id="password" class="login-input" data-i18n-placeholder="loginPassword" placeholder="كلمة المرور">
+            <button onclick="signIn()" class="btn-gold mt-2" data-i18n="loginBtn">تسجيل الدخول</button>
+            <button onclick="signUp()" class="btn-outline" data-i18n="signupBtn">إنشاء حساب جديد</button>
         </div>
-
-        <hr class="divider-gold my-6">
-
-        <div class="rounded-xl p-3 text-center text-xs bg-stone-50 border border-stone-100 text-stone-500">
-            تجربة حساب تجريبي: <span class="font-mono font-bold text-stone-700">admin / 123456</span>
+        <hr class="rose-divider">
+        <div class="text-center text-xs text-[#9c7c8c] bg-[#fce8f0] rounded-lg p-3">
+            <span data-i18n="loginDemo">حساب تجريبي</span>: <span class="font-mono font-bold text-[#3a1a2a]">admin / 123456</span>
         </div>
     </div>
-
-    <!-- نافذة الرسائل المنبثقة بتصميم فخم -->
-    <div id="messageBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all">
-        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl border border-stone-100">
-            <div id="messageIcon" class="mx-auto w-12 h-12 mb-3 text-3xl"></div>
-            <p id="messageText" class="text-base font-medium text-stone-800 leading-relaxed"></p>
-            <button onclick="hideMessage()" class="mt-6 btn-primary w-full py-2.5 text-sm">
-                إغلاق
-            </button>
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl border border-[#f0d0d8]">
+            <p id="messageText" class="text-base font-medium text-[#3a1a2a] leading-relaxed"></p>
+            <button onclick="hideMessage()" class="mt-5 w-full py-2.5 rounded-lg font-semibold text-white" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));" data-i18n="loginOk">حسناً</button>
         </div>
     </div>
-
     <script type="module" src="auth.js"></script>
 </body>
 </html>

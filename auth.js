@@ -1,73 +1,46 @@
-// auth.js - النسخة المستقرة والخالية من الأخطاء
-import { auth, usernameToEmail, showMessage, hideMessage } from "./firebase-config.js";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { registerUser, getUserRole } from "./sheets-service.js";
+import { showMessage, hideMessage, usernameToEmail } from "./firebase-config.js";
 
-window.signIn = async function() {
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    
-    const user = usernameInput.value.trim();
-    const pass = passwordInput.value;
+function getUsers() {
+    return JSON.parse(localStorage.getItem('vora_users')) || {};
+}
 
-    if (!user || !pass) {
-        return showMessage("يرجى ملء اسم المستخدم وكلمة المرور", "⚠️");
+function saveUsers(users) {
+    localStorage.setItem('vora_users', JSON.stringify(users));
+}
+
+function ensureAdmin() {
+    const users = getUsers();
+    if (!users['admin']) {
+        users['admin'] = { password: '123456', role: 'admin', email: 'admin@vora.app' };
+        saveUsers(users);
     }
+}
 
-    showMessage("جاري تسجيل الدخول...", "⏳");
+ensureAdmin();
 
-    try {
-        const email = usernameToEmail(user);
-        // 1. التحقق من الحساب عبر Firebase Auth
-        const cred = await signInWithEmailAndPassword(auth, email, pass);
-        
-        // 2. جلب دور المستخدم من شيت جوجل
-        const res = await getUserRole(cred.user.email);
-        
-        // 3. تخزين بيانات الجلسة محلياً
-        localStorage.setItem('vora_user', JSON.stringify({
-            email: cred.user.email,
-            username: user,
-            role: res.role || 'customer'
-        }));
-        
-        hideMessage();
-        // 4. التوجه للرئيسية مباشرة
-        window.location.href = "home.html";
-    } catch (err) {
-        console.error("Login Error:", err);
-        showMessage("اسم المستخدم أو كلمة المرور غير صحيحة", "❌");
-    }
-};
-
-window.signUp = async function() {
+window.signIn = function() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
-
-    if (!user || pass.length < 6) {
-        return showMessage("اسم المستخدم مطلوب\nوكلمة المرور يجب أن تكون 6 أحرف على الأقل", "⚠️");
-    }
-
-    showMessage("جاري إنشاء الحساب...", "⏳");
-
-    try {
-        const email = usernameToEmail(user);
-        // 1. إنشاء المستخدم في Firebase
-        await createUserWithEmailAndPassword(auth, email, pass);
-        
-        // 2. تسجيل المستخدم في شيت جوجل
-        const response = await registerUser({ email, username: user, role: 'customer' });
-        
-        if (response.success) {
-            showMessage("✅ تم إنشاء الحساب بنجاح!\nيمكنك الآن تسجيل الدخول", "🎉");
-        } else {
-            showMessage(`خطأ أثناء الحفظ: ${response.error}`, "⚠️");
-        }
-    } catch (err) {
-        console.error("Signup Error:", err);
-        showMessage("هذا الاسم مستخدم بالفعل أو حدث خطأ في الشبكة", "⚠️");
+    if (!user || !pass) return showMessage("يرجى ملء اسم المستخدم وكلمة المرور");
+    const users = getUsers();
+    if (users[user] && users[user].password === pass) {
+        localStorage.setItem('vora_user', JSON.stringify({ username: user, role: users[user].role || 'customer', email: users[user].email || usernameToEmail(user) }));
+        hideMessage();
+        window.location.href = "home.html";
+    } else {
+        showMessage("اسم المستخدم أو كلمة المرور غير صحيحة");
     }
 };
 
-// إتاحة دالة الإغلاق للـ HTML
+window.signUp = function() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
+    if (!user || pass.length < 6) return showMessage("اسم المستخدم مطلوب وكلمة المرور 6 أحرف على الأقل");
+    const users = getUsers();
+    if (users[user]) return showMessage("اسم المستخدم موجود بالفعل");
+    users[user] = { password: pass, role: 'customer', email: usernameToEmail(user) };
+    saveUsers(users);
+    showMessage("✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن");
+};
+
 window.hideMessage = hideMessage;

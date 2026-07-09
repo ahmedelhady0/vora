@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - تم تأكيد الطلب</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-stone-50 to-amber-50 min-h-screen">
+
+    <nav class="bg-white border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 py-5 flex justify-between items-center">
+            <a href="home.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold text-sm">V</div>
+                <span class="text-xl font-bold text-stone-900 tracking-wider">VORA</span>
+            </a>
+            <a href="home.html" class="text-stone-600 hover:text-amber-600 transition text-sm font-semibold">← العودة للرئيسية</a>
+        </div>
+    </nav>
+
+    <div class="max-w-2xl mx-auto px-4 py-16">
+        <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 md:p-12 text-center space-y-6">
+            <div class="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+
+            <div class="space-y-2">
+                <h1 class="text-3xl font-bold text-stone-900">تم استلام طلبك بنجاح! 🎉</h1>
+                <p class="text-stone-600">شكراً لتسوقك من VORA. فريقنا هيبدأ تجهيز طلبك فوراً.</p>
+            </div>
+
+            <div id="orderDetails" class="bg-amber-50 rounded-xl p-6 text-right space-y-3">
+                <p class="text-stone-500 text-sm" id="loadingMsg">جاري تحميل بيانات الطلب...</p>
+            </div>
+
+            <div class="bg-stone-50 rounded-xl p-6 text-right space-y-3">
+                <h3 class="font-bold text-stone-900">📋 خطوات ما بعد الطلب:</h3>
+                <ul class="space-y-2 text-sm text-stone-700">
+                    <li class="flex items-start gap-2">✓ <span>سنقوم بتأكيد الطلب عبر الواتساب خلال 24 ساعة</span></li>
+                    <li class="flex items-start gap-2">✓ <span>مدة التوصيل من 2-5 أيام عمل حسب المحافظة</span></li>
+                    <li class="flex items-start gap-2">✓ <span>للاستفسار: <span id="whatsappDisplay">01000000000</span></span></li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                <a href="home.html" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transition">
+                    ← العودة للتسوق
+                </a>
+                <a href="shop.html" class="flex-1 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition">
+                    متابعة التسوق
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const order = JSON.parse(localStorage.getItem('vora_lastOrder'));
+        const el = document.getElementById('orderDetails');
+
+        if (order) {
+            const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+            document.getElementById('whatsappDisplay').textContent = settings.whatsapp || '01000000000';
+
+            el.innerHTML = `
+                <div class="flex justify-between text-stone-600 text-sm">
+                    <span>رقم الطلب:</span>
+                    <span class="font-bold text-stone-900" dir="ltr">#${order.orderId}</span>
+                </div>
+                <div class="flex justify-between text-stone-600 text-sm">
+                    <span>التاريخ:</span>
+                    <span class="font-bold text-stone-900">${order.date}</span>
+                </div>
+                <div class="flex justify-between text-stone-600 text-sm">
+                    <span>طريقة الدفع:</span>
+                    <span class="font-bold text-stone-900">${order.paymentMethod === 'instapay' ? 'إنستا باي' : order.paymentMethod === 'cash' ? 'الدفع عند الاستلام' : order.paymentMethod === 'vodafone' ? 'فودافون كاش' : 'بطاقة ائتمان'}</span>
+                </div>
+                <div class="flex justify-between text-stone-600 text-sm">
+                    <span>محافظة التوصيل:</span>
+                    <span class="font-bold text-stone-900">${order.governorate}</span>
+                </div>
+                <div class="border-t border-amber-200 pt-3 mt-3 flex justify-between font-bold text-amber-700">
+                    <span>الإجمالي المدفوع:</span>
+                    <span>${order.total} ج.م</span>
+                </div>
+            `;
+        } else {
+            el.innerHTML = `<p class="text-stone-500 text-sm">لا توجد تفاصيل متاحة. يمكنك متابعة طلباتك عبر التواصل معنا.</p>`;
+        }
+    </script>
+</body>
+</html>

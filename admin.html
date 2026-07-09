@@ -6,87 +6,298 @@
     <title>Vora - لوحة الإدارة</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 bg-stone-50">
 
-    <div class="container max-w-6xl mx-auto p-6 md:p-8">
+    <div class="max-w-6xl mx-auto">
 
-        <div class="site-header">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="brand-logo" style="font-size:1.8rem;">💼 لوحة الإدارة</h1>
-                <p class="brand-tagline">إدارة المنتجات، متابعة الطلبات، وتعديل صلاحيات المستخدمين</p>
+                <h1 class="text-2xl font-bold text-stone-900">💼 لوحة الإدارة</h1>
+                <p class="text-stone-500 text-sm">إدارة المنتجات، متابعة الطلبات، والإعدادات</p>
             </div>
-            <a href="home.html" class="btn-ghost">← العودة للمتجر الرئيسية</a>
+            <a href="home.html" class="text-stone-600 hover:text-amber-600 transition text-sm font-semibold">← العودة للمتجر</a>
         </div>
 
-        <div class="flex gap-4 mb-8 overflow-x-auto pb-2" style="border-bottom: 1px solid var(--gold-mist);">
-            <button onclick="switchTab('orders-tab')" id="btn-orders-tab" class="tab-btn active px-6 py-2.5 font-bold transition-all" style="color: var(--wine); border-bottom: 2px solid var(--wine);">📦 الطلبات الواردة</button>
-            <button onclick="switchTab('products-tab')" id="btn-products-tab" class="tab-btn px-6 py-2.5 font-medium transition-all" style="color: var(--muted);">✨ إضافة عطر جديد</button>
+        <div class="flex gap-2 mb-6 border-b border-stone-200 pb-2 overflow-x-auto">
+            <button onclick="switchTab('orders-tab')" id="btn-orders-tab" class="tab-btn px-5 py-2.5 font-bold text-amber-600 border-b-2 border-amber-600 transition text-sm">📦 الطلبات</button>
+            <button onclick="switchTab('products-tab')" id="btn-products-tab" class="tab-btn px-5 py-2.5 font-medium text-stone-500 transition text-sm">✨ المنتجات</button>
+            <button onclick="switchTab('settings-tab')" id="btn-settings-tab" class="tab-btn px-5 py-2.5 font-medium text-stone-500 transition text-sm">⚙️ الإعدادات</button>
         </div>
 
-        <div id="orders-tab" class="tab-content block">
-            <h3 class="section-title" style="font-size:1.3rem;">قائمة الطلبات الحالية (من جوجل شيت)</h3>
-            <div class="overflow-x-auto bg-white rounded" style="border: 1px solid var(--gold-mist);">
-                <table class="w-full text-right border-collapse">
-                    <thead>
-                        <tr style="background: var(--gold-mist); color: var(--wine-deep);">
-                            <th class="p-4">التاريخ</th>
-                            <th class="p-4">العميل</th>
-                            <th class="p-4">الهاتف</th>
-                            <th class="p-4">المنتجات المطلوبة</th>
-                            <th class="p-4">الإجمالي</th>
-                            <th class="p-4">الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminOrdersTable">
-                        <tr>
-                            <td colspan="6" class="p-8 text-center" style="color: var(--muted);">جاري سحب الطلبات من النظام...</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="tab-content">
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="p-4 border-b border-stone-200">
+                    <h3 class="font-bold text-stone-900">📋 جميع الطلبات</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-600">
+                                <th class="p-3">التاريخ</th>
+                                <th class="p-3">العميل</th>
+                                <th class="p-3">الهاتف</th>
+                                <th class="p-3">المنتجات</th>
+                                <th class="p-3">الإجمالي</th>
+                                <th class="p-3">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrdersTable">
+                            <tr><td colspan="6" class="p-8 text-center text-stone-400">جاري تحميل الطلبات...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div id="products-tab" class="tab-content hidden max-w-xl">
-            <h3 class="section-title" style="font-size:1.3rem;">إضافة عطر جديد للمخزن (Inventory)</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">اسم العطر</label>
-                    <input type="text" id="prodName" class="input-field w-full" placeholder="مثال: Vora Luxury Oud">
+        <!-- Products Tab -->
+        <div id="products-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Add/Edit Form -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4" id="formTitle">➕ إضافة عطر جديد</h3>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">اسم العطر</label>
+                                <input type="text" id="prodName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="Vora Luxury Oud">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النوع</label>
+                                <input type="text" id="prodBrand" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="VORA" value="VORA">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">الماركة</label>
+                                <input type="text" id="prodCategory" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="عطور شرقية">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">الحجم</label>
+                                <select id="prodSize" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm bg-white">
+                                    <option value="30ml">30 مل</option>
+                                    <option value="50ml" selected>50 مل</option>
+                                    <option value="75ml">75 مل</option>
+                                    <option value="100ml">100 مل</option>
+                                    <option value="150ml">150 مل</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">السعر (ج.م)</label>
+                                <input type="number" id="prodPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="1250">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">السعر الأصلي (قبل الخصم)</label>
+                                <input type="number" id="prodOriginalPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اتركه فارغاً">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">المخزون (عدد القطع)</label>
+                                <input type="number" id="prodStock" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="50" value="50" min="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">نسبة الخصم (%)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="prodDiscountPercent" class="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="0" min="0" max="100">
+                                    <span class="text-stone-400 text-sm">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">صورة العطر</label>
+                            <div class="flex items-center gap-4">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="file" id="prodImageInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                                    <div id="uploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
+                                        📁 اضغط لرفع صورة
+                                    </div>
+                                </label>
+                                <div id="imagePreview" class="hidden w-16 h-16 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50">
+                                    <img id="previewImg" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <p class="text-xs text-stone-400 mt-1">اتركه بدون صورة لاستخدام شكل الزجاجة الافتراضي</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">الوصف</label>
+                            <textarea id="prodDesc" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="مكونات العطر وملاحظات..." rows="3"></textarea>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="saveProductBtn" onclick="saveProduct()" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition text-sm uppercase tracking-wider">
+                                💾 حفظ العطر
+                            </button>
+                            <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-4 py-3 border-2 border-stone-300 text-stone-600 font-bold rounded-lg hover:bg-stone-50 transition text-sm">
+                                إلغاء
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">الفئة / المجموعة</label>
-                    <input type="text" id="prodCategory" class="input-field w-full" placeholder="مثال: عطور شرقية / عطور فرنسية">
+
+                <!-- Product List -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">📋 المنتجات الموجودة</h3>
+                    <div id="productList" class="space-y-2 max-h-[600px] overflow-y-auto"></div>
                 </div>
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">السعر (ج.م)</label>
-                    <input type="number" id="prodPrice" class="input-field w-full" placeholder="مثال: 1250">
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content hidden">
+            <div class="space-y-6">
+                <!-- Logo Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🖼️ شعار الموقع (Logo)</h3>
+                    <p class="text-xs text-stone-400 mb-3">ارفع صورة شعار VORA لتظهر في شريط التنقل</p>
+                    <div class="flex items-center gap-4">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="file" id="logoInput" accept="image/*" class="hidden" onchange="previewLogo(event)">
+                            <div id="logoUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
+                                📁 اضغط لرفع الشعار
+                            </div>
+                        </label>
+                        <div id="logoPreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 flex items-center justify-center p-1">
+                            <img id="logoPreviewImg" class="max-w-full max-h-full object-contain">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">رابط صورة المنتج</label>
-                    <input type="text" id="prodImage" class="input-field w-full" placeholder="https://...  (رابط صورة مباشر للمنتج)">
-                    <p class="text-xs mt-1" style="color: var(--muted);">ارفع الصورة على أي مكان بيدي رابط مباشر (Google Drive بعد المشاركة العامة، Imgur، Cloudinary...) والصق الرابط هنا. لو سبته فاضي هيظهر شكل زجاجة افتراضي.</p>
+
+                <!-- Payment Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🏦 إعدادات الدفع</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">اسم حساب InstaPay</label>
+                            <input type="text" id="set_instaName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="مثال: Vora Perfumes">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">رقم InstaPay</label>
+                            <input type="text" id="set_instaNumber" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="01XXXXXXXXX">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">ملاحظة InstaPay</label>
+                            <input type="text" id="set_instaNote" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="بعد التحويل، أرسل صورة الإيصال على الواتساب">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">السعر الأصلي قبل الخصم (اختياري)</label>
-                    <input type="number" id="prodOriginalPrice" class="input-field w-full" placeholder="اتركه فارغاً لو مفيش خصم">
+
+                <!-- Login Logo -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🔐 صفحة تسجيل الدخول</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">نص العنوان (بدلاً من VORA)</label>
+                            <input type="text" id="set_loginTitle" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="VORA">
+                        </div>
+                        <p class="text-xs text-stone-400">الشعار يستخدم نفس الشعار المرفوع في قسم الشعار أعلاه.</p>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-medium mb-1" style="color: var(--charcoal);">وصف العطر ومكوناته</label>
-                    <textarea id="prodDesc" class="input-field w-full h-24 resize-none" placeholder="اكتب المكونات العليا والوسطى والقاعدة..."></textarea>
+
+                <!-- WhatsApp & Email -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">💬 التواصل</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">رقم الواتساب (للاستعلام)</label>
+                            <input type="text" id="set_whatsapp" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="01XXXXXXXXX">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">البريد الإلكتروني</label>
+                            <input type="email" id="set_email" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="info@vora.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">انستجرام</label>
+                            <input type="text" id="set_instagram" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="v0ra.eg">
+                        </div>
+                    </div>
                 </div>
-                <button onclick="addNewProduct()" class="btn-primary w-full py-3.5 mt-2">
-                    ➕ حفظ العطر في جوجل شيت
+
+                <!-- Hero Section Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🎯 القسم الرئيسي (Hero Section)</h3>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النص العلوي (Badge)</label>
+                                <input type="text" id="hero_badge" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="مجموعة استثنائية">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">العنوان الرئيسي</label>
+                                <input type="text" id="hero_title" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اكتشف توقيعك العطري">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي</label>
+                            <textarea id="hero_subtitle" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="عطور فاخرة تجمع بين الأصالة والحداثة..." rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">صورة الزجاجة (جانب الهيرو)</label>
+                            <div class="flex items-center gap-4">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="file" id="heroImageInput" accept="image/*" class="hidden" onchange="previewHeroImage(event)">
+                                    <div id="heroUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
+                                        📁 اضغط لرفع صورة الزجاجة
+                                    </div>
+                                </label>
+                                <div id="heroImagePreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50">
+                                    <img id="heroPreviewImg" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <p class="text-xs text-stone-400 mt-1">اتركه فارغاً لاستخدام شكل الزجاجة الافتراضي</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slideshow Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🎠 صور الهيرو المتحركة (Slideshow)</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف صوراً لعرضها كخلفية متحركة في القسم الرئيسي. أقصى عدد 5 صور.</p>
+                    <div id="slideshowImagesContainer" class="flex flex-wrap gap-3 mb-3"></div>
+                    <div>
+                        <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
+                            📁 إضافة صورة
+                            <input type="file" id="slideshowImageInput" accept="image/*" class="hidden" onchange="addSlideshowImages(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Banner Grid Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🎪 البانرات الدعائية (Banner Grid)</h3>
+                    <p class="text-xs text-stone-400 mb-3">تحكم في البطاقات الدعائية الثلاث أسفل القسم الرئيسي</p>
+                    <div id="bannersSettingsContainer"></div>
+                </div>
+
+                <!-- Shipping Rates -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🚚 أسعار الشحن حسب المحافظة</h3>
+                    <p class="text-xs text-stone-400 mb-3">السعر بـ (ج.م). اترك 0 للشحن المجاني.</p>
+                    <div id="shippingRatesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+                </div>
+
+                <!-- COD Governorates -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">💰 محافظات الدفع عند الاستلام (COD)</h3>
+                    <p class="text-xs text-stone-400 mb-3">اختر المحافظات المتاح فيها الدفع عند الاستلام</p>
+                    <div id="codGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"></div>
+                </div>
+
+                <button onclick="saveSettings()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition">
+                    💾 حفظ جميع الإعدادات
                 </button>
             </div>
         </div>
 
     </div>
 
-    <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
-            <p id="messageText" class="text-lg font-medium"></p>
-            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl space-y-4">
+            <p id="messageText" class="text-lg font-medium text-stone-800"></p>
+            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">حسناً</button>
         </div>
     </div>
 

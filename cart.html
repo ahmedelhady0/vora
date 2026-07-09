@@ -6,6 +6,7 @@
     <title>Vora - سلة المشتريات</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
 </head>
 <body class="p-4 md:p-8">
 
@@ -20,10 +21,10 @@
         </div>
 
         <div id="cartContent" class="space-y-4">
-            <p class="text-center py-12" style="color: var(--muted);">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>
+            <p class="text-center py-12" style="color: var(--text-muted);">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>
         </div>
 
-        <div id="checkoutForm" class="hidden mt-8 pt-8 space-y-4" style="border-top: 1px solid var(--gold-mist);">
+        <div id="checkoutForm" class="hidden mt-8 pt-8 space-y-4" style="border-top: 1px solid var(--border);">
             <h3 class="section-title" style="font-size:1.4rem; margin-bottom:16px;">📍 تفاصيل الشحن والتوصيل</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,17 +33,18 @@
             </div>
 
             <input type="text" id="customerAddress" class="input-field w-full" placeholder="العنوان بالتفصيل (المدينة / الشارع / المبنى)">
+            <input type="email" id="customerEmail" class="input-field w-full" placeholder="البريد الإلكتروني (لإرسال تأكيد الطلب)" dir="ltr">
 
-            <div class="p-6 rounded mt-6 space-y-2" style="background: var(--gold-mist);">
-                <div class="flex justify-between" style="color: var(--charcoal);">
+            <div class="p-6 rounded mt-6 space-y-2" style="background: var(--bg-warm);">
+                <div class="flex justify-between" style="color: var(--text-primary);">
                     <span>إجمالي المنتجات:</span>
                     <span id="subtotalPrice">0 ج.م</span>
                 </div>
-                <div class="flex justify-between" style="color: var(--charcoal);">
+                <div class="flex justify-between" style="color: var(--text-primary);">
                     <span>مصاريف الشحن:</span>
-                    <span class="font-medium" style="color: var(--wine);">مكافأة (شحن مجاني)</span>
+                    <span class="font-medium" style="color: var(--primary);">مكافأة (شحن مجاني)</span>
                 </div>
-                <div class="flex justify-between text-xl font-bold pt-2" style="color: var(--wine-deep); border-top: 1px solid var(--gold);">
+                <div class="flex justify-between text-xl font-bold pt-2" style="color: var(--text-primary); border-top: 1px solid var(--primary);">
                     <span>المجموع النهائي:</span>
                     <span id="totalPrice">0 ج.م</span>
                 </div>

@@ -1,6 +1,4 @@
-// shop.js - صفحة عرض المنتجات مع الفلاتر والبحث والترتيب
 import { getProducts } from "./sheets-service.js";
-import { showMessage, hideMessage } from "./firebase-config.js";
 
 const BOTTLE_SVG = `
 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,13 +8,14 @@ const BOTTLE_SVG = `
     <line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
 </svg>`;
 
-// التحقق من الجلسة
 const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData) {
-    window.location.href = "index.html";
+if (userData && (userData.role === 'admin' || userData.role === 'manager')) {
+    document.addEventListener("DOMContentLoaded", () => {
+        const el = document.getElementById('adminNavLink');
+        if (el) el.classList.remove('hidden');
+    });
 }
 
-// حالة الفلاتر
 let allProducts = [];
 let activeCategory = "الكل";
 let searchQuery = "";
@@ -25,13 +24,22 @@ let minPrice = null;
 let maxPrice = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        const loader = document.getElementById('pageLoader');
+        if (loader) loader.classList.add('hidden');
+    }, 600);
+
     updateCartCount();
+    initBrandSlider();
+    loadLogo();
+    applyFooterSettings();
     loadProducts();
 
-    document.getElementById('shopSearch').addEventListener('input', debounce((e) => {
-        searchQuery = e.target.value.trim().toLowerCase();
+    document.addEventListener('langchange', () => {
+        updateCartCount();
+        applyFooterSettings();
         renderProducts();
-    }, 250));
+    });
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
         sortMode = e.target.value;
@@ -47,7 +55,32 @@ document.addEventListener("DOMContentLoaded", () => {
         maxPrice = e.target.value ? parseFloat(e.target.value) : null;
         renderProducts();
     }, 300));
+
+    document.querySelectorAll('.btn-primary, .btn-secondary, .btn, button.bg-gradient-to-r').forEach(el => {
+        el.classList.add('ripple-btn');
+        el.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = this.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left) + 'px';
+            ripple.style.top = (e.clientY - rect.top) + 'px';
+            ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
 });
+
+// ===== Brand Slider =====
+function initBrandSlider() {
+    const track = document.getElementById('brandTrack');
+    if (!track) return;
+    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const brands = [...new Set(products.map(p => (p.brand || 'THE ESSENCE OF RADIANCE').trim()).filter(Boolean))];
+    if (!brands.includes('THE ESSENCE OF RADIANCE')) brands.unshift('THE ESSENCE OF RADIANCE');
+    const items = brands.map(b => `<div class="brand-track-item">${b}</div>`).join('');
+    track.innerHTML = items + items;
+}
 
 function debounce(fn, delay) {
     let timer;
@@ -56,6 +89,111 @@ function debounce(fn, delay) {
         timer = setTimeout(() => fn(...args), delay);
     };
 }
+
+// ===== Load Logo from Settings =====
+function loadLogo() {
+    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    if (s.logo) {
+        ['navLogo', 'footerLogo', 'mobileLogo'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el || el.querySelector('img')) return;
+            const img = document.createElement('img');
+            img.src = s.logo;
+            img.alt = 'VORA';
+            img.style.cssText = id === 'navLogo' ? 'height:40px;width:auto;' : 'height:28px;width:auto;';
+            el.insertBefore(img, el.firstChild);
+        });
+    }
+}
+
+// ===== Footer Contact from Settings =====
+function applyFooterSettings() {
+    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const wa = document.getElementById('footerWhatsapp');
+    const em = document.getElementById('footerEmail');
+    if (wa) wa.textContent = t('footerWhatsappLabel') + ' ' + (s.whatsapp || '01000000000');
+    if (em) em.textContent = t('footerEmailLabel') + ' ' + (s.email || 'info@vora.com');
+    const ig = document.getElementById('footerInstagram');
+    if (ig) {
+        const handle = s.instagram || 'v0ra.eg';
+        ig.innerHTML = t('footerInstagramLabel') + ' <a href="https://instagram.com/' + handle + '" target="_blank" rel="noopener" class="hover:text-[var(--primary)] transition">@' + handle + '</a>';
+    }
+}
+
+// ===== Premium Toast =====
+window.showMessage = function(msg) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast-item';
+    const isSuccess = msg.includes('✓') || msg.includes('✅') || msg.includes('تم');
+    toast.innerHTML = `<div class="toast-icon ${isSuccess ? 'success' : 'warning'}">${isSuccess ? '✓' : '!'}</div><div class="toast-text">${msg}</div>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }, 2800);
+};
+
+// ===== Mobile Menu =====
+window.openMobileMenu = function() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.getElementById('mobileMenuOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+};
+window.closeMobileMenu = function() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('mobileMenuOverlay').classList.remove('show');
+    document.body.style.overflow = 'auto';
+};
+
+// ===== Search Overlay (Shop) =====
+window.openSearchOverlay = function() {
+    document.getElementById('searchOverlay').classList.add('active');
+    const inp = document.getElementById('searchOverlayInput');
+    inp.value = '';
+    document.getElementById('searchOverlayResults').innerHTML = '';
+    setTimeout(() => inp.focus(), 100);
+    inp.onkeydown = (e) => {
+        if (e.key === 'Enter' && inp.value.trim()) {
+            searchQuery = inp.value.trim().toLowerCase();
+            closeSearchOverlay();
+            renderProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+    document.body.style.overflow = 'hidden';
+};
+window.closeSearchOverlay = function() {
+    document.getElementById('searchOverlay').classList.remove('active');
+    document.body.style.overflow = 'auto';
+};
+window.liveSearch = function(q) {
+    const results = document.getElementById('searchOverlayResults');
+    const trimmed = q.trim().toLowerCase();
+    if (!trimmed) { results.innerHTML = ''; return; }
+    const matches = allProducts.filter(p => (p.name||'').toLowerCase().includes(trimmed) || (p.category||'').toLowerCase().includes(trimmed));
+    if (matches.length === 0) {
+        results.innerHTML = `<div class="search-empty">${t('searchNoResults')}</div>`;
+        return;
+    }
+    results.innerHTML = matches.slice(0, 8).map(p => `
+        <div class="search-result-item" onclick="selectSearchResult('${p.id}')">
+            <div class="result-icon">🧴</div>
+            <div class="result-info">
+                <p>${p.name}</p>
+                <span>${p.category || ''}</span>
+            </div>
+            <span class="result-price">${p.price} ${t('currency')}</span>
+        </div>
+    `).join('');
+};
+window.selectSearchResult = function(id) {
+    closeSearchOverlay();
+    const prod = allProducts.find(p => p.id === id);
+    if (prod) { searchQuery = prod.name; renderProducts(); }
+};
 
 async function loadProducts() {
     const container = document.getElementById('productsContainer');
@@ -67,19 +205,19 @@ async function loadProducts() {
         renderProducts();
     } catch (err) {
         console.error('Error loading products:', err);
-        container.innerHTML = `<p class="text-red-500 text-center col-span-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
+        container.innerHTML = `<p class="text-red-500 text-center py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
     }
 }
 
 function renderSkeletons(container) {
-    container.innerHTML = Array.from({ length: 6 }).map(() => `
-        <div class="space-y-4">
-            <div class="skeleton rounded-2xl h-80 w-full"></div>
-            <div class="skeleton rounded h-4 w-1/3"></div>
-            <div class="skeleton rounded h-5 w-2/3"></div>
-            <div class="skeleton rounded h-12 w-full"></div>
+    container.innerHTML = `<div class="products-grid">${Array.from({ length: 6 }).map(() => `
+        <div class="space-y-3">
+            <div class="skeleton rounded-2xl" style="aspect-ratio: 1;"></div>
+            <div class="skeleton rounded h-3 w-1/3"></div>
+            <div class="skeleton rounded h-4 w-2/3"></div>
+            <div class="skeleton rounded h-3 w-1/4"></div>
         </div>
-    `).join("");
+    `).join("")}</div>`;
 }
 
 function buildCategoryPills() {
@@ -137,7 +275,7 @@ function getFilteredProducts() {
             list.sort((a, b) => (a.name || "").localeCompare(b.name || "", 'ar'));
             break;
         default:
-            break; // الأحدث = ترتيب الشيت كما هو
+            break;
     }
 
     return list;
@@ -149,7 +287,7 @@ function renderProducts() {
     const filtered = getFilteredProducts();
 
     countEl.textContent = allProducts.length > 0
-        ? `عرض ${filtered.length} من أصل ${allProducts.length} منتج`
+        ? `${t('shopResults')} ${filtered.length} ${t('shopOf')} ${allProducts.length} ${t('shopProducts')}`
         : "";
 
     container.innerHTML = "";
@@ -158,8 +296,8 @@ function renderProducts() {
         container.innerHTML = `
             <div class="text-center py-16 space-y-4">
                 <p class="text-4xl">🎁</p>
-                <p class="text-2xl font-bold text-stone-900">لا توجد عطور بعد</p>
-                <p class="text-stone-600">هنا هتظهر تشكيلة VORA بمجرد ما يتم إضافتها من لوحة الإدارة.</p>
+                <p class="text-2xl font-bold text-stone-900">${t('shopNoProducts')}</p>
+                <p class="text-stone-600">${t('shopNoProductsHint')}</p>
             </div>`;
         return;
     }
@@ -168,14 +306,13 @@ function renderProducts() {
         container.innerHTML = `
             <div class="text-center py-16 space-y-4">
                 <p class="text-4xl">🔍</p>
-                <p class="text-2xl font-bold text-stone-900">لا توجد نتائج مطابقة</p>
-                <p class="text-stone-600">جرّب تغيير الفلاتر أو كلمة البحث</p>
-                <button onclick="window.resetFilters()" class="px-6 py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">إعادة تعيين الفلاتر</button>
+                <p class="text-2xl font-bold text-stone-900">${t('shopNoResults')}</p>
+                <p class="text-stone-600">${t('shopNoResultsHint')}</p>
+                <button onclick="window.resetFilters()" class="px-6 py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transition">${t('shopReset')}</button>
             </div>`;
         return;
     }
 
-    // تجميع المنتجات حسب الفئة/الماركة، بنفس ترتيب ظهورها الأول في الشيت
     const groups = new Map();
     filtered.forEach(prod => {
         const key = prod.category || 'VORA';
@@ -185,58 +322,157 @@ function renderProducts() {
 
     groups.forEach((products, categoryName) => {
         const section = document.createElement('div');
-        section.className = "category-section";
+        section.className = "mb-12";
         section.innerHTML = `
-            <h2 class="category-section-title text-base md:text-lg font-bold italic text-stone-900 mb-1">${categoryName}</h2>
-            <div class="h-px bg-stone-900 w-full mb-6"></div>
-            <div class="flex gap-6 md:gap-8 overflow-x-auto pb-3 -mx-1 px-1"></div>
+            <h2 class="text-xl font-bold text-stone-900 mb-1">${categoryName}</h2>
+            <div class="h-px bg-gradient-to-r from-amber-600/50 to-transparent w-full mb-6"></div>
+            <div class="products-grid"></div>
         `;
-        const row = section.querySelector('div.flex');
+        const grid = section.querySelector('.products-grid');
 
-        products.forEach(prod => {
-            row.appendChild(buildProductTile(prod));
+        const firstIndex = allProducts.findIndex(p => p.id === products[0].id);
+        const delayBase = firstIndex >= 0 ? firstIndex * 0.05 : 0;
+
+        products.forEach((prod, i) => {
+            const card = buildProductCard(prod);
+            card.style.animation = `fadeInUp 0.4s ease-out ${delayBase + i * 0.05}s both`;
+            grid.appendChild(card);
         });
 
         container.appendChild(section);
     });
 }
 
-function buildProductTile(prod) {
-    const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
+function buildProductCard(prod) {
+    const discountPct = prod.discountPercent || (prod.discount && prod.originalPrice
+        ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0);
+    const rating = parseFloat(prod.rating) || 0;
+    const stars = "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating));
+    const isNew = parseInt(prod.id?.split('-')[1]) % 3 === 0;
+    const stock = prod.stock ?? 50;
+    const outOfStock = stock <= 0;
 
-    const tile = document.createElement('div');
-    tile.className = "flex-shrink-0 w-40 sm:w-48 text-center group";
-    tile.innerHTML = `
-        <div class="relative h-48 sm:h-56 flex items-end justify-center mb-3">
-            ${discount > 0 ? `<span class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">Sale</span>` : ''}
+    const card = document.createElement('div');
+    card.className = "product-card";
+    const safeName = prod.name.replace(/'/g, "\\'");
+    const safeId = prod.id.replace(/'/g, "\\'");
 
-            ${prod.image ? `
-                <img src="${prod.image}" alt="${prod.name}" class="relative z-[1] max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="w-full h-full text-amber-600 opacity-80" style="display:none;">${BOTTLE_SVG}</div>
-            ` : `
-                <div class="w-full h-full text-amber-600 opacity-80">${BOTTLE_SVG}</div>
-            `}
-            <div class="product-tile-shadow"></div>
+    let badgeHtml = "";
+    if (isNew) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
+    if (discountPct > 0) badgeHtml += `<span class="badge badge-sale">-${discountPct}%</span>`;
+    if (outOfStock) badgeHtml += `<span class="badge badge-out">${t('outOfStockBadge')}</span>`;
+
+    const imageContent = prod.image
+        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
+        : '';
+
+    const stockLabel = outOfStock ? '' : (stock <= 5 ? `<span style="color:#ea580c;font-weight:700;font-size:10px;">${t('lastItems')} ${stock} ${t('pieces')}</span>` : '');
+
+    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
+    const groupHtml = !outOfStock ? `
+        <div class="card-product__group group-left">
+            <button onclick="toggleWishlist('${safeId}', '${safeName}', ${prod.price})" title="${t('wishlist')}">🤍</button>
+            <button onclick="quickView('${safeId}')" title="${t('quickView')}">👁️</button>
+        </div>` : '';
+
+    card.innerHTML = `
+        <div class="card-media">
+            ${badgeHtml}
+            ${imageContent}
+            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+                ${BOTTLE_SVG}
+            </div>
+            <a class="card-link" href="#" onclick="quickView('${safeId}'); return false;" title="${prod.name}"></a>
+            ${groupHtml}
+            <div class="card-action-overlay">
+                ${!outOfStock
+                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price})">🛒 ${t('addToCart')}</button>`
+                    : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
+            </div>
         </div>
-
-        <p class="text-[11px] font-bold italic uppercase tracking-wide text-stone-800">${prod.category || 'VORA'}</p>
-        <p class="text-sm italic text-stone-700 line-clamp-1 mt-0.5" style="font-family: 'Playfair Display', serif;">${prod.name}</p>
-        <p class="text-xs text-stone-400 mt-0.5 line-clamp-1">${prod.description ? prod.description.slice(0, 24) : 'Full Size'}</p>
-
-        <div class="mt-1.5">
-            ${prod.discount && prod.originalPrice ? `
-                <p class="text-xs text-stone-400 line-through">LE ${prod.originalPrice}</p>
-                <p class="text-sm font-bold text-red-600">LE ${prod.price}</p>
-            ` : `
-                <p class="text-sm font-bold text-stone-900">LE ${prod.price}</p>
-            `}
+        <div class="card-information">
+            <div class="card-information__wrapper text-center">
+                <div class="card-vendor"><a href="shop.html">${prod.brand || prod.category || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="#" onclick="quickView('${safeId}'); return false;"><span class="text">${prod.name}</span></a>
+                ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
+                <div class="card-desc">${stockLabel}</div>
+                <div class="card-price">
+                    <span class="price-current">${prod.price} ${t('currency')}</span>
+                    ${prod.discount && prod.originalPrice ? `<span class="price-original">${prod.originalPrice} ${t('currency')}</span>` : ''}
+                </div>
+            </div>
         </div>
-
-        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="mt-2 text-xs font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2 transition">
-            + إضافة للسلة
-        </button>
     `;
-    return tile;
+    return card;
+}
+
+window.quickView = function(id) {
+    const prod = allProducts.find(p => p.id === id);
+    if (!prod) return;
+    const modal = document.getElementById('quickViewModal');
+    const imageContent = prod.image
+        ? `<img src="${prod.image}" alt="${prod.name}" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        : '';
+
+    modal.querySelector('.modal-image').innerHTML = `
+        ${imageContent}
+        <div class="qv-fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+            ${BOTTLE_SVG}
+        </div>
+    `;
+    const stock = prod.stock ?? 50;
+    const outOfStock = stock <= 0;
+    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('shopProducts')} ${stock}</span>`;
+
+    modal.querySelector('.modal-info').innerHTML = `
+        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.brand || prod.category || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>
+        <h2>${prod.name}</h2>
+        ${stockLabel}
+        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"★".repeat(Math.round(parseFloat(prod.rating)))+"☆".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
+        <div class="modal-price">
+            ${prod.price} ${t('currency')}
+            ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
+        </div>
+        <p class="modal-desc">${prod.description || ''}</p>
+        ${!outOfStock ? `<button class="modal-add-btn" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}); closeQuickView();">
+            ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
+        </button>` : ''}
+    `;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeQuickView = function() {
+    document.getElementById('quickViewModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+};
+
+let wishlist = JSON.parse(localStorage.getItem('vora_wishlist')) || [];
+
+window.toggleWishlist = function(id, name, price) {
+    const idx = wishlist.findIndex(w => w.id === id);
+    if (idx > -1) {
+        wishlist.splice(idx, 1);
+        showWishlistToast(t('notifWishlistRemoved'));
+    } else {
+        wishlist.push({ id, name, price });
+        showWishlistToast(`✓ ${t('notifWishlistAdded')}`);
+    }
+    localStorage.setItem('vora_wishlist', JSON.stringify(wishlist));
+};
+
+function showWishlistToast(msg) {
+    let toast = document.getElementById('wishlistToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'wishlistToast';
+        toast.className = 'wishlist-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
 window.resetFilters = function() {
@@ -246,7 +482,8 @@ window.resetFilters = function() {
     minPrice = null;
     maxPrice = null;
 
-    document.getElementById('shopSearch').value = "";
+    const ss = document.getElementById('shopSearch');
+    if (ss) ss.value = "";
     document.getElementById('sortSelect').value = "default";
     document.getElementById('minPrice').value = "";
     document.getElementById('maxPrice').value = "";
@@ -255,27 +492,26 @@ window.resetFilters = function() {
     renderProducts();
 };
 
-// ==================== Cart (مطابق لـ home.js) ====================
 window.addToCart = function(id, name, price) {
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const itemIndex = cart.findIndex(item => item.id === id);
-
     if (itemIndex > -1) {
         cart[itemIndex].qty += 1;
     } else {
         cart.push({ id, name, price, qty: 1 });
     }
-
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     renderCartDrawer();
-    showMessage(`✓ تمت إضافة "${name}" إلى السلة!`);
+    showMessage(`✓ ${t('notifAdded')}`);
 };
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('cartCount').textContent = totalQty;
+    const btn = document.getElementById('langToggle');
+    if (btn) btn.textContent = getLang() === 'ar' ? 'EN' : 'AR';
 }
 
 window.openCartDrawer = function() {
@@ -294,7 +530,7 @@ window.closeCartDrawer = function() {
 window.goToCheckout = function() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     if (cart.length === 0) {
-        showMessage('⚠️ السلة فارغة. أضف منتجات أولاً');
+        showMessage(`⚠️ ${t('notifCartEmpty')}`);
         return;
     }
     window.location.href = 'checkout.html';
@@ -309,8 +545,8 @@ function renderCartDrawer() {
         body.innerHTML = `
             <div class="text-center py-16 space-y-4">
                 <div class="text-6xl">🛍️</div>
-                <p class="font-bold text-stone-900 text-lg">سلتك فارغة</p>
-                <p class="text-stone-600 text-sm">أضف عطرك المفضل لتبدأ التسوق</p>
+                <p class="font-bold text-stone-900 text-lg">${t('cartEmpty')}</p>
+                <p class="text-stone-600 text-sm">${t('cartEmptyHint')}</p>
             </div>`;
         footer.classList.add('hidden');
         return;
@@ -334,7 +570,7 @@ function renderCartDrawer() {
             <div class="flex-1 space-y-2">
                 <div>
                     <p class="font-bold text-stone-900 text-sm">${item.name}</p>
-                    <p class="text-xs text-stone-500">${item.price} ج.م</p>
+                    <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
                     <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
@@ -344,15 +580,15 @@ function renderCartDrawer() {
             </div>
             <div class="flex flex-col items-end justify-between">
                 <button class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
-                <p class="font-bold text-amber-600 text-sm">${subtotal} ج.م</p>
+                <p class="font-bold text-amber-600 text-sm">${subtotal} ${t('currency')}</p>
             </div>
         `;
         body.appendChild(row);
     });
 
-    document.getElementById('cartDrawerTotal').textContent = `${total} ج.م`;
-    document.getElementById('cartSubtotal').textContent = `${total} ج.م`;
-    document.getElementById('cartShipping').textContent = 'مجاني';
+    document.getElementById('cartDrawerTotal').textContent = `${total} ${t('currency')}`;
+    document.getElementById('cartSubtotal').textContent = `${total} ${t('currency')}`;
+    document.getElementById('cartShipping').textContent = t('cartFree');
 }
 
 window.changeDrawerQty = function(index, change) {
@@ -375,7 +611,18 @@ window.removeDrawerItem = function(index) {
 window.logout = function() {
     localStorage.removeItem('vora_user');
     localStorage.removeItem('vora_cart');
-    window.location.href = "index.html";
+    window.location.href = "home.html";
 };
 
-window.hideMessage = hideMessage;
+window.subscribeNewsletter = function() {
+    const email = document.getElementById('newsletterEmail')?.value.trim();
+    if (!email || !email.includes('@')) return showMessage(`✉️ ${t('footerSubInvalid')}`);
+    let subs = JSON.parse(localStorage.getItem('vora_newsletter')) || [];
+    if (subs.includes(email)) return showMessage(`✅ ${t('footerSubExists')}`);
+    subs.push(email);
+    localStorage.setItem('vora_newsletter', JSON.stringify(subs));
+    document.getElementById('newsletterEmail').value = '';
+    showMessage(`✅ ${t('footerSubSuccess')}`);
+};
+
+

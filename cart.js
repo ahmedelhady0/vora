@@ -3,11 +3,6 @@ import { placeOrder } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 // التحقق من تسجيل الدخول
-const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData) {
-    window.location.href = "index.html";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     renderCart();
 });
@@ -30,11 +25,11 @@ function renderCart() {
     cart.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = "bg-white p-4 rounded border flex flex-col sm:flex-row justify-between items-center gap-4";
-        row.style.borderColor = "var(--gold-mist)";
+        row.style.borderColor = "var(--border)";
         row.innerHTML = `
             <div class="flex-1 text-center sm:text-right">
-                <h4 class="text-lg font-bold" style="font-family: var(--font-display); color: var(--charcoal);">${item.name}</h4>
-                <p class="text-sm font-medium" style="color: var(--wine);">${item.price} ج.م</p>
+                <h4 class="text-lg font-bold" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${item.name}</h4>
+                <p class="text-sm font-medium" style="color: var(--primary);">${item.price} ${t('currency')}</p>
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="changeQty(${index}, -1)" class="w-8 h-8 bg-gray-100 text-gray-700 rounded-full font-bold flex items-center justify-center hover:bg-gray-200">-</button>
@@ -42,7 +37,7 @@ function renderCart() {
                 <button onclick="changeQty(${index}, 1)" class="w-8 h-8 bg-gray-100 text-gray-700 rounded-full font-bold flex items-center justify-center hover:bg-gray-200">+</button>
             </div>
             <div class="text-left flex items-center gap-4">
-                <span class="font-bold text-gray-800 min-w-[80px] text-center">${item.price * item.qty} ج.م</span>
+                <span class="font-bold text-gray-800 min-w-[80px] text-center">${item.price * item.qty} ${t('currency')}</span>
                 <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 transition-all">🗑️</button>
             </div>
         `;
@@ -76,8 +71,8 @@ window.removeItem = function(index) {
 // حساب المجموع الكلي
 function calculateTotal(cart) {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    document.getElementById('subtotalPrice').textContent = `${subtotal} ج.م`;
-    document.getElementById('totalPrice').textContent = `${subtotal} ج.م`;
+    document.getElementById('subtotalPrice').textContent = `${subtotal} ${t('currency')}`;
+    document.getElementById('totalPrice').textContent = `${subtotal} ${t('currency')}`;
 }
 
 // إرسال الطلب لجوجل شيت
@@ -85,8 +80,9 @@ window.submitOrder = async function() {
     const name = document.getElementById('customerName').value.trim();
     const phone = document.getElementById('customerPhone').value.trim();
     const address = document.getElementById('customerAddress').value.trim();
+    const email = document.getElementById('customerEmail').value.trim();
 
-    if (!name || !phone || !address) {
+    if (!name || !phone || !address || !email) {
         return showMessage("يرجى ملء جميع تفاصيل الشحن والتوصيل");
     }
 
@@ -98,7 +94,7 @@ window.submitOrder = async function() {
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     const orderData = {
-        userEmail: userData.email,
+        userEmail: email,
         customerName: name,
         customerPhone: phone,
         customerAddress: address,
