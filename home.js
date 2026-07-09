@@ -50,46 +50,40 @@ async function loadProducts() {
             const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
 
             const card = document.createElement('div');
-            card.className = "product-card group w-[150px] sm:w-[180px] flex-shrink-0";
+            card.className = "flex-shrink-0 w-[130px] sm:w-[150px] text-center group";
             card.innerHTML = `
-                <div class="relative overflow-hidden rounded-lg bg-white border border-stone-200 p-3 h-32 sm:h-36 flex items-center justify-center transform transition-all duration-300 group-hover:shadow-lg">
-                    ${isNew ? '<span class="absolute top-1.5 right-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full text-[9px] font-bold shadow">جديد</span>' : ''}
-                    ${discount > 0 ? `<span class="absolute top-1.5 left-1.5 bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold shadow">Sale</span>` : ''}
+                <div class="relative h-32 sm:h-36 flex items-end justify-center mb-2">
+                    ${isNew ? '<span class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded text-[9px] font-bold shadow z-10">جديد</span>' : ''}
+                    ${discount > 0 ? `<span class="absolute top-0 left-0 bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold shadow z-10">Sale</span>` : ''}
 
                     ${prod.image ? `
-                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all" style="display:none;">
-                            ${BOTTLE_SVG}
-                        </div>
+                        <img src="${prod.image}" alt="${prod.name}" class="relative z-[1] max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-full h-full text-amber-600 opacity-80" style="display:none;">${BOTTLE_SVG}</div>
                     ` : `
-                        <div class="w-full h-full text-amber-600 opacity-90 group-hover:opacity-100 transition-all">
-                            ${BOTTLE_SVG}
-                        </div>
+                        <div class="w-full h-full text-amber-600 opacity-80">${BOTTLE_SVG}</div>
+                    `}
+                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-2.5" style="background: radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, transparent 70%);"></div>
+                </div>
+
+                <p class="text-[9px] font-bold italic uppercase tracking-wide text-stone-700">${prod.category || 'VORA'}</p>
+                <p class="text-xs italic text-stone-800 line-clamp-1 mt-0.5" style="font-family: 'Playfair Display', serif;">${prod.name}</p>
+
+                <div class="flex items-center justify-center gap-1 mt-0.5">
+                    <span class="text-yellow-500 text-[9px]">${stars}</span>
+                </div>
+
+                <div class="mt-1">
+                    ${prod.discount && prod.originalPrice ? `
+                        <p class="text-[9px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
+                        <p class="text-xs font-bold text-red-600">${prod.price} ج.م</p>
+                    ` : `
+                        <p class="text-xs font-bold text-stone-900">${prod.price} ج.م</p>
                     `}
                 </div>
 
-                <div class="pt-2 space-y-1">
-                    <span class="block text-[9px] font-bold text-stone-500 uppercase tracking-widest italic">${prod.category || 'VORA'}</span>
-
-                    <h3 class="text-xs font-bold text-stone-900 line-clamp-1 leading-tight">${prod.name}</h3>
-
-                    <div class="flex items-center gap-1">
-                        <span class="text-yellow-500 text-[10px]">${stars}</span>
-                        <span class="text-[9px] text-stone-400">(${prod.ratingCount || 0})</span>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-0.5">
-                        <div>
-                            ${prod.discount && prod.originalPrice ? `
-                                <p class="text-[9px] text-stone-400 line-through leading-none">${prod.originalPrice} ج.م</p>
-                            ` : ``}
-                            <p class="text-sm font-bold ${discount > 0 ? 'text-red-600' : 'text-stone-900'}">${prod.price} ج.م</p>
-                        </div>
-                        <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="w-7 h-7 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-md flex-shrink-0 text-xs">
-                            🛍️
-                        </button>
-                    </div>
-                </div>
+                <button onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price})" class="mt-1.5 text-[10px] font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2 transition">
+                    + إضافة للسلة
+                </button>
             `;
             container.appendChild(card);
         });
