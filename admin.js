@@ -499,3 +499,15 @@ window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
 };
 
 window.hideMessage = hideMessage;
+// ربط دوال الفايرستور بالأزرار في الـ HTML بشكل مباشر
+window.addNewProduct = async function(productData) {
+    // استدعاء دالة إضافة المنتج المحدثة لـ Firestore
+    const result = await addProduct(productData);
+    if(result.success) {
+        showMessage("🔥 تم إضافة المنتج وحفظه في Firestore بنجاح!");
+        // لإعادة عرض المنتجات في اللوحة بعد الإضافة
+        if (typeof window.renderProducts === 'function') window.renderProducts();
+    } else {
+        showMessage("❌ فشل حفظ المنتج: " + result.error);
+    }
+};
