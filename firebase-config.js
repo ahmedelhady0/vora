@@ -1,8 +1,8 @@
 // firebase-config.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// بيانات مشروع Firebase الخاص بك (انسخها من 콘솔 Firebase)
+// ⚠️ استبدل هذه الإعدادات ببيانات مشروعك من Firebase Console
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_AUTH_DOMAIN",
@@ -12,32 +12,19 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// تشغيل Firebase
+// تهيئة Firebase
 const app = initializeApp(firebaseConfig);
-// تشغيل Firestore Database
-const db = getFirestore(app);
 
-// دالة لجلب المنتجات من Firestore
-export async function getProductsFromFirestore() {
-    try {
-        // تحديد الكوليكشن (الجدول) اللي اسمه products
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const products = [];
-        
-        querySnapshot.forEach((doc) => {
-            // دمج معرف المستند (ID) مع البيانات
-            products.push({ id: doc.id, ...doc.data() });
-        });
-        
-        return products;
-    } catch (error) {
-        console.error("خطأ في جلب البيانات من Firestore:", error);
-        return null;
-    }
-}
+// تصدير الـ db لكي يقرأه ملف sheets-service.js
+export const db = getFirestore(app);
 
-// الدوال القديمة المخصصة للرسائل (ابقِ عليها كما هي)
+// الدوال الحالية الموجودة في ملفك (أبقها كما هي لكي لا تتأثر الملفات الأخرى)
 export function showMessage(text) {
+    const toastContainer = document.getElementById('toastContainer');
+    if (toastContainer && typeof window.showMessage === 'function') {
+        window.showMessage(text);
+        return;
+    }
     const box = document.getElementById('messageBox');
     if (!box) return;
     const el = document.getElementById('messageText');
@@ -48,4 +35,8 @@ export function showMessage(text) {
 export function hideMessage() {
     const box = document.getElementById('messageBox');
     if (box) { box.classList.add('hidden'); }
+}
+
+export function usernameToEmail(username) {
+    return `${username.toLowerCase()}@vora.app`;
 }
