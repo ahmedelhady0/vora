@@ -1,3 +1,14 @@
+// sheets-service.js
+import { db } from "./firebase-config.js";
+import { 
+    collection, 
+    getDocs, 
+    addDoc, 
+    updateDoc, 
+    deleteDoc, 
+    doc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
 const STORE = {
@@ -10,111 +21,159 @@ const STORE = {
 };
 
 async function tryFetch(fn) {
-    try { return await fn(); } catch { return null; }
+    try { return await fn(); } catch (e) { console.error('Backup sync error:', e); return null; }
 }
 
+// ==================== إدارة المنتجات عبر FIRESTORE ====================
+
 export async function getProducts() {
-    // الأولوية للبيانات المحلية (لوحة الإدارة)
-    const local = STORE.products;
-    if (local.length > 0) {
-        // تنظيف المنتجات الافتراضية القديمة (مرة واحدة)
-        if (!localStorage.getItem('vora_cleanup_done')) {
-            const oldIds = ['VORA-1001','VORA-1002','VORA-1003','VORA-1004','VORA-1005','VORA-1006','VORA-1007','VORA-1008'];
-            const isOldDefaults = local.length === 8 && local.every(p => oldIds.includes(p.id));
-            if (isOldDefaults) {
-                localStorage.removeItem('vora_products');
-                localStorage.setItem('vora_cleanup_done', '1');
-                return [];
-            }
-            localStorage.setItem('vora_cleanup_done', '1');
+    try {
+        console.log("جاري جلب المنتجات من Firestore...");
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const fbProducts = [];
+        
+        querySnapshot.forEach((doc) => {
+            fbProducts.push({ id: doc.id, ...doc.data() });
+        });
+
+        if (fbProducts.length > 0) {
+            STORE.products = fbProducts;
+            return fbProducts;
         }
-        return local;
+    } catch (error) {
+        console.error("خطأ أثناء جلب البيانات من Firestore، جاري الاعتماد على المخزن المحلي:", error);
     }
 
-    // لو مفيش بيانات محلية، نجيب من remote (Google Sheets)
-    const remote = await tryFetch(async () => {
-        const r = await fetch(WEB_APP_URL + '?action=getProducts');
-        if (!r.ok) throw Error();
-        const d = await r.json();
-        return d.products || [];
-    });
-    if (remote && remote.length > 0) {
-        STORE.products = remote;
-        return remote;
-    }
+    // fallback للمخزن المحلي أو البيانات الافتراضية إذا فشل الفايرستور
+    const local = STORE.products;
+    if (local.length > 0) return local;
 
-    // لو مفيش ولا local ولا remote، نستخدم fallback data من الملف الثابت
-    if (window.__FALLBACK_PRODUCTS && window.__FALLBACK_PRODUCTS.length > 0) {
+    if (window.__FALLBACK_PRODUCTS) {
         STORE.products = window.__FALLBACK_PRODUCTS;
         return window.__FALLBACK_PRODUCTS;
     }
     return [];
 }
 
-export async function getOrders(email = null) {
-    const remote = await tryFetch(async () => {
-        const r = await fetch(WEB_APP_URL + '?action=getOrders' + (email ? '&email=' + encodeURIComponent(email) : ''));
-        if (!r.ok) throw Error();
-        const d = await r.json();
-        return d.orders || [];
-    });
-    if (remote && remote.length > 0) {
-        STORE.orders = remote;
-        return remote;
+export async function addProduct(product) {
+    try {
+        // 1. الرفع إلى الفايرستور
+        const docRef = await addDoc(collection(db, "products"), product);
+        console.log("🔥 تم حفظ المنتج بنجاح في الفايرستور بمعرف: ", docRef.id);
+
+        // تحديث البيانات محلياً
+        const products = STORE.products;
+        const newProduct = { ...product, id: docRef.id };
+        products.push(newProduct);
+        STORE.products = products;
+
+        // 2. إرسال نسخة احتياطية لـ Google Sheets (اختياري)
+        tryFetch(() => fetch(WEB_APP_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            body: JSON.stringify({ action: 'addProduct', ...newProduct }) 
+        }));
+
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error("خطأ أثناء إضافة المنتج إلى الفايرستور:", error);
+        return { success: false, error };
     }
-    const all = STORE.orders;
-    return email ? all.filter(o => o.userEmail === email) : all;
 }
 
-export async function placeOrder(order) {
-    STORE.orders = [...STORE.orders, { ...order, id: 'ORD-' + Date.now(), timestamp: Date.now() }];
-    tryFetch(() => fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'placeOrder', ...order }) }));
-    return { success: true };
+export async function updateProduct(id, updated) {
+    try {
+        // 1. تحديث المنتج في الفايرستور
+        const productRef = doc(db, "products", id);
+        await updateDoc(productRef, updated);
+        console.log(`✏️ تم تحديث المنتج ${id} في الفايرستور بنجاح`);
+
+        // تحديث البيانات محلياً
+        const products = STORE.products;
+        const idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) {
+            products[idx] = { ...products[idx], ...updated, id };
+            STORE.products = products;
+        }
+
+        // 2. تحديث نسخة شيت جوجل
+        tryFetch(() => fetch(WEB_APP_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            body: JSON.stringify({ action: 'updateProduct', id, ...updated }) 
+        }));
+
+        return { success: true };
+    } catch (error) {
+        console.error("خطأ أثناء تحديث المنتج في الفايرستور:", error);
+        return { success: false, error };
+    }
 }
 
-export async function getUserRole(email) {
-    const remote = await tryFetch(async () => {
-        const r = await fetch(WEB_APP_URL + '?action=getUserRole&email=' + encodeURIComponent(email));
-        if (!r.ok) throw Error();
-        return await r.json();
-    });
-    if (remote && remote.role) return remote;
-    const users = STORE.users;
-    for (const key in users) {
-        if (users[key].email === email) return { role: users[key].role || 'customer' };
+export async function deleteProduct(id) {
+    try {
+        // 1. حذف المنتج من الفايرستور
+        const productRef = doc(db, "products", id);
+        await deleteDoc(productRef);
+        console.log(`❌ تم حذف المنتج ${id} من الفايرستور`);
+
+        // تحديث البيانات محلياً
+        const products = STORE.products.filter(p => p.id !== id);
+        STORE.products = products;
+
+        // 2. الحذف من شيت جوجل
+        tryFetch(() => fetch(WEB_APP_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            body: JSON.stringify({ action: 'deleteProduct', id }) 
+        }));
+
+        return { success: true };
+    } catch (error) {
+        console.error("خطأ أثناء حذف المنتج من الفايرستور:", error);
+        return { success: false, error };
     }
-    return { role: 'customer' };
+}
+
+// ==================== إدارة الطلبات والمستخدمين ====================
+
+export async function getOrders() {
+    const local = STORE.orders;
+    if (local.length > 0) return local;
+    
+    const res = await tryFetch(() => fetch(`${WEB_APP_URL}?action=getOrders`));
+    if (res) {
+        const data = await res.json();
+        STORE.orders = data;
+        return data;
+    }
+    return [];
+}
+
+export async function placeOrder(orderData) {
+    const orders = STORE.orders;
+    orders.push(orderData);
+    STORE.orders = orders;
+    
+    const res = await tryFetch(() => fetch(WEB_APP_URL, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify({ action: 'placeOrder', ...orderData }) 
+    }));
+    
+    if (res) return { success: true };
+    return { success: false };
 }
 
 export async function registerUser(userData) {
     const users = STORE.users;
-    users[userData.username || userData.email] = { ...userData, password: 'firebase-managed' };
+    users[userData.username.toLowerCase()] = { ...userData, password: 'firebase-managed' };
     STORE.users = users;
-    tryFetch(() => fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'registerUser', ...userData }) }));
-    return { success: true };
-}
-
-export async function addProduct(product) {
-    const products = STORE.products;
-    products.push(product);
-    STORE.products = products;
-    tryFetch(() => fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'addProduct', ...product }) }));
-    return { success: true };
-}
-
-export async function updateProduct(id, updated) {
-    const products = STORE.products;
-    const idx = products.findIndex(p => p.id === id);
-    if (idx === -1) return { success: false, error: "المنتج غير موجود" };
-    products[idx] = { ...products[idx], ...updated, id };
-    STORE.products = products;
-    tryFetch(() => fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateProduct', id, ...updated }) }));
-    return { success: true };
-}
-
-export async function deleteProduct(id) {
-    const products = STORE.products.filter(p => p.id !== id);
-    STORE.products = products;
-    tryFetch(() => fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteProduct', id }) }));
+    
+    tryFetch(() => fetch(WEB_APP_URL, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify({ action: 'registerUser', ...userData }) 
+    }));
     return { success: true };
 }
