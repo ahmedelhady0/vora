@@ -1,4 +1,4 @@
-import { getProducts, getOrders, addProduct, updateProduct, deleteProduct } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const ALL_GOVERNORATES = [
@@ -194,7 +194,7 @@ async function loadAdminOrders() {
                 <td class="p-3 font-semibold text-stone-900">${order.customerName}</td>
                 <td class="p-3 text-stone-600" dir="ltr">${order.customerPhone}</td>
                 <td class="p-3 text-stone-600 text-xs max-w-xs truncate" title="${order.items}">${order.items}</td>
-                <td class="p-3 font-bold text-amber-600">${order.total} ${t('currency')}</td>
+                <td class="p-3 font-bold text-amber-600">${order.total} EGP</td>
                 <td class="p-3"><span class="px-2 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800">${order.status || 'قيد المراجعة'}</span></td>
             `;
             tbody.appendChild(row);
@@ -319,7 +319,7 @@ window.deleteProduct = async function(id) {
     const prod = products.find(p => p.id === id);
     showMessage("جاري الحذف...");
     try {
-        const response = await deleteProduct(id);
+        const response = await deleteProductFromService(id);
         if (response.success) {
             showMessage(`✅ تم حذف "${prod?.name || id}" بنجاح`);
             loadProductList();
@@ -363,7 +363,7 @@ async function loadProductList() {
             ${img}
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-stone-900 truncate">${prod.name} ${discountBadge}</p>
-                <p class="text-xs text-stone-400">${prod.category || '—'} • ${prod.price} ${t('currency')} • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
+                <p class="text-xs text-stone-400">${prod.category || '—'} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
             </div>
             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
                 <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">✏️</button>
@@ -499,13 +499,11 @@ window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
 };
 
 window.hideMessage = hideMessage;
-// ربط دوال الفايرستور بالأزرار في الـ HTML بشكل مباشر
+
 window.addNewProduct = async function(productData) {
-    // استدعاء دالة إضافة المنتج المحدثة لـ Firestore
     const result = await addProduct(productData);
     if(result.success) {
         showMessage("🔥 تم إضافة المنتج وحفظه في Firestore بنجاح!");
-        // لإعادة عرض المنتجات في اللوحة بعد الإضافة
         if (typeof window.renderProducts === 'function') window.renderProducts();
     } else {
         showMessage("❌ فشل حفظ المنتج: " + result.error);
