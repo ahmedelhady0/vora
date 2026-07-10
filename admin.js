@@ -24,7 +24,7 @@ if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
     window.location.href = "home.html";
 }
 
-let editingProductId = null;
+let editingProductId = null; // سيخزن الآن الـ Firestore ID النصي عند التعديل
 let uploadedImageData = "";
 let uploadedHeroImage = "";
 let uploadedLogo = "";
@@ -253,9 +253,10 @@ window.saveProduct = async function() {
     try {
         let response;
         if (editingProductId) {
+            // التعديل يرسل الآن الـ Firestore ID النصي مباشرة
             response = await updateProduct(editingProductId, prodData);
-        } else {
-            prodData.id = "VORA-" + Math.floor(1000 + Math.random() * 9000);
+        } {
+            // عند الإضافة، الـ Service يتولى توليد المستند بالمعرف العشوائي
             response = await addProduct(prodData);
         }
         if (response.success) {
@@ -267,11 +268,12 @@ window.saveProduct = async function() {
 };
 
 window.editProduct = async function(id) {
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    // جلب المنتجات المحدثة القادمة من الفايرستور مباشرة لضمان العثور على الـ ID الصحيح
+    const products = await getProducts();
     const prod = products.find(p => p.id === id);
     if (!prod) return showMessage("المنتج غير موجود");
 
-    editingProductId = id;
+    editingProductId = id; // تخزين معرّف الفايرستور (مثل: SlAKN1uYA...)
     document.getElementById('prodName').value = prod.name || '';
     document.getElementById('prodBrand').value = prod.brand || 'VORA';
     document.getElementById('prodCategory').value = prod.category || '';
@@ -300,10 +302,17 @@ window.cancelEdit = function() {
 };
 
 window.duplicateProduct = async function(id) {
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const products = await getProducts();
     const prod = products.find(p => p.id === id);
     if (!prod) return showMessage("المنتج غير موجود");
-    const copy = { ...prod, id: "VORA-" + Math.floor(1000 + Math.random() * 9000), name: prod.name + " (نسخة)" };
+    
+    // إنشاء نسخة جديدة، وبدون إرسال id قديم ليتولى الفايرستور توليد ID جديد كلياً
+    const copy = { 
+        ...prod, 
+        name: prod.name + " (نسخة)" 
+    };
+    delete copy.id; 
+
     try {
         const response = await addProduct(copy);
         if (response.success) {
@@ -315,7 +324,7 @@ window.duplicateProduct = async function(id) {
 
 window.deleteProduct = async function(id) {
     if (!confirm("هل أنت متأكد من حذف هذا العطر؟")) return;
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const products = await getProducts();
     const prod = products.find(p => p.id === id);
     showMessage("جاري الحذف...");
     try {
@@ -349,6 +358,10 @@ function clearForm() {
 async function loadProductList() {
     const container = document.getElementById('productList');
     const products = await getProducts();
+    
+    // حفظ النسخة المحدثة من الفايرستور محلياً لمزامنة البيانات الاحتياطية تلقائياً
+    localStorage.setItem('vora_products', JSON.stringify(products));
+
     if (products.length === 0) {
         container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">لا توجد منتجات بعد. أضف أول عطر!</p>`;
         return;
@@ -358,6 +371,8 @@ async function loadProductList() {
         const stock = prod.stock ?? '—';
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
         const discountBadge = prod.discount && prod.discountPercent ? `<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">-${prod.discountPercent}%</span>` : '';
+        
+        // تمرير الـ id النصي الحقيقي والفريد لفايرستور داخل الأقواس في الأزرار
         return `
         <div class="flex items-center gap-3 p-3 rounded-lg border border-stone-100 hover:border-amber-200 hover:bg-amber-50/30 transition group">
             ${img}
