@@ -253,10 +253,10 @@ window.saveProduct = async function() {
     try {
         let response;
         if (editingProductId) {
-            // 1. هنا يتم التحديث إذا كان هناك معرف تعديل
+            // تحديث المنتج الحالي باستخدام الـ ID النصي لفايرستور
             response = await updateProduct(editingProductId, prodData);
         } else { 
-            // 2. تم إضافة الـ else هنا لضمان عدم الدخول هنا إلا في حالة إضافة منتج جديد تماماً
+            // إضافة منتج جديد تماماً
             response = await addProduct(prodData);
         }
         
@@ -269,12 +269,11 @@ window.saveProduct = async function() {
 };
 
 window.editProduct = async function(id) {
-    // جلب المنتجات المحدثة القادمة من الفايرستور مباشرة لضمان العثور على الـ ID الصحيح
     const products = await getProducts();
     const prod = products.find(p => p.id === id);
     if (!prod) return showMessage("المنتج غير موجود");
 
-    editingProductId = id; // تخزين معرّف الفايرستور (مثل: SlAKN1uYA...)
+    editingProductId = id; 
     document.getElementById('prodName').value = prod.name || '';
     document.getElementById('prodBrand').value = prod.brand || 'VORA';
     document.getElementById('prodCategory').value = prod.category || '';
@@ -307,7 +306,6 @@ window.duplicateProduct = async function(id) {
     const prod = products.find(p => p.id === id);
     if (!prod) return showMessage("المنتج غير موجود");
     
-    // إنشاء نسخة جديدة، وبدون إرسال id قديم ليتولى الفايرستور توليد ID جديد كلياً
     const copy = { 
         ...prod, 
         name: prod.name + " (نسخة)" 
@@ -360,8 +358,12 @@ async function loadProductList() {
     const container = document.getElementById('productList');
     const products = await getProducts();
     
-    // حفظ النسخة المحدثة من الفايرستور محلياً لمزامنة البيانات الاحتياطية تلقائياً
-    localStorage.setItem('vora_products', JSON.stringify(products));
+    // حماية التخزين المحلي من الانهيار عند امتلاء الـ LocalStorage بصور الـ Base64 الثقيلة
+    try {
+        localStorage.setItem('vora_products', JSON.stringify(products));
+    } catch (e) {
+        console.warn("⚠️ الـ LocalStorage ممتلئ، تم اعتماد جلب البيانات الحية مباشرة من Firestore.");
+    }
 
     if (products.length === 0) {
         container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">لا توجد منتجات بعد. أضف أول عطر!</p>`;
@@ -373,7 +375,6 @@ async function loadProductList() {
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
         const discountBadge = prod.discount && prod.discountPercent ? `<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">-${prod.discountPercent}%</span>` : '';
         
-        // تمرير الـ id النصي الحقيقي والفريد لفايرستور داخل الأقواس في الأزرار
         return `
         <div class="flex items-center gap-3 p-3 rounded-lg border border-stone-100 hover:border-amber-200 hover:bg-amber-50/30 transition group">
             ${img}
@@ -399,7 +400,7 @@ function loadSettings() {
     if (s.email) document.getElementById('set_email').value = s.email;
     if (s.instagram) document.getElementById('set_instagram').value = s.instagram;
     if (s.loginTitle) document.getElementById('set_loginTitle').value = s.loginTitle;
-    // Hero settings
+    
     if (s.heroBadge) document.getElementById('hero_badge').value = s.heroBadge;
     if (s.heroTitle) document.getElementById('hero_title').value = s.heroTitle;
     if (s.heroSubtitle) document.getElementById('hero_subtitle').value = s.heroSubtitle;
@@ -409,17 +410,17 @@ function loadSettings() {
         document.getElementById('heroImagePreview').classList.remove('hidden');
         document.getElementById('heroUploadPlaceholder').innerHTML = '📁 تغيير الصورة';
     }
-    // Logo
+    
     if (s.logo) {
         uploadedLogo = s.logo;
         document.getElementById('logoPreviewImg').src = s.logo;
         document.getElementById('logoPreview').classList.remove('hidden');
         document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     }
-    // Slideshow
+    
     if (s.slideshowImages) slideshowImages = s.slideshowImages;
     renderSlideshowAdmin();
-    // Banners
+    
     if (s.banners) {
         s.banners.forEach((b, i) => {
             if (b.image) uploadedBannerImages[i] = b.image;
