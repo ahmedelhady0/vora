@@ -386,6 +386,7 @@ function buildProductCard(prod) {
     card.className = "product-card";
     const safeName = prod.name.replace(/'/g, "\\'");
     const safeId = prod.id.replace(/'/g, "\\'");
+    const safeImage = (prod.image || "").replace(/'/g, "\\'");
 
     let badgeHtml = "";
     if (isNew) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
@@ -416,7 +417,7 @@ function buildProductCard(prod) {
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
-                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price})">🛒 ${t('addToCart')}</button>`
+                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">🛒 ${t('addToCart')}</button>`
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
@@ -453,6 +454,7 @@ window.quickView = function(id) {
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
     const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('shopProducts')} ${stock}</span>`;
+    const safeImage = (prod.image || "").replace(/'/g, "\\'");
 
     modal.querySelector('.modal-info').innerHTML = `
         <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.brand || prod.category || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>
@@ -464,7 +466,7 @@ window.quickView = function(id) {
             ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
         </div>
         <p class="modal-desc">${prod.description || ''}</p>
-        ${!outOfStock ? `<button class="modal-add-btn" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}); closeQuickView();">
+        ${!outOfStock ? `<button class="modal-add-btn" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}, '${safeImage}'); closeQuickView();">
             ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
         </button>` : ''}
     `;
@@ -535,7 +537,7 @@ window.addToCart = function(id, name, price, image) {
     if (itemIndex > -1) {
         cart[itemIndex].qty += 1;
     } else {
-        // 👈 التعديل هنا: إضافة حقل image لتخزينه في الـ LocalStorage
+        // إضافة حقل image لتخزينه في الـ LocalStorage للسلة
         cart.push({ id, name, price, image: image || '', qty: 1 });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
@@ -598,12 +600,17 @@ function renderCartDrawer() {
         total += item.price * item.qty;
         const subtotal = item.price * item.qty;
 
+        // التحقق الذكي لعرض صورة المنتج الحقيقية المخزنة أو الـ SVG كاحتياط
+        const drawerImage = item.image 
+            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` 
+            : BOTTLE_SVG;
+
         const row = document.createElement('div');
         row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
         row.innerHTML = `
-            <div class="relative w-20 h-24 bg-gradient-to-br from-amber-100 to-stone-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 shadow-md">
-                ${BOTTLE_SVG}
-                <div class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent"></div>
+            <div class="relative w-20 h-24 bg-gradient-to-br from-amber-100 to-stone-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 shadow-md overflow-hidden">
+                ${drawerImage}
+                <div class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
             </div>
             <div class="flex-1 space-y-2">
                 <div>
