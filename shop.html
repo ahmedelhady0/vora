@@ -45,59 +45,32 @@
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
-        <!-- Row 1: Logo / Search / Icons -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 h-16 md:h-20">
-            <a href="home.html" id="navLogo" class="flex items-center gap-2 shrink-0">
-                <span class="text-xl md:text-2xl font-bold text-stone-900 tracking-wider" style="font-family:'Playfair Display',serif;">VORA</span>
-            </a>
-
-            <!-- Desktop Search Bar (centered) -->
-            <div class="hidden md:flex flex-1 justify-center px-6">
-                <button type="button" onclick="openSearchOverlay()" class="nav-search-box">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <span data-i18n="searchPlaceholder">ابحث عن عطر...</span>
-                </button>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex items-center gap-3">
+                <button onclick="openMobileMenu()" class="md:hidden text-stone-700 text-xl">☰</button>
+                <a href="home.html" id="navLogo" class="flex items-center gap-2">
+                    <span class="text-xl font-bold text-stone-900 tracking-wider" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
             </div>
-
-            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button onclick="openSearchOverlay()" class="nav-icon-btn md:hidden" aria-label="بحث">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-
-                <button onclick="toggleLang()" id="langToggle" class="nav-lang-btn">EN</button>
-
-                <div class="relative">
-                    <button id="accountBtn" onclick="toggleAccountMenu(event)" class="nav-icon-btn" aria-label="الحساب">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
-                    </button>
-                    <div id="accountMenu" class="account-menu hidden">
-                        <a href="#" onclick="logout()" data-i18n="navLogout">🚪 خروج</a>
-                    </div>
-                </div>
-
-                <button onclick="openCartDrawer()" class="nav-icon-btn relative" aria-label="السلة">
-                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>
-                    <span id="cartCount" class="cart-count-badge">0</span>
-                </button>
-
-                <button onclick="openMobileMenu()" class="nav-icon-btn md:hidden" aria-label="القائمة">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-                </button>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop">المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
-        </div>
-
-        <!-- Row 2: Nav Links (desktop only) -->
-        <div class="hidden md:block border-t border-stone-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-10 h-12">
-                <a href="home.html" class="nav-link" data-i18n="navHome">الرئيسية</a>
-                <a href="shop.html" class="nav-link active" data-i18n="navShop">المتجر</a>
-                <a href="admin.html" id="adminNavLink" class="hidden nav-link" data-i18n="navAdmin">الإدارة</a>
+            <div class="flex items-center gap-5">
+                <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
+                <button onclick="toggleLang()" class="text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
+                    <span class="text-xl">🛍️</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
+                </button>
+                <button onclick="logout()" class="text-stone-500 hover:text-red-600 transition text-xs font-semibold hidden sm:inline">🚪</button>
             </div>
         </div>
     </nav>
 
     <!-- Page Header -->
-    <section class="pt-20 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8">
+    <section class="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto text-center space-y-3">
             <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle">✨ تشكيلة كاملة</span>
             <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">متجر VORA</h1>
@@ -106,7 +79,7 @@
     </section>
 
     <!-- Filters Toolbar -->
-    <section class="px-4 sm:px-6 lg:px-8 sticky top-16 md:top-32 z-30">
+    <section class="px-4 sm:px-6 lg:px-8 sticky top-20 z-30">
         <div class="max-w-7xl mx-auto bg-stone-50 border border-stone-200 rounded-2xl shadow-sm p-4 md:p-5 space-y-4">
             <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
                 <!-- Category Pills -->

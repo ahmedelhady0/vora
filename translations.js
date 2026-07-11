@@ -318,19 +318,3 @@ window.setLang = setLang;
 window.getLang = getLang;
 window.toggleLang = toggleLang;
 window.applyTranslations = applyTranslations;
-
-// ===== Account Dropdown Menu (Header) =====
-window.toggleAccountMenu = function(e) {
-    if (e) e.stopPropagation();
-    const menu = document.getElementById('accountMenu');
-    if (menu) menu.classList.toggle('hidden');
-};
-
-document.addEventListener('click', function(e) {
-    const menu = document.getElementById('accountMenu');
-    const btn = document.getElementById('accountBtn');
-    if (!menu || menu.classList.contains('hidden')) return;
-    if (!menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-        menu.classList.add('hidden');
-    }
-});
