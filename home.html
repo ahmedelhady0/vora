@@ -9,17 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="translations.js"></script>
     <script src="fallback-data.js"></script>
-    <style>
-        /* تعويض ارتفاع الهيدر المزدوج لمنع اختفاء محتوى الصفحة تحته */
-        body {
-            padding-top: 128px;
-        }
-        @media (max-width: 768px) {
-            body {
-                padding-top: 80px;
-            }
-        }
-    </style>
 </head>
 <body class="bg-stone-50">
 
@@ -36,9 +25,9 @@
             <span id="mobileLogo">VORA</span>
             <button onclick="closeMobileMenu()">✕</button>
         </div>
-        <a href="/" class="active">🏠 الرئيسية</a>
-        <a href="/shop">🛍️ المتجر</a>
-        <a href="/admin" id="adminNavMobile" class="hidden">⚙️ الإدارة</a>
+        <a href="/home" class="active">🏠 الرئيسية</a>
+        <a href="shop.html">🛍️ المتجر</a>
+        <a href="admin.html" id="adminNavMobile" class="hidden">⚙️ الإدارة</a>
         <a href="#" onclick="logout(); closeMobileMenu();" style="margin-top:auto;color:rgba(255,255,255,0.4);">🚪 خروج</a>
     </div>
 
@@ -54,69 +43,28 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Premium Double Navigation (Emarati Scents Style) -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100 shadow-sm font-['Alexandria',sans-serif]">
-        
-        <!-- الدور الأول: اللوجو، شريط البحث العريض، والأيقونات -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20 gap-4">
-            
-            <!-- زر الموبايل واللوجو -->
-            <div class="flex items-center gap-3 shrink-0">
-                <button onclick="openMobileMenu()" class="md:hidden text-stone-700 text-2xl p-1">☰</button>
-                <a href="/" id="navLogo" class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-full overflow-hidden border border-stone-200 hidden sm:block">
-                        <img src="https://vora-perfume.vercel.app/home" onerror="this.style.display='none'" class="w-full h-full object-cover" alt="VORA Logo">
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-2xl font-bold text-stone-900 tracking-widest leading-none" style="font-family:'Playfair Display',serif;">VORA</span>
-                        <span class="text-[9px] text-amber-700 font-medium tracking-normal mt-1 uppercase hidden sm:inline-block">The Essence of Elegance</span>
-                    </div>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex items-center gap-3">
+                <button onclick="openMobileMenu()" class="md:hidden text-stone-700 text-xl">☰</button>
+                <a href="home.html" id="navLogo" class="flex items-center gap-2">
+                    <span class="text-xl font-bold text-stone-900 tracking-wider" style="font-family:'Playfair Display',serif;">VORA</span>
                 </a>
             </div>
-
-            <!-- المنتصف: محرك البحث السريع والمفتوح بالتصميم العصري المستدير -->
-            <div class="hidden md:flex flex-1 max-w-2xl mx-6">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-stone-400 pointer-events-none text-base">🔍</span>
-                    <input type="text" 
-                           id="navLiveSearchInput" 
-                           class="w-full bg-stone-50 border border-stone-300 text-stone-900 rounded-full py-2.5 pr-11 pl-4 text-sm transition-all focus:bg-white focus:border-stone-500 focus:ring-1 focus:ring-stone-500 focus:outline-none" 
-                           placeholder="ابحث عن عطر أو منتج عناية..."
-                           oninput="if(typeof liveSearch === 'function') { openSearchOverlay(); document.getElementById('searchOverlayInput').value = this.value; liveSearch(this.value); }">
-                </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
-
-            <!-- اليسار: أزرار التحكم والسلة -->
-            <div class="flex items-center gap-4 sm:gap-5 shrink-0">
-                <button onclick="openSearchOverlay()" class="md:hidden text-stone-700 hover:text-amber-600 transition text-xl p-1">🔍</button>
+            <div class="flex items-center gap-5">
+                <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
                 <button onclick="toggleLang()" class="text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
-                
-                <a href="/admin" id="adminNavLink" class="hidden text-stone-700 hover:text-amber-600 transition text-xl p-1 relative group" title="الإدارة">
-                    👤
-                    <span class="absolute top-full transform translate-y-1 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] py-0.5 px-1.5 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">الإدارة</span>
-                </a>
-
-                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition p-1">
-                    <span class="text-2xl">🛍️</span>
-                    <span id="cartCount" class="absolute -top-1.5 -left-1.5 bg-stone-950 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold border border-white shadow-sm" style="min-width:20px; height:20px;">0</span>
+                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
+                    <span class="text-xl">🛍️</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full w-4.5 h-4.5 flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
                 </button>
-                
-                <button onclick="logout()" class="text-stone-400 hover:text-red-600 transition text-lg p-1 hidden sm:inline" title="خروج">🚪</button>
-            </div>
-        </div>
-
-        <!-- الدور الثاني: شريط الأقسام والروابط المفصلة -->
-        <div class="hidden md:block border-t border-stone-100 bg-stone-50/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-center items-center h-12 gap-8 text-sm font-medium">
-                    <a href="/" class="text-amber-600 font-bold border-b-2 border-amber-600 h-full flex items-center px-1 transition" data-i18n="navHome">الرئيسية</a>
-                    <a href="/shop" class="text-stone-600 hover:text-amber-600 h-full flex items-center px-1 transition" data-i18n="navShop">كل المنتجات</a>
-                    <a href="/shop?category=perfumes" class="text-stone-600 hover:text-amber-600 h-full flex items-center px-1 transition">عطور خليجية</a>
-                    <a href="/shop?category=skincare" class="text-stone-600 hover:text-amber-600 h-full flex items-center px-1 transition">عناية كورية اصلية</a>
-                    <a href="/shop?category=unisex" class="text-stone-600 hover:text-amber-600 h-full flex items-center px-1 transition">عطور للجنسين</a>
-                    <a href="#products" onclick="document.getElementById('products')?.scrollIntoView({behavior:'smooth'})" class="text-stone-600 hover:text-amber-600 h-full flex items-center px-1 transition" data-i18n="bestSellersTitle">الأكثر مبيعاً</a>
-                    <a href="#footerLogo" onclick="document.getElementById('footerLogo')?.scrollIntoView({behavior:'smooth'})" class="text-stone-500 hover:text-amber-600 h-full flex items-center px-1 transition">من نحن</a>
-                </div>
+                <button onclick="logout()" class="text-stone-500 hover:text-red-600 transition text-xs font-semibold hidden sm:inline">🚪</button>
             </div>
         </div>
     </nav>
@@ -133,7 +81,7 @@
                     <h1 id="heroTitleText">اكتشف توقيعك العطري</h1>
                     <p class="hero-sub" id="heroSubText">عطور فاخرة تجمع بين الأصالة والحداثة. كل رائحة تحكي قصة، كل عطر هوية لا تٌنسى.</p>
                     <div class="flex gap-4 pt-2">
-                        <button onclick="window.location.href='/shop'" class="btn-primary" data-i18n="heroCta">
+                        <button onclick="window.location.href='shop.html'" class="btn-primary" data-i18n="heroCta">
                             تسوق الآن
                         </button>
                         <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" class="btn-secondary" data-i18n="bestSellersTitle">
@@ -163,6 +111,7 @@
     <!-- Infinite Scrolling Marquee Section -->
     <section class="w-full bg-[#3a1a2a] text-stone-100 overflow-hidden py-3.5 border-y border-[#2a0f1a] marquee-container relative z-10">
         <div class="flex whitespace-nowrap w-[200%] flex-nowrap justify-start items-center">
+            
             <!-- Group 1 -->
             <div class="flex items-center px-4 animate-marquee-infinite select-none shrink-0 gap-16">
                 <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
@@ -184,6 +133,7 @@
                     </svg>
                 </div>
             </div>
+
             <!-- Group 2 (Duplicate for Seamless Loop) -->
             <div class="flex items-center px-4 animate-marquee-infinite select-none shrink-0 gap-16" aria-hidden="true">
                 <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
@@ -205,6 +155,7 @@
                     </svg>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -246,7 +197,7 @@
                 <!-- Products will be loaded here -->
             </div>
             <div class="text-center mt-12">
-                <a href="/shop" class="inline-block px-8 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition" data-i18n="shopTitle">
+                <a href="shop.html" class="inline-block px-8 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition" data-i18n="shopTitle">
                     عرض كل التشكيلة ←
                 </a>
             </div>
@@ -302,6 +253,7 @@
     </div>
 
     <style>
+        /* أنيميشن الشريط المتحرك اللانهائي المحسن ليتوافق مع الاتجاهات تلقائياً */
         @keyframes marquee-horizontal {
             0% { transform: translateX(0%); }
             100% { transform: translateX(-50%); }
@@ -321,23 +273,59 @@
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
-        .animate-slideDown { animation: slideDown 0.3s ease-out; }
-        .animation-delay-200 { animation-delay: 0.2s; }
-        .animate-scaleIn { animation: scaleIn 0.3s ease-out; }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .animate-slideDown {
+            animation: slideDown 0.3s ease-out;
+        }
+        .animation-delay-200 {
+            animation-delay: 0.2s;
+        }
+        .animate-scaleIn {
+            animation: scaleIn 0.3s ease-out;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 
     <!-- Brand Logo Slider -->
@@ -375,9 +363,9 @@
                 <div>
                     <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerQuickLinks">روابط سريعة</h4>
                     <ul class="space-y-1.5 text-xs">
-                        <li><a href="/" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
-                        <li><a href="/shop" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
-                        <li><a href="/admin" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
+                        <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
+                        <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
+                        <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
                     </ul>
                 </div>
                 <div>
