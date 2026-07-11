@@ -11,13 +11,32 @@ import {
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 
+// تحصين كائن STORE لمنع توقف الكود عند امتلاء الـ LocalStorage (QuotaExceededError)
 const STORE = {
     get products() { return JSON.parse(localStorage.getItem('vora_products')) || []; },
-    set products(v) { localStorage.setItem('vora_products', JSON.stringify(v)); },
+    set products(v) { 
+        try { 
+            localStorage.setItem('vora_products', JSON.stringify(v)); 
+        } catch (e) { 
+            console.warn("⚠️ تم تخطي حفظ المنتجات محلياً (المخزن ممتلئ)، والاعتماد الآن كلياً على Firestore الحية."); 
+        } 
+    },
     get orders() { return JSON.parse(localStorage.getItem('vora_orders')) || []; },
-    set orders(v) { localStorage.setItem('vora_orders', JSON.stringify(v)); },
+    set orders(v) { 
+        try { 
+            localStorage.setItem('vora_orders', JSON.stringify(v)); 
+        } catch (e) { 
+            console.warn("⚠️ تم تخطي حفظ الطلبات محلياً بسبب امتلاء مساحة المتصفح."); 
+        } 
+    },
     get users() { return JSON.parse(localStorage.getItem('vora_users')) || {}; },
-    set users(v) { localStorage.setItem('vora_users', JSON.stringify(v)); }
+    set users(v) { 
+        try { 
+            localStorage.setItem('vora_users', JSON.stringify(v)); 
+        } catch (e) { 
+            console.warn("⚠️ تم تخطي حفظ المستخدمين محلياً بسبب امتلاء مساحة المتصفح."); 
+        } 
+    }
 };
 
 async function tryFetch(fn) {
@@ -37,7 +56,7 @@ export async function getProducts() {
         });
 
         if (fbProducts.length > 0) {
-            STORE.products = fbProducts;
+            STORE.products = fbProducts; // تم تأمينها بـ try...catch داخلياً في الـ STORE
             return fbProducts;
         }
     } catch (error) {
@@ -61,11 +80,11 @@ export async function addProduct(product) {
         const docRef = await addDoc(collection(db, "products"), product);
         console.log("🔥 تم حفظ المنتج بنجاح في الفايرستور بمعرف: ", docRef.id);
 
-        // تحديث البيانات محلياً
+        // تحديث البيانات بأمان
         const products = STORE.products;
         const newProduct = { ...product, id: docRef.id };
         products.push(newProduct);
-        STORE.products = products;
+        STORE.products = products; // لن تتسبب في انهيار الدالة حتى لو فشل الـ LocalStorage
 
         // 2. إرسال نسخة احتياطية لـ Google Sheets (اختياري)
         tryFetch(() => fetch(WEB_APP_URL, { 
@@ -88,7 +107,7 @@ export async function updateProduct(id, updated) {
         await updateDoc(productRef, updated);
         console.log(`✏️ تم تحديث المنتج ${id} في الفايرستور بنجاح`);
 
-        // تحديث البيانات محلياً
+        // تحديث البيانات بأمان
         const products = STORE.products;
         const idx = products.findIndex(p => p.id === id);
         if (idx !== -1) {
@@ -117,7 +136,7 @@ export async function deleteProduct(id) {
         await deleteDoc(productRef);
         console.log(`❌ تم حذف المنتج ${id} من الفايرستور`);
 
-        // تحديث البيانات محلياً
+        // تحديث البيانات بأمان
         const products = STORE.products.filter(p => p.id !== id);
         STORE.products = products;
 
