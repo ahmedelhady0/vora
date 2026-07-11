@@ -10,6 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
+const IMGBB_API_KEY = "8621949d7967c0c66d9ab1290454d70e";
 
 // تحصين كائن STORE لمنع توقف الكود عند امتلاء الـ LocalStorage (QuotaExceededError)
 const STORE = {
@@ -18,7 +19,7 @@ const STORE = {
         try { 
             localStorage.setItem('vora_products', JSON.stringify(v)); 
         } catch (e) { 
-            console.warn("⚠️ تم تخطي حفظ المنتجات محلياً (المخزن ممتلئ)، والاعتماد الآن كلياً على Firestore الحية."); 
+            console.warn("⚠️ تم تخطي حفظ المنتجات محلياً (المخزن ممتلئ)، والاعتماد الآن كلياً على الروابط السحابية و Firestore."); 
         } 
     },
     get orders() { return JSON.parse(localStorage.getItem('vora_orders')) || []; },
@@ -43,6 +44,31 @@ async function tryFetch(fn) {
     try { return await fn(); } catch (e) { console.error('Backup sync error:', e); return null; }
 }
 
+// ==================== دالة الرفع السحابي إلى ImgBB ====================
+export async function uploadImageToStorage(fileObject) {
+    if (!fileObject) return "";
+    const formData = new FormData();
+    formData.append("image", fileObject);
+
+    try {
+        console.log("جاري رفع الصورة سحابياً إلى ImgBB...");
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST",
+            body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+            console.log("✅ تم الرفع بنجاح! الرابط السحابي:", result.data.url);
+            return result.data.url;
+        } else {
+            throw new Error(result.error.message);
+        }
+    } catch (error) {
+        console.error("خطأ أثناء رفع الصورة إلى السحابة:", error);
+        throw error;
+    }
+}
+
 // ==================== إدارة المنتجات عبر FIRESTORE ====================
 
 export async function getProducts() {
@@ -56,14 +82,13 @@ export async function getProducts() {
         });
 
         if (fbProducts.length > 0) {
-            STORE.products = fbProducts; // تم تأمينها بـ try...catch داخلياً في الـ STORE
+            STORE.products = fbProducts;
             return fbProducts;
         }
     } catch (error) {
         console.error("خطأ أثناء جلب البيانات من Firestore، جاري الاعتماد على المخزن المحلي:", error);
     }
 
-    // fallback للمخزن المحلي أو البيانات الافتراضية إذا فشل الفايرستور
     const local = STORE.products;
     if (local.length > 0) return local;
 
@@ -76,17 +101,14 @@ export async function getProducts() {
 
 export async function addProduct(product) {
     try {
-        // 1. الرفع إلى الفايرستور
         const docRef = await addDoc(collection(db, "products"), product);
         console.log("🔥 تم حفظ المنتج بنجاح في الفايرستور بمعرف: ", docRef.id);
 
-        // تحديث البيانات بأمان
         const products = STORE.products;
         const newProduct = { ...product, id: docRef.id };
         products.push(newProduct);
-        STORE.products = products; // لن تتسبب في انهيار الدالة حتى لو فشل الـ LocalStorage
+        STORE.products = products;
 
-        // 2. إرسال نسخة احتياطية لـ Google Sheets (اختياري)
         tryFetch(() => fetch(WEB_APP_URL, { 
             method: 'POST', 
             headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
@@ -102,12 +124,10 @@ export async function addProduct(product) {
 
 export async function updateProduct(id, updated) {
     try {
-        // 1. تحديث المنتج في الفايرستور
         const productRef = doc(db, "products", id);
         await updateDoc(productRef, updated);
         console.log(`✏️ تم تحديث المنتج ${id} في الفايرستور بنجاح`);
 
-        // تحديث البيانات بأمان
         const products = STORE.products;
         const idx = products.findIndex(p => p.id === id);
         if (idx !== -1) {
@@ -115,7 +135,6 @@ export async function updateProduct(id, updated) {
             STORE.products = products;
         }
 
-        // 2. تحديث نسخة شيت جوجل
         tryFetch(() => fetch(WEB_APP_URL, { 
             method: 'POST', 
             headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
@@ -131,16 +150,13 @@ export async function updateProduct(id, updated) {
 
 export async function deleteProduct(id) {
     try {
-        // 1. حذف المنتج من الفايرستور
         const productRef = doc(db, "products", id);
         await deleteDoc(productRef);
         console.log(`❌ تم حذف المنتج ${id} من الفايرستور`);
 
-        // تحديث البيانات بأمان
         const products = STORE.products.filter(p => p.id !== id);
         STORE.products = products;
 
-        // 2. الحذف من شيت جوجل
         tryFetch(() => fetch(WEB_APP_URL, { 
             method: 'POST', 
             headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
