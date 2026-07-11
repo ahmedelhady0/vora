@@ -26,17 +26,29 @@ function renderCart() {
         const row = document.createElement('div');
         row.className = "bg-white p-4 rounded border flex flex-col sm:flex-row justify-between items-center gap-4";
         row.style.borderColor = "var(--border)";
+        
+        // التحقق من وجود رابط الصورة السحابي للمنتج، وإذا لم يوجد نضع أيقونة زجاجة كاحتياط
+        const itemImage = item.image ? item.image : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%23d6d3d1"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-15a3 3 0 00-3 3V18a3 3 0 003 3h15zM12 3v7.5M9 6h6"/></svg>';
+
         row.innerHTML = `
-            <div class="flex-1 text-center sm:text-right">
-                <h4 class="text-lg font-bold" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${item.name}</h4>
-                <p class="text-sm font-medium" style="color: var(--primary);">${item.price} ${t('currency')}</p>
+            <!-- إضافة حاوية الصورة والاسم معاً لتنسيق احترافي -->
+            <div class="flex items-center gap-4 flex-1 w-full sm:w-auto text-right">
+                <!-- 👈 عنصر الصورة المحدث والرابط السحابي -->
+                <img src="${itemImage}" class="w-16 h-16 rounded-lg object-cover border border-stone-200 flex-shrink-0" alt="${item.name}">
+                
+                <div class="min-w-0 flex-1">
+                    <h4 class="text-base font-bold truncate" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${item.name}</h4>
+                    <p class="text-sm font-medium" style="color: var(--primary);">${item.price} ${t('currency')}</p>
+                </div>
             </div>
+            
             <div class="flex items-center gap-3">
                 <button onclick="changeQty(${index}, -1)" class="w-8 h-8 bg-gray-100 text-gray-700 rounded-full font-bold flex items-center justify-center hover:bg-gray-200">-</button>
                 <span class="font-bold text-gray-800 w-6 text-center">${item.qty}</span>
                 <button onclick="changeQty(${index}, 1)" class="w-8 h-8 bg-gray-100 text-gray-700 rounded-full font-bold flex items-center justify-center hover:bg-gray-200">+</button>
             </div>
-            <div class="text-left flex items-center gap-4">
+            
+            <div class="text-left flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                 <span class="font-bold text-gray-800 min-w-[80px] text-center">${item.price * item.qty} ${t('currency')}</span>
                 <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 transition-all">🗑️</button>
             </div>
@@ -89,7 +101,6 @@ window.submitOrder = async function() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     if (cart.length === 0) return;
 
-    // تجهيز تفاصيل المنتجات في نص واحد لعرضه في عمود واحد بالشيت
     const itemsSummary = cart.map(item => `${item.name} (${item.qty} قطع)`).join(' + ');
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
@@ -109,7 +120,7 @@ window.submitOrder = async function() {
     try {
         const response = await placeOrder(orderData);
         if (response.success) {
-            localStorage.removeItem('vora_cart'); // تفريغ السلة بعد نجاح الطلب
+            localStorage.removeItem('vora_cart');
             showMessage("تم استلام طلبك بنجاح! شكراً لاختيارك Vora ✨");
             setTimeout(() => {
                 window.location.href = "home.html";
