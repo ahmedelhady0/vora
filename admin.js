@@ -1,4 +1,4 @@
-import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const ALL_GOVERNORATES = [
@@ -24,8 +24,10 @@ if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
     window.location.href = "home.html";
 }
 
-let editingProductId = null; // سيخزن الآن الـ Firestore ID النصي عند التعديل
-let uploadedImageData = "";
+let editingProductId = null; 
+let uploadedImageData = ""; // سيحتفظ برابط الصورة الحالي عند التعديل
+window.selectedProductFile = null; // سيخزن كائن ملف الصورة المرفوع حالياً
+
 let uploadedHeroImage = "";
 let uploadedLogo = "";
 let slideshowImages = [];
@@ -204,21 +206,18 @@ async function loadAdminOrders() {
     }
 }
 
+// معاينة محلية ذكية وسريعة للصورة المحددة للمنتج
 window.previewImage = function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-        showMessage("⚠️ الصورة كبيرة جداً. أقصى حجم 5 ميجابايت.");
+    if (file.size > 10 * 1024 * 1024) {
+        showMessage("⚠️ الصورة كبيرة جداً. أقصى حجم 10 ميجابايت.");
         return;
     }
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-        uploadedImageData = ev.target.result;
-        document.getElementById('previewImg').src = uploadedImageData;
-        document.getElementById('imagePreview').classList.remove('hidden');
-        document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
-    };
-    reader.readAsDataURL(file);
+    window.selectedProductFile = file; // تخزين الملف مؤقتاً لرفعه عند الحفظ
+    document.getElementById('previewImg').src = URL.createObjectURL(file);
+    document.getElementById('imagePreview').classList.remove('hidden');
+    document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
 };
 
 window.saveProduct = async function() {
@@ -230,6 +229,7 @@ window.saveProduct = async function() {
     const stock = parseInt(document.getElementById('prodStock').value) || 0;
     const discountPercent = parseFloat(document.getElementById('prodDiscountPercent').value) || 0;
     const description = document.getElementById('prodDesc').value.trim();
+    
     if (!name || !category || !price) return showMessage("يرجى ملء: الاسم، الفئة، والسعر");
 
     let originalPrice = null;
@@ -240,23 +240,29 @@ window.saveProduct = async function() {
         if (raw) originalPrice = parseFloat(raw);
     }
 
-    const prodData = {
-        name, brand, category, size, price, stock, description,
-        image: uploadedImageData,
-        originalPrice: originalPrice || "",
-        discount: discountPercent > 0 ? true : false,
-        discountPercent: discountPercent,
-        rating: 5, ratingCount: 1
-    };
-
-    showMessage("جاري الحفظ...");
+    showMessage("جاري رفع الصورة للمخزن السحابي وحفظ البيانات...");
+    
     try {
+        let finalImageUrl = uploadedImageData;
+
+        // إذا كان هناك ملف صورة جديد تم اختياره، نرفعه سحابياً أولاً
+        if (window.selectedProductFile) {
+            finalImageUrl = await uploadImageToStorage(window.selectedProductFile);
+        }
+
+        const prodData = {
+            name, brand, category, size, price, stock, description,
+            image: finalImageUrl, // الرابط السحابي النظيف من ImgBB
+            originalPrice: originalPrice || "",
+            discount: discountPercent > 0 ? true : false,
+            discountPercent: discountPercent,
+            rating: 5, ratingCount: 1
+        };
+
         let response;
         if (editingProductId) {
-            // تحديث المنتج الحالي باستخدام الـ ID النصي لفايرستور
             response = await updateProduct(editingProductId, prodData);
         } else { 
-            // إضافة منتج جديد تماماً
             response = await addProduct(prodData);
         }
         
@@ -265,7 +271,9 @@ window.saveProduct = async function() {
             clearForm();
             loadProductList();
         } else showMessage(`خطأ: ${response.error}`);
-    } catch (err) { showMessage("فشل الاتصال."); }
+    } catch (err) { 
+        showMessage("❌ فشل رفع وحفظ المنتج السحابي."); 
+    }
 };
 
 window.editProduct = async function(id) {
@@ -285,6 +293,7 @@ window.editProduct = async function(id) {
     document.getElementById('prodDesc').value = prod.description || '';
     document.getElementById('formTitle').textContent = '✏️ تعديل العطر';
 
+    window.selectedProductFile = null;
     if (prod.image) {
         uploadedImageData = prod.image;
         document.getElementById('previewImg').src = prod.image;
@@ -339,6 +348,7 @@ window.deleteProduct = async function(id) {
 function clearForm() {
     editingProductId = null;
     uploadedImageData = "";
+    window.selectedProductFile = null;
     ['prodName', 'prodCategory', 'prodPrice', 'prodDesc', 'prodOriginalPrice', 'prodDiscountPercent', 'prodStock', 'prodBrand'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = "";
@@ -358,13 +368,6 @@ async function loadProductList() {
     const container = document.getElementById('productList');
     const products = await getProducts();
     
-    // حماية التخزين المحلي من الانهيار عند امتلاء الـ LocalStorage بصور الـ Base64 الثقيلة
-    try {
-        localStorage.setItem('vora_products', JSON.stringify(products));
-    } catch (e) {
-        console.warn("⚠️ الـ LocalStorage ممتلئ، تم اعتماد جلب البيانات الحية مباشرة من Firestore.");
-    }
-
     if (products.length === 0) {
         container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">لا توجد منتجات بعد. أضف أول عطر!</p>`;
         return;
@@ -516,13 +519,3 @@ window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
 };
 
 window.hideMessage = hideMessage;
-
-window.addNewProduct = async function(productData) {
-    const result = await addProduct(productData);
-    if(result.success) {
-        showMessage("🔥 تم إضافة المنتج وحفظه في Firestore بنجاح!");
-        if (typeof window.renderProducts === 'function') window.renderProducts();
-    } else {
-        showMessage("❌ فشل حفظ المنتج: " + result.error);
-    }
-};
