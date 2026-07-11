@@ -253,12 +253,13 @@ window.saveProduct = async function() {
     try {
         let response;
         if (editingProductId) {
-            // التعديل يرسل الآن الـ Firestore ID النصي مباشرة
+            // 1. هنا يتم التحديث إذا كان هناك معرف تعديل
             response = await updateProduct(editingProductId, prodData);
-        } {
-            // عند الإضافة، الـ Service يتولى توليد المستند بالمعرف العشوائي
+        } else { 
+            // 2. تم إضافة الـ else هنا لضمان عدم الدخول هنا إلا في حالة إضافة منتج جديد تماماً
             response = await addProduct(prodData);
         }
+        
         if (response.success) {
             showMessage(editingProductId ? `✅ تم تحديث "${name}" بنجاح!` : `✅ تم إضافة "${name}" بنجاح!`);
             clearForm();
