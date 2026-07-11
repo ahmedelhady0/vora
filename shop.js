@@ -522,13 +522,21 @@ window.resetFilters = function() {
     renderProducts();
 };
 
-window.addToCart = function(id, name, price) {
+window.addToCart = function(id, name, price, image) {
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const itemIndex = cart.findIndex(item => item.id === id);
+    
+    // إذا لم يتم تمرير الصورة مباشرة، نبحث عنها في المصفوفة الرئيسية كاحتياط
+    if (!image) {
+        const prod = allProducts.find(p => p.id === id);
+        image = prod ? prod.image : '';
+    }
+
     if (itemIndex > -1) {
         cart[itemIndex].qty += 1;
     } else {
-        cart.push({ id, name, price, qty: 1 });
+        // 👈 التعديل هنا: إضافة حقل image لتخزينه في الـ LocalStorage
+        cart.push({ id, name, price, image: image || '', qty: 1 });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
