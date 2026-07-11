@@ -108,6 +108,57 @@
         <div class="hero-dots" id="heroDots"></div>
     </section>
 
+    <!-- Infinite Scrolling Marquee Section -->
+    <section class="w-full bg-[#3a1a2a] text-stone-100 overflow-hidden py-3.5 border-y border-[#2a0f1a] marquee-container relative z-10">
+        <div class="flex whitespace-nowrap w-[200%] flex-nowrap justify-start items-center">
+            
+            <!-- Group 1 -->
+            <div class="flex items-center px-4 animate-marquee-infinite select-none shrink-0 gap-16">
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>100% Authentic & guaranteed fragrances</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>Fast delivery within 1-3 days</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>Shipping all over Egypt</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Group 2 (Duplicate for Seamless Loop) -->
+            <div class="flex items-center px-4 animate-marquee-infinite select-none shrink-0 gap-16" aria-hidden="true">
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>100% Authentic & guaranteed fragrances</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>Fast delivery within 1-3 days</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-medium tracking-wide">
+                    <span>Shipping all over Egypt</span>
+                    <svg width="12" height="12" fill="none" class="text-amber-500 shrink-0">
+                        <path fill="currentColor" d="M0 6c3 0 6-3 6-6 0 3 3 6 6 6-3 0-6 3-6 6 0-3-3-6-6-6Z"></path>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto">
@@ -152,8 +203,6 @@
             </div>
         </div>
     </section>
-
-
 
     <!-- Cart Drawer -->
     <div id="cartDrawerOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-40 transition-all" onclick="closeCartDrawer()"></div>
@@ -204,6 +253,25 @@
     </div>
 
     <style>
+        /* أنيميشن الشريط المتحرك اللانهائي المحسن ليتوافق مع الاتجاهات تلقائياً */
+        @keyframes marquee-horizontal {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes marquee-horizontal-rtl {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(50%); }
+        }
+        .animate-marquee-infinite {
+            animation: marquee-horizontal 18s linear infinite;
+        }
+        [dir="rtl"] .animate-marquee-infinite {
+            animation: marquee-horizontal-rtl 18s linear infinite;
+        }
+        .marquee-container:hover .animate-marquee-infinite {
+            animation-play-state: paused;
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
