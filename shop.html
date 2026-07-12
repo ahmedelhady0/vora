@@ -22,13 +22,15 @@
     <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
     <div id="mobileMenu">
         <div class="menu-header">
-            <span>VORA</span>
+            <span id="mobileLogo">VORA</span>
             <button onclick="closeMobileMenu()">✕</button>
         </div>
         <a href="home.html">🏠 الرئيسية</a>
         <a href="shop.html" class="active">🛍️ المتجر</a>
+        <a href="index.html">👤 تسجيل الدخول</a>
         <a href="admin.html" id="adminNavMobile" class="hidden">⚙️ الإدارة</a>
-        <a href="#" onclick="logout(); closeMobileMenu();" style="margin-top:auto;color:rgba(255,255,255,0.4);">🚪 خروج</a>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-3 text-white/80 hover:text-white transition text-sm font-medium border-t border-white/10 mt-auto">🌐 AR</button>
+        <a href="#" onclick="logout(); closeMobileMenu();" style="color:rgba(255,255,255,0.4);">🚪 خروج</a>
     </div>
 
     <!-- Search Overlay -->
@@ -46,26 +48,39 @@
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
-            <div class="flex items-center gap-3">
-                <button onclick="openMobileMenu()" class="md:hidden text-stone-700 text-xl">☰</button>
+            
+            <!-- Mobile: Left - Profile + Menu -->
+            <div class="flex md:hidden items-center gap-2">
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
+                <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
+            </div>
+            
+            <!-- Center: VORA + Subtitle -->
+            <div class="flex flex-col items-center md:items-start">
                 <a href="home.html" id="navLogo" class="flex items-center gap-2">
                     <span class="text-xl font-bold text-stone-900 tracking-wider" style="font-family:'Playfair Display',serif;">VORA</span>
                 </a>
+                <span class="text-[10px] text-stone-500 -mt-1 md:hidden" style="font-family:'Playfair Display',serif;font-style:italic;">the essence of radiance</span>
             </div>
+            
+            <!-- Desktop: Nav Links -->
             <div class="hidden md:flex items-center gap-8">
                 <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
                 <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop">المتجر</a>
                 <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
-            <div class="flex items-center gap-5">
+            
+            <!-- Right: Search, Lang (desktop), Profile (desktop), Cart -->
+            <div class="flex items-center gap-3 md:gap-5">
                 <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
-                <button onclick="toggleLang()" class="text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
                     <span class="text-xl">🛍️</span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
                 </button>
-                <button onclick="logout()" class="text-stone-500 hover:text-red-600 transition text-xs font-semibold hidden sm:inline">🚪</button>
             </div>
+            
         </div>
     </nav>
 

@@ -1,4 +1,4 @@
-import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const ALL_GOVERNORATES = [
@@ -158,9 +158,9 @@ function renderBannersSettings() {
     }).join('');
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadAdminOrders();
-    loadSettings();
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadAdminOrders();
+    await loadSettings();
     initShippingRates();
     initCodGrid();
 });
@@ -394,7 +394,17 @@ async function loadProductList() {
     }).join("");
 }
 
-function loadSettings() {
+async function loadSettings() {
+    try {
+        const cloud = await getSettingsFromFirestore();
+        if (cloud) {
+            localStorage.setItem('vora_settings', JSON.stringify(cloud));
+            if (cloud.shipping) localStorage.setItem('vora_shipping', JSON.stringify(cloud.shipping));
+            if (cloud.codGovernorates) localStorage.setItem('vora_cod_governorates', JSON.stringify(cloud.codGovernorates));
+        }
+    } catch (e) {
+        console.warn("Could not load settings from Firestore:", e);
+    }
     const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
     if (s.instaName) document.getElementById('set_instaName').value = s.instaName;
     if (s.instaNumber) document.getElementById('set_instaNumber').value = s.instaNumber;
@@ -454,7 +464,7 @@ function initCodGrid() {
     `).join("");
 }
 
-window.saveSettings = function() {
+window.saveSettings = async function() {
     const settings = {
         instaName: document.getElementById('set_instaName').value.trim(),
         instaNumber: document.getElementById('set_instaNumber').value.trim(),
@@ -491,6 +501,18 @@ window.saveSettings = function() {
         if (cb && cb.checked) codGovs.push(gov);
     });
     localStorage.setItem('vora_cod_governorates', JSON.stringify(codGovs));
+
+    try {
+        await saveSettingsToFirestore({
+            ...settings,
+            shipping,
+            codGovernorates: codGovs,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.warn("Could not save settings to Firestore:", e);
+    }
+
     showMessage("✅ تم حفظ جميع الإعدادات بنجاح!");
 };
 

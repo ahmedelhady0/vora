@@ -105,6 +105,7 @@ const TRANSLATIONS = {
         loginDemo: 'حساب تجريبي',
         loginWelcome: 'عطور فاخرة · أناقة لا تنتهي',
         loginOk: 'حسناً',
+        browseStore: '⬅️ تصفح المتجر',
         // Footer
         footerDesc: 'عطور فاخرة تجمع بين الأصالة والحداثة.',
         footerQuickLinks: 'روابط سريعة',
@@ -235,6 +236,7 @@ const TRANSLATIONS = {
         loginDemo: 'Demo Account',
         loginWelcome: 'Luxury Perfumes · Timeless Elegance',
         loginOk: 'OK',
+        browseStore: '⬅️ Browse Store',
         footerDesc: 'Luxury perfumes blending authenticity and modernity.',
         footerQuickLinks: 'Quick Links',
         footerContact: 'Contact Us',

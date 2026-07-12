@@ -1,4 +1,4 @@
-import { getProducts } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
 // استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
 import { db } from "./firebase-config.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -26,7 +26,15 @@ let sortMode = "default";
 let minPrice = null;
 let maxPrice = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+async function loadSettingsFromCloud() {
+    try {
+        const cloud = await getSettingsFromFirestore();
+        if (cloud) localStorage.setItem('vora_settings', JSON.stringify(cloud));
+    } catch (e) { /* stay with local */ }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadSettingsFromCloud();
     setTimeout(() => {
         const loader = document.getElementById('pageLoader');
         if (loader) loader.classList.add('hidden');
@@ -42,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCartCount();
         applyFooterSettings();
         renderProducts();
+        const text = getLang() === 'ar' ? 'EN' : 'AR';
+        document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
     });
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
@@ -550,8 +560,10 @@ function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('cartCount').textContent = totalQty;
+    const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
-    if (btn) btn.textContent = getLang() === 'ar' ? 'EN' : 'AR';
+    if (btn) btn.textContent = text;
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
 }
 
 window.openCartDrawer = function() {

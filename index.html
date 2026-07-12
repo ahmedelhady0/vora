@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="translations.js"></script>
+    <script>
+        // إذا كان المستخدم مسجل دخول بالفعل، حوله للصفحة الرئيسية
+        const loggedUser = JSON.parse(localStorage.getItem('vora_user'));
+        if (loggedUser) window.location.href = "home.html";
+    </script>
     <style>
         body { background: #3a1a2a; }
         .login-card { background: rgba(255,255,255,0.97); border: 1px solid var(--primary); box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
@@ -49,6 +54,7 @@
             <input type="password" id="password" class="login-input" data-i18n-placeholder="loginPassword" placeholder="كلمة المرور">
             <button onclick="signIn()" class="btn-gold mt-2" data-i18n="loginBtn">تسجيل الدخول</button>
             <button onclick="signUp()" class="btn-outline" data-i18n="signupBtn">إنشاء حساب جديد</button>
+            <a href="home.html" class="block text-center text-sm text-[#9c7c8c] hover:text-[#3a1a2a] transition mt-3" data-i18n="browseStore">⬅️ تصفح المتجر</a>
         </div>
         <hr class="rose-divider">
         <div class="text-center text-xs text-[#9c7c8c] bg-[#fce8f0] rounded-lg p-3">

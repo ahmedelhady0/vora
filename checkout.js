@@ -1,4 +1,4 @@
-import { placeOrder } from "./sheets-service.js";
+import { placeOrder, getSettingsFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const DEFAULT_SHIPPING = {
@@ -30,11 +30,19 @@ async function initStripe() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    await loadSettingsFromCloud();
     initStripe();
     loadCartItems();
     setupPaymentMethodListeners();
     loadInstapayInfo();
 });
+
+async function loadSettingsFromCloud() {
+    try {
+        const cloud = await getSettingsFromFirestore();
+        if (cloud) localStorage.setItem('vora_settings', JSON.stringify(cloud));
+    } catch (e) { /* stay with local */ }
+}
 
 function loadCartItems() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
@@ -162,17 +170,8 @@ window.submitOrder = async function() {
 async function submitOrderToSheet(orderData) {
     try {
         await placeOrder({
-            action: 'placeOrder',
-            userEmail: orderData.userEmail,
-            customerName: orderData.customerName,
-            customerPhone: orderData.customerPhone,
-            customerAddress: orderData.customerAddress,
-            governorate: orderData.governorate,
-            paymentMethod: orderData.paymentMethod,
-            items: orderData.items,
-            total: orderData.total,
-            status: orderData.status,
-            date: orderData.date
+            ...orderData,
+            action: 'placeOrder'
         });
     } catch (e) { console.log('Sheets save optional:', e); }
 }

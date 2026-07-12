@@ -6,7 +6,9 @@ import {
     addDoc, 
     updateDoc, 
     deleteDoc, 
-    doc 
+    doc,
+    setDoc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
@@ -170,9 +172,23 @@ export async function deleteProduct(id) {
     }
 }
 
-// ==================== إدارة الطلبات والمستخدمين ====================
+// ==================== إدارة الطلبات والمستخدمين والإعدادات عبر FIRESTORE ====================
 
 export async function getOrders() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        const fbOrders = [];
+        querySnapshot.forEach((doc) => {
+            fbOrders.push({ id: doc.id, ...doc.data() });
+        });
+        if (fbOrders.length > 0) {
+            STORE.orders = fbOrders;
+            return fbOrders;
+        }
+    } catch (error) {
+        console.warn("Firestore orders unavailable, using local:", error);
+    }
+
     const local = STORE.orders;
     if (local.length > 0) return local;
     
@@ -190,6 +206,13 @@ export async function placeOrder(orderData) {
     orders.push(orderData);
     STORE.orders = orders;
     
+    try {
+        await addDoc(collection(db, "orders"), orderData);
+        console.log("🔥 تم حفظ الطلب في Firestore");
+    } catch (error) {
+        console.warn("Could not save order to Firestore:", error);
+    }
+    
     const res = await tryFetch(() => fetch(WEB_APP_URL, { 
         method: 'POST', 
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
@@ -205,10 +228,59 @@ export async function registerUser(userData) {
     users[userData.username.toLowerCase()] = { ...userData, password: 'firebase-managed' };
     STORE.users = users;
     
+    try {
+        await setDoc(doc(db, "users", userData.username.toLowerCase()), {
+            password: userData.password,
+            role: userData.role || 'customer',
+            email: userData.email || '',
+            createdAt: new Date().toISOString()
+        });
+        console.log("🔥 تم حفظ المستخدم في Firestore");
+    } catch (error) {
+        console.warn("Could not save user to Firestore:", error);
+    }
+    
     tryFetch(() => fetch(WEB_APP_URL, { 
         method: 'POST', 
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
         body: JSON.stringify({ action: 'registerUser', ...userData }) 
     }));
     return { success: true };
+}
+
+export async function getUserFromFirestore(username) {
+    try {
+        const docRef = doc(db, "users", username.toLowerCase());
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { username: docSnap.id, ...docSnap.data() };
+        }
+    } catch (error) {
+        console.warn("Could not fetch user from Firestore:", error);
+    }
+    return null;
+}
+
+export async function saveSettingsToFirestore(settings) {
+    try {
+        await setDoc(doc(db, "config", "settings"), settings);
+        console.log("🔥 تم حفظ الإعدادات في Firestore");
+        return { success: true };
+    } catch (error) {
+        console.error("Could not save settings to Firestore:", error);
+        return { success: false, error };
+    }
+}
+
+export async function getSettingsFromFirestore() {
+    try {
+        const docRef = doc(db, "config", "settings");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+    } catch (error) {
+        console.warn("Could not fetch settings from Firestore:", error);
+    }
+    return null;
 }

@@ -1,4 +1,4 @@
-import { getProducts } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
 
 const BOTTLE_SVG = `
 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,15 @@ function getSettings() {
 let slideshowInterval = null;
 let currentSlide = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
+async function loadSettingsFromCloud() {
+    try {
+        const cloud = await getSettingsFromFirestore();
+        if (cloud) localStorage.setItem('vora_settings', JSON.stringify(cloud));
+    } catch (e) { /* stay with local */ }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadSettingsFromCloud();
     setTimeout(() => {
         const loader = document.getElementById('pageLoader');
         if (loader) loader.classList.add('hidden');
@@ -135,8 +143,10 @@ document.addEventListener('langchange', () => {
     loadBanners();
     updateCartCount();
     applyFooterSettings();
+    const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
-    if (btn) btn.textContent = getLang() === 'ar' ? 'EN' : 'AR';
+    if (btn) btn.textContent = text;
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
 });
 
 // ===== Load Logo from Settings =====
@@ -406,8 +416,10 @@ function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('cartCount').textContent = totalQty;
+    const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
-    if (btn) btn.textContent = getLang() === 'ar' ? 'EN' : 'AR';
+    if (btn) btn.textContent = text;
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
 }
 
 window.openCartDrawer = function() {
