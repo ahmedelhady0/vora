@@ -153,13 +153,13 @@ document.addEventListener('langchange', () => {
 function loadLogo() {
     const s = getSettings();
     if (s.logo) {
-        ['navLogo', 'footerLogo', 'mobileLogo'].forEach(id => {
+        ['footerLogo', 'mobileLogo'].forEach(id => {
             const el = document.getElementById(id);
             if (!el || el.querySelector('img')) return;
             const img = document.createElement('img');
             img.src = s.logo;
             img.alt = 'VORA';
-            img.style.cssText = id === 'navLogo' ? 'height:40px;width:auto;' : (id === 'footerLogo' ? 'height:28px;width:auto;' : 'height:24px;width:auto;');
+            img.style.cssText = id === 'footerLogo' ? 'height:28px;width:auto;' : 'height:24px;width:auto;';
             el.insertBefore(img, el.firstChild);
         });
     }

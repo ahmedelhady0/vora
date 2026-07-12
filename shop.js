@@ -113,13 +113,13 @@ function debounce(fn, delay) {
 function loadLogo() {
     const s = getSettings();
     if (s.logo) {
-        ['navLogo', 'footerLogo', 'mobileLogo'].forEach(id => {
+        ['footerLogo', 'mobileLogo'].forEach(id => {
             const el = document.getElementById(id);
             if (!el || el.querySelector('img')) return;
             const img = document.createElement('img');
             img.src = s.logo;
             img.alt = 'VORA';
-            img.style.cssText = id === 'navLogo' ? 'height:40px;width:auto;' : 'height:28px;width:auto;';
+            img.style.cssText = 'height:28px;width:auto;';
             el.insertBefore(img, el.firstChild);
         });
     }
