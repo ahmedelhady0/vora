@@ -22,15 +22,22 @@
     <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
     <div id="mobileMenu">
         <div class="menu-header">
-            <span id="mobileLogo">VORA</span>
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase">Menu</span>
             <button onclick="closeMobileMenu()">✕</button>
         </div>
-        <a href="home.html" class="active">🏠 الرئيسية</a>
-        <a href="shop.html">🛍️ المتجر</a>
-        <a href="index.html">👤 تسجيل الدخول</a>
-        <a href="admin.html" id="adminNavMobile" class="hidden">⚙️ الإدارة</a>
-        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-3 text-white/80 hover:text-white transition text-sm font-medium border-t border-white/10 mt-auto">🌐 AR</button>
-        <a href="#" onclick="logout(); closeMobileMenu();" style="color:rgba(255,255,255,0.4);">🚪 خروج</a>
+        <div class="menu-link" onclick="navigateTo('index.html')">👤 Profile</div>
+        <div class="menu-link active" onclick="navigateTo('home.html')">🏠 Home</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
+        <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
+        <div class="border-t border-white/10 my-2"></div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')">🔑 Sign in</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')">📝 Create an account</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium">🌐 EN</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();">🚪 Logout</div>
     </div>
 
     <!-- Search Overlay -->

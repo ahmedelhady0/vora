@@ -27,6 +27,28 @@ function getSettings() {
 let slideshowInterval = null;
 let currentSlide = 0;
 
+let lastScrollY = 0;
+function initScrollNav() {
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav.fixed');
+        if (!nav) return;
+        const y = window.scrollY;
+        if (y > 80 && y > lastScrollY) {
+            nav.classList.add('header-hidden');
+            nav.classList.remove('header-visible');
+        } else {
+            nav.classList.remove('header-hidden');
+            nav.classList.add('header-visible');
+        }
+        lastScrollY = y;
+    }, { passive: true });
+}
+
+function handleImageLoad(img) {
+    if (img.complete) { img.classList.add('loaded'); return; }
+    img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+}
+
 async function loadSettingsFromCloud() {
     try {
         const cloud = await getSettingsFromFirestore();
@@ -35,6 +57,7 @@ async function loadSettingsFromCloud() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    initScrollNav();
     await loadSettingsFromCloud();
     setTimeout(() => {
         const loader = document.getElementById('pageLoader');
@@ -190,6 +213,10 @@ window.closeMobileMenu = function() {
     document.getElementById('mobileMenuOverlay').classList.remove('show');
     document.body.style.overflow = 'auto';
 };
+window.navigateTo = function(url) {
+    closeMobileMenu();
+    setTimeout(() => { window.location.href = url; }, 150);
+};
 
 // ===== Search Overlay =====
 window.openSearchOverlay = function() {
@@ -298,7 +325,7 @@ function buildHomeCard(prod, index) {
     const outOfStock = stock <= 0;
 
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
+        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
         : '';
 
     let badgeHtml = "";
@@ -346,9 +373,23 @@ function buildHomeCard(prod, index) {
     return card;
 }
 
+function renderHomeSkeletons(container) {
+    container.innerHTML = `
+    <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+        ${Array.from({ length: 4 }).map(() => `
+        <div class="flex-[0_0_200px] space-y-3">
+            <div class="skeleton rounded-2xl" style="aspect-ratio:3/4;"></div>
+            <div class="skeleton rounded h-3 w-2/3 mx-auto"></div>
+            <div class="skeleton rounded h-4 w-1/3 mx-auto"></div>
+        </div>
+        `).join('')}
+    </div>`;
+}
+
 async function loadProducts() {
     const container = document.getElementById('productsContainer');
     if (!container) return;
+    renderHomeSkeletons(container);
     try {
         const products = await getProducts();
         container.innerHTML = "";
@@ -364,6 +405,7 @@ async function loadProducts() {
         }
 
         const sections = [
+            { key: 'new-arrivals', labelAr: 'جديد', labelEn: 'New Arrivals', icon: '🆕' },
             { key: 'best-sellers', labelAr: 'الأكثر مبيعاً', labelEn: 'Best Sellers', icon: '🏆' },
             { key: 'for-him', labelAr: 'For Him', labelEn: 'For Him', icon: '👔' },
             { key: 'for-her', labelAr: 'For Her', labelEn: 'For Her', icon: '👗' },
@@ -405,6 +447,12 @@ async function loadProducts() {
             });
 
             wrap.appendChild(row);
+
+            const more = document.createElement('div');
+            more.className = 'text-center mt-4';
+            more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${lang === 'ar' ? 'اكتشف المزيد ←' : '← Discover More'}</a>`;
+            wrap.appendChild(more);
+
             container.appendChild(wrap);
         });
 
@@ -422,6 +470,10 @@ async function loadProducts() {
                 row.appendChild(buildHomeCard(prod, i));
             });
             wrap.appendChild(row);
+            const more = document.createElement('div');
+            more.className = 'text-center mt-4';
+            more.innerHTML = `<a href="shop.html?section=best-sellers" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${lang === 'ar' ? 'اكتشف المزيد ←' : '← Discover More'}</a>`;
+            wrap.appendChild(more);
             container.appendChild(wrap);
         }
     } catch (err) {
@@ -469,6 +521,8 @@ window.addToCart = function(id, name, price) {
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     renderCartDrawer();
+    const badge = document.getElementById('cartCount');
+    if (badge) { badge.classList.remove('cart-badge-bounce'); void badge.offsetWidth; badge.classList.add('cart-badge-bounce'); }
     showMessage(`✓ ${t('notifAdded')}`);
 };
 

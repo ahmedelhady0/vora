@@ -123,6 +123,9 @@
                                 <label class="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer hover:text-amber-700">
                                     <input type="checkbox" id="sct_unisex" class="w-4 h-4 text-amber-600 rounded"> 🔄 Unisex
                                 </label>
+                                <label class="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer hover:text-amber-700">
+                                    <input type="checkbox" id="sct_newArrivals" class="w-4 h-4 text-amber-600 rounded"> 🆕 New Arrivals
+                                </label>
                             </div>
                         </div>
                         <div>
@@ -210,7 +213,21 @@
                             <label class="block text-sm font-medium text-stone-700 mb-1">نص العنوان (بدلاً من VORA)</label>
                             <input type="text" id="set_loginTitle" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="VORA">
                         </div>
-                        <p class="text-xs text-stone-400">الشعار يستخدم نفس الشعار المرفوع في قسم الشعار أعلاه.</p>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">شعار صفحة تسجيل الدخول</label>
+                            <div class="flex items-center gap-4">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="file" id="loginLogoInput" accept="image/*" class="hidden" onchange="previewLoginLogo(event)">
+                                    <div id="loginLogoUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
+                                        📁 اضغط لرفع الشعار
+                                    </div>
+                                </label>
+                                <div id="loginLogoPreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 flex items-center justify-center p-1">
+                                    <img id="loginLogoPreviewImg" class="max-w-full max-h-full object-contain">
+                                </div>
+                            </div>
+                            <p class="text-xs text-stone-400 mt-1">اتركه فارغاً لاستخدام شعار الموقع الافتراضي</p>
+                        </div>
                     </div>
                 </div>
 

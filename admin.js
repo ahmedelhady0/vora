@@ -30,6 +30,7 @@ window.selectedProductFile = null; // سيخزن كائن ملف الصورة ا
 
 let uploadedHeroImage = "";
 let uploadedLogo = "";
+let uploadedLoginLogo = "";
 let slideshowImages = [];
 let uploadedBannerImages = ["", "", ""];
 
@@ -57,6 +58,20 @@ window.previewLogo = function(e) {
         document.getElementById('logoPreviewImg').src = uploadedLogo;
         document.getElementById('logoPreview').classList.remove('hidden');
         document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+    };
+    reader.readAsDataURL(file);
+};
+
+window.previewLoginLogo = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { showMessage("⚠️ الشعار كبير جداً (أقصى 2MB)"); return; }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        uploadedLoginLogo = ev.target.result;
+        document.getElementById('loginLogoPreviewImg').src = uploadedLoginLogo;
+        document.getElementById('loginLogoPreview').classList.remove('hidden');
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     };
     reader.readAsDataURL(file);
 };
@@ -235,6 +250,7 @@ window.saveProduct = async function() {
     if (document.getElementById('sct_forHim').checked) sections.push('for-him');
     if (document.getElementById('sct_forHer').checked) sections.push('for-her');
     if (document.getElementById('sct_unisex').checked) sections.push('unisex');
+    if (document.getElementById('sct_newArrivals').checked) sections.push('new-arrivals');
     
     if (!name || !category || !price) return showMessage("يرجى ملء: الاسم، الفئة، والسعر");
 
@@ -305,6 +321,7 @@ window.editProduct = async function(id) {
     document.getElementById('sct_forHim').checked = prodSections.includes('for-him');
     document.getElementById('sct_forHer').checked = prodSections.includes('for-her');
     document.getElementById('sct_unisex').checked = prodSections.includes('unisex');
+    document.getElementById('sct_newArrivals').checked = prodSections.includes('new-arrivals');
     
     document.getElementById('formTitle').textContent = '✏️ تعديل العطر';
 
@@ -381,6 +398,7 @@ function clearForm() {
     document.getElementById('sct_forHim').checked = false;
     document.getElementById('sct_forHer').checked = false;
     document.getElementById('sct_unisex').checked = false;
+    document.getElementById('sct_newArrivals').checked = false;
 }
 
 async function loadProductList() {
@@ -449,6 +467,13 @@ async function loadSettings() {
         document.getElementById('logoPreview').classList.remove('hidden');
         document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     }
+
+    if (s.loginLogo) {
+        uploadedLoginLogo = s.loginLogo;
+        document.getElementById('loginLogoPreviewImg').src = s.loginLogo;
+        document.getElementById('loginLogoPreview').classList.remove('hidden');
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+    }
     
     if (s.slideshowImages) slideshowImages = s.slideshowImages;
     renderSlideshowAdmin();
@@ -497,6 +522,7 @@ window.saveSettings = async function() {
         heroSubtitle: document.getElementById('hero_subtitle').value.trim(),
         heroImage: uploadedHeroImage,
         logo: uploadedLogo,
+        loginLogo: uploadedLoginLogo,
         slideshowImages: slideshowImages,
         banners: [0,1,2].map(i => ({
             image: uploadedBannerImages[i] || '',

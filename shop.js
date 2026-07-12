@@ -25,6 +25,7 @@ let searchQuery = "";
 let sortMode = "default";
 let minPrice = null;
 let maxPrice = null;
+let activeSection = '';
 
 async function loadSettingsFromCloud() {
     try {
@@ -33,7 +34,25 @@ async function loadSettingsFromCloud() {
     } catch (e) { /* stay with local */ }
 }
 
+let lastScrollY = 0;
+function initScrollNav() {
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav.fixed');
+        if (!nav) return;
+        const y = window.scrollY;
+        if (y > 80 && y > lastScrollY) {
+            nav.classList.add('header-hidden');
+            nav.classList.remove('header-visible');
+        } else {
+            nav.classList.remove('header-hidden');
+            nav.classList.add('header-visible');
+        }
+        lastScrollY = y;
+    }, { passive: true });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+    initScrollNav();
     await loadSettingsFromCloud();
     setTimeout(() => {
         const loader = document.getElementById('pageLoader');
@@ -166,6 +185,10 @@ window.closeMobileMenu = function() {
     document.getElementById('mobileMenuOverlay').classList.remove('show');
     document.body.style.overflow = 'auto';
 };
+window.navigateTo = function(url) {
+    closeMobileMenu();
+    setTimeout(() => { window.location.href = url; }, 150);
+};
 
 // ===== Search Overlay (Shop) =====
 window.openSearchOverlay = function() {
@@ -234,13 +257,14 @@ async function loadProducts() {
         }
 
         buildCategoryPills();
+        applySectionFilter();
         renderProducts();
     } catch (err) {
         console.error('Error loading products from Firestore, trying Sheets...', err);
         try {
-            // محاولة جلب المنتجات من الجوجل شيت كـ Fallback بدون توقف النظام عند حدوث أي خطأ في الفاير ستور
             allProducts = await getProducts();
             buildCategoryPills();
+            applySectionFilter();
             renderProducts();
         } catch (sheetErr) {
             console.error('Error loading products from Sheets:', sheetErr);
@@ -248,6 +272,22 @@ async function loadProducts() {
         }
     }
 }
+
+function applySectionFilter() {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get('section');
+    if (s && ['new-arrivals','best-sellers','for-him','for-her','unisex'].includes(s)) {
+        activeSection = s;
+    }
+}
+
+const SECTION_META = {
+    'new-arrivals': { icon: '🆕', labelAr: 'جديد', labelEn: 'New Arrivals' },
+    'best-sellers': { icon: '🏆', labelAr: 'الأكثر مبيعاً', labelEn: 'Best Sellers' },
+    'for-him': { icon: '👔', labelAr: 'For Him', labelEn: 'For Him' },
+    'for-her': { icon: '👗', labelAr: 'For Her', labelEn: 'For Her' },
+    'unisex': { icon: '🔄', labelAr: 'Unisex', labelEn: 'Unisex' }
+};
 
 function renderSkeletons(container) {
     container.innerHTML = `<div class="products-grid">${Array.from({ length: 6 }).map(() => `
@@ -301,6 +341,10 @@ function getFilteredProducts() {
         list = list.filter(p => parseFloat(p.price) <= maxPrice);
     }
 
+    if (activeSection) {
+        list = list.filter(p => (p.sections || []).includes(activeSection));
+    }
+
     switch (sortMode) {
         case "price-asc":
             list.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
@@ -330,7 +374,24 @@ function renderProducts() {
         ? `${t('shopResults')} ${filtered.length} ${t('shopOf')} ${allProducts.length} ${t('shopProducts')}`
         : "";
 
-    container.innerHTML = "";
+    let sectionHeader = '';
+    if (activeSection && SECTION_META[activeSection]) {
+        const m = SECTION_META[activeSection];
+        const label = getLang() === 'ar' ? m.labelAr : m.labelEn;
+        sectionHeader = `
+        <div class="w-full mb-6 pb-4 border-b border-stone-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">${m.icon}</span>
+                <div>
+                    <h2 class="text-2xl font-bold text-stone-900">${label}</h2>
+                    <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
+                </div>
+            </div>
+            <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">✕ إزالة الفلتر</button>
+        </div>`;
+    }
+
+    container.innerHTML = sectionHeader;
 
     if (allProducts.length === 0) {
         container.innerHTML = `
@@ -404,7 +465,7 @@ function buildProductCard(prod) {
     if (outOfStock) badgeHtml += `<span class="badge badge-out">${t('outOfStockBadge')}</span>`;
 
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
+        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
         : '';
 
     const stockLabel = outOfStock ? '' : (stock <= 5 ? `<span style="color:#ea580c;font-weight:700;font-size:10px;">${t('lastItems')} ${stock} ${t('pieces')}</span>` : '');
@@ -452,7 +513,7 @@ window.quickView = function(id) {
     if (!prod) return;
     const modal = document.getElementById('quickViewModal');
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        ? `<img src="${prod.image}" alt="${prod.name}" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
         : '';
 
     modal.querySelector('.modal-image').innerHTML = `
@@ -517,12 +578,19 @@ function showWishlistToast(msg) {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
+window.clearSectionFilter = function() {
+    activeSection = '';
+    window.history.replaceState({}, '', window.location.pathname);
+    renderProducts();
+};
+
 window.resetFilters = function() {
     activeCategory = "الكل";
     searchQuery = "";
     sortMode = "default";
     minPrice = null;
     maxPrice = null;
+    activeSection = '';
 
     const ss = document.getElementById('shopSearch');
     if (ss) ss.value = "";
@@ -553,6 +621,8 @@ window.addToCart = function(id, name, price, image) {
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     renderCartDrawer();
+    const badge = document.getElementById('cartCount');
+    if (badge) { badge.classList.remove('cart-badge-bounce'); void badge.offsetWidth; badge.classList.add('cart-badge-bounce'); }
     showMessage(`✓ ${t('notifAdded')}`);
 };
 
