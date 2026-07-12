@@ -282,8 +282,73 @@ function initBrandSlider() {
     track.innerHTML = items + items;
 }
 
+function buildHomeCard(prod, index) {
+    const rating = parseFloat(prod.rating) || 0;
+    const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
+    const discount = prod.discount && prod.originalPrice
+        ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
+        : 0;
+
+    const card = document.createElement('div');
+    card.className = "product-card";
+    card.style.cssText = 'flex: 0 0 200px; scroll-snap-align: start;';
+    card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.08}s both`;
+
+    const stock = prod.stock ?? 50;
+    const outOfStock = stock <= 0;
+
+    const imageContent = prod.image
+        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
+        : '';
+
+    let badgeHtml = "";
+    if (index === 0) badgeHtml += `<span class="badge badge-new">جديد</span>`;
+    if (discount > 0) badgeHtml += `<span class="badge badge-sale">-${discount}%</span>`;
+    if (outOfStock) badgeHtml += `<span class="badge badge-out">نفد</span>`;
+
+    const safeName = prod.name.replace(/'/g, "\\'");
+    const safeId = prod.id.replace(/'/g, "\\'");
+
+    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
+    const groupHtml = !outOfStock ? `
+        <div class="card-product__group group-left">
+            <button onclick="toggleWishlistHome('${safeId}', '${safeName}', ${prod.price})" title="المفضلة">🤍</button>
+            <button onclick="window.location.href='shop.html'" title="عرض سريع">👁️</button>
+        </div>` : '';
+
+    card.innerHTML = `
+        <div class="card-media">
+            ${badgeHtml}
+            ${imageContent}
+            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+                ${BOTTLE_SVG}
+            </div>
+            <a class="card-link" href="shop.html" title="${prod.name}"></a>
+            ${groupHtml}
+            <div class="card-action-overlay">
+                ${!outOfStock
+                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price})">🛒 ${t('addToCart')}</button>`
+                    : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
+            </div>
+        </div>
+        <div class="card-information">
+            <div class="card-information__wrapper text-center">
+                <div class="card-vendor"><a href="shop.html">${prod.brand || prod.category || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="shop.html"><span class="text">${prod.name}</span></a>
+                <div class="rating-row"><span class="stars">${stars}</span></div>
+                <div class="card-price">
+                    <span class="price-current">${prod.price} ${t('currency')}</span>
+                    ${prod.discount && prod.originalPrice ? `<span class="price-original">${prod.originalPrice} ${t('currency')}</span>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    return card;
+}
+
 async function loadProducts() {
     const container = document.getElementById('productsContainer');
+    if (!container) return;
     try {
         const products = await getProducts();
         container.innerHTML = "";
@@ -298,72 +363,67 @@ async function loadProducts() {
             return;
         }
 
-        const bestSellers = products.slice(0, 4);
+        const sections = [
+            { key: 'best-sellers', labelAr: 'الأكثر مبيعاً', labelEn: 'Best Sellers', icon: '🏆' },
+            { key: 'for-him', labelAr: 'For Him', labelEn: 'For Him', icon: '👔' },
+            { key: 'for-her', labelAr: 'For Her', labelEn: 'For Her', icon: '👗' },
+            { key: 'unisex', labelAr: 'Unisex', labelEn: 'Unisex', icon: '🔄' }
+        ];
 
-        bestSellers.forEach((prod, index) => {
-            const rating = parseFloat(prod.rating) || 0;
-            const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
-            const discount = prod.discount && prod.originalPrice
-                ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
-                : 0;
-
-            const card = document.createElement('div');
-            card.className = "product-card";
-            card.style.width = "220px";
-            card.style.flexShrink = "0";
-            card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.08}s both`;
-
-            const stock = prod.stock ?? 50;
-            const outOfStock = stock <= 0;
-
-            const imageContent = prod.image
-                ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
-                : '';
-
-            let badgeHtml = "";
-            if (index === 0) badgeHtml += `<span class="badge badge-new">جديد</span>`;
-            if (discount > 0) badgeHtml += `<span class="badge badge-sale">-${discount}%</span>`;
-            if (outOfStock) badgeHtml += `<span class="badge badge-out">نفد</span>`;
-
-            const safeName = prod.name.replace(/'/g, "\\'");
-            const safeId = prod.id.replace(/'/g, "\\'");
-
-            const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
-            const groupHtml = !outOfStock ? `
-                <div class="card-product__group group-left">
-                    <button onclick="toggleWishlistHome('${safeId}', '${safeName}', ${prod.price})" title="المفضلة">🤍</button>
-                    <button onclick="window.location.href='shop.html'" title="عرض سريع">👁️</button>
-                </div>` : '';
-
-            card.innerHTML = `
-                <div class="card-media">
-                    ${badgeHtml}
-                    ${imageContent}
-                    <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
-                        ${BOTTLE_SVG}
-                    </div>
-                    <a class="card-link" href="shop.html" title="${prod.name}"></a>
-                    ${groupHtml}
-                    <div class="card-action-overlay">
-                        ${!outOfStock
-                            ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price})">🛒 ${t('addToCart')}</button>`
-                            : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
-                    </div>
-                </div>
-                <div class="card-information">
-                    <div class="card-information__wrapper text-center">
-                        <div class="card-vendor"><a href="shop.html">${prod.brand || prod.category || 'VORA'}</a>${sizeHtml}</div>
-                        <a class="card-title" href="shop.html"><span class="text">${prod.name}</span></a>
-                        <div class="rating-row"><span class="stars">${stars}</span></div>
-                        <div class="card-price">
-                            <span class="price-current">${prod.price} ${t('currency')}</span>
-                            ${prod.discount && prod.originalPrice ? `<span class="price-original">${prod.originalPrice} ${t('currency')}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
+        const grouped = {};
+        sections.forEach(s => grouped[s.key] = []);
+        products.forEach(prod => {
+            const ps = prod.sections || [];
+            if (ps.length === 0) {
+                if (grouped['best-sellers']) grouped['best-sellers'].push(prod);
+            } else {
+                ps.forEach(k => { if (grouped[k]) grouped[k].push(prod); });
+            }
         });
+
+        let hasAny = false;
+        const lang = getLang();
+        sections.forEach(section => {
+            const items = grouped[section.key] || [];
+            if (items.length === 0) return;
+            hasAny = true;
+
+            const wrap = document.createElement('div');
+            wrap.className = 'w-full mb-8';
+
+            const title = document.createElement('div');
+            title.className = 'section-divider mb-5';
+            title.innerHTML = `<span>${section.icon} ${lang === 'ar' ? section.labelAr : section.labelEn}</span>`;
+            wrap.appendChild(title);
+
+            const row = document.createElement('div');
+            row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
+            row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
+
+            items.forEach((prod, i) => {
+                row.appendChild(buildHomeCard(prod, i));
+            });
+
+            wrap.appendChild(row);
+            container.appendChild(wrap);
+        });
+
+        if (!hasAny) {
+            const wrap = document.createElement('div');
+            wrap.className = 'w-full';
+            const title = document.createElement('div');
+            title.className = 'section-divider mb-5';
+            title.innerHTML = `<span>🏆 ${lang === 'ar' ? 'الأكثر مبيعاً' : 'Best Sellers'}</span>`;
+            wrap.appendChild(title);
+            const row = document.createElement('div');
+            row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
+            row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
+            products.slice(0, 8).forEach((prod, i) => {
+                row.appendChild(buildHomeCard(prod, i));
+            });
+            wrap.appendChild(row);
+            container.appendChild(wrap);
+        }
     } catch (err) {
         console.error('Error loading products:', err);
         container.innerHTML = `<p class="text-red-500 text-center w-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;

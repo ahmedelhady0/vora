@@ -230,6 +230,12 @@ window.saveProduct = async function() {
     const discountPercent = parseFloat(document.getElementById('prodDiscountPercent').value) || 0;
     const description = document.getElementById('prodDesc').value.trim();
     
+    const sections = [];
+    if (document.getElementById('sct_bestSellers').checked) sections.push('best-sellers');
+    if (document.getElementById('sct_forHim').checked) sections.push('for-him');
+    if (document.getElementById('sct_forHer').checked) sections.push('for-her');
+    if (document.getElementById('sct_unisex').checked) sections.push('unisex');
+    
     if (!name || !category || !price) return showMessage("يرجى ملء: الاسم، الفئة، والسعر");
 
     let originalPrice = null;
@@ -252,10 +258,11 @@ window.saveProduct = async function() {
 
         const prodData = {
             name, brand, category, size, price, stock, description,
-            image: finalImageUrl, // الرابط السحابي النظيف من ImgBB
+            image: finalImageUrl,
             originalPrice: originalPrice || "",
             discount: discountPercent > 0 ? true : false,
             discountPercent: discountPercent,
+            sections: sections,
             rating: 5, ratingCount: 1
         };
 
@@ -291,6 +298,14 @@ window.editProduct = async function(id) {
     document.getElementById('prodStock').value = prod.stock ?? 50;
     document.getElementById('prodDiscountPercent').value = prod.discountPercent || '';
     document.getElementById('prodDesc').value = prod.description || '';
+    
+    // Populate section checkboxes
+    const prodSections = prod.sections || [];
+    document.getElementById('sct_bestSellers').checked = prodSections.includes('best-sellers');
+    document.getElementById('sct_forHim').checked = prodSections.includes('for-him');
+    document.getElementById('sct_forHer').checked = prodSections.includes('for-her');
+    document.getElementById('sct_unisex').checked = prodSections.includes('unisex');
+    
     document.getElementById('formTitle').textContent = '✏️ تعديل العطر';
 
     window.selectedProductFile = null;
@@ -362,6 +377,10 @@ function clearForm() {
     document.getElementById('imagePreview').classList.add('hidden');
     document.getElementById('uploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة';
     document.getElementById('prodImageInput').value = "";
+    document.getElementById('sct_bestSellers').checked = true;
+    document.getElementById('sct_forHim').checked = false;
+    document.getElementById('sct_forHer').checked = false;
+    document.getElementById('sct_unisex').checked = false;
 }
 
 async function loadProductList() {
