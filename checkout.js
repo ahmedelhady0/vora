@@ -72,7 +72,11 @@ function loadCartItems() {
         sidebarItems.appendChild(sidebarDiv);
     });
     itemCount.textContent = itemsCount;
-    updateTotals(total, 0);
+    if (appliedDiscount > 0) {
+        updateTotalsWithDiscount();
+    } else {
+        updateTotals(total, 0);
+    }
 }
 
 function getShippingRates() {
@@ -85,7 +89,11 @@ window.updateShipping = function() {
     const subtotal = parseFloat(localStorage.getItem('vora_cart_total') || 0);
     const rates = getShippingRates();
     const shipping = gov && rates[gov] ? rates[gov] : 0;
-    updateTotals(subtotal, shipping);
+    if (appliedDiscount > 0) {
+        updateTotalsWithDiscount();
+    } else {
+        updateTotals(subtotal, shipping);
+    }
 };
 
 function updateTotals(subtotal, shipping) {
@@ -108,6 +116,53 @@ function loadInstapayInfo() {
     }
 }
 
+let appliedDiscount = 0;
+
+window.applyCoupon = function() {
+    const code = document.getElementById('couponCode').value.trim().toUpperCase();
+    const msg = document.getElementById('couponMessage');
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const coupons = settings.coupons || {};
+    if (!code) {
+        msg.className = 'text-xs mt-1 text-red-600';
+        msg.textContent = 'يرجى إدخال كود الخصم';
+        msg.classList.remove('hidden');
+        return;
+    }
+    if (coupons[code]) {
+        appliedDiscount = parseFloat(coupons[code]) || 0;
+        msg.className = 'text-xs mt-1 text-green-600';
+        msg.textContent = `✅ تم تطبيق الخصم! خصم ${appliedDiscount}%`;
+        msg.classList.remove('hidden');
+        document.getElementById('discountRow').style.display = 'flex';
+        updateTotalsWithDiscount();
+    } else {
+        appliedDiscount = 0;
+        msg.className = 'text-xs mt-1 text-red-600';
+        msg.textContent = '❌ كود الخصم غير صالح';
+        msg.classList.remove('hidden');
+        document.getElementById('discountRow').style.display = 'none';
+        updateTotalsWithDiscount();
+    }
+};
+
+function updateTotalsWithDiscount() {
+    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    const gov = document.getElementById('governorate').value;
+    const rates = getShippingRates();
+    const shipping = gov && rates[gov] ? rates[gov] : 0;
+    const discount = subtotal * (appliedDiscount / 100);
+    const total = subtotal + shipping - discount;
+    document.getElementById('subtotal').textContent = `${subtotal} ${t('currency')}`;
+    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && gov ? `${t('cartFree')} ✓` : `${t('checkoutGovernorate')}`;
+    document.getElementById('discountAmount').textContent = `-${Math.round(discount)} ${t('currency')}`;
+    document.getElementById('total').textContent = `${Math.round(total)} ${t('currency')}`;
+    document.getElementById('sidebarTotal').textContent = `${Math.round(total)} ${t('currency')}`;
+    localStorage.setItem('vora_checkout_total', Math.round(total));
+    localStorage.setItem('vora_cart_total', subtotal);
+}
+
 function setupPaymentMethodListeners() {
     document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
         radio.addEventListener('change', function() {
@@ -128,7 +183,8 @@ window.submitOrder = async function() {
         const shippingCost = rates[gov] || 0;
         const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
         const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-        const total = subtotal + shippingCost;
+        const discountAmount = subtotal * (appliedDiscount / 100);
+        const total = subtotal + shippingCost - discountAmount;
         const orderData = {
             customerName: document.getElementById('customerName').value,
             customerPhone: document.getElementById('customerPhone').value,
@@ -138,9 +194,10 @@ window.submitOrder = async function() {
             paymentMethod: paymentMethod,
             items: cart.map(i => `${i.name} (${i.qty})`).join(' + '),
             itemDetails: JSON.stringify(cart),
-            total: total,
+            total: Math.round(total),
             shippingCost: shippingCost,
             subtotal: subtotal,
+            discount: appliedDiscount > 0 ? `${appliedDiscount}%` : '',
             orderDate: new Date().toISOString(),
             date: new Date().toLocaleString('ar-EG'),
             status: 'قيد المراجعة',
@@ -157,6 +214,12 @@ window.submitOrder = async function() {
         orderData.orderId = 'VORA-' + Date.now();
         localStorage.setItem('vora_lastOrder', JSON.stringify(orderData));
         localStorage.setItem('vora_orders', JSON.stringify([...(JSON.parse(localStorage.getItem('vora_orders')) || []), { ...orderData, timestamp: Date.now() }]));
+        // Save address for account page
+        const addrEntry = { name: document.getElementById('customerName').value, phone: document.getElementById('customerPhone').value, address: document.getElementById('customerAddress').value, governorate: document.getElementById('governorate').value };
+        let addresses = JSON.parse(localStorage.getItem('vora_addresses')) || [];
+        const addrExists = addresses.find(a => a.name === addrEntry.name && a.phone === addrEntry.phone);
+        if (!addrExists) addresses.push(addrEntry);
+        localStorage.setItem('vora_addresses', JSON.stringify(addresses));
         await submitOrderToSheet(orderData);
         localStorage.removeItem('vora_cart');
         showMessage('✓ تم استلام طلبك بنجاح! جاري تحويلك لصفحة التأكيد...');

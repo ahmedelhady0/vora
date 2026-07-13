@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="productPageTitle">VORA - منتج</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+    <script src="fallback-data.js"></script>
+    <style>
+        .product-page-image { width:100%; max-width:500px; aspect-ratio:3/4; object-fit:cover; border-radius:24px; background:#fef6f9; }
+        .breadcrumb { display:flex; flex-wrap:wrap; align-items:center; gap:4px; font-size:13px; }
+        .breadcrumb a { color:#9c7c8c; text-decoration:none; transition:color 0.2s; }
+        .breadcrumb a:hover { color:#c25a80; }
+        .breadcrumb .separate { display:inline-flex; align-items:center; color:#d4b5c4; }
+        .breadcrumb .separate svg { width:14px; height:14px; fill:currentColor; }
+        .breadcrumb span:last-child { color:#3a1a2a; font-weight:600; }
+        .section-title { font-size:20px; font-weight:700; color:#3a1a2a; margin-bottom:16px; font-family:'Playfair Display',serif; }
+        .review-card { background:white; border:1px solid #f0d0d8; border-radius:16px; padding:20px; }
+        .review-card .stars { color:#f59e0b; font-size:14px; }
+        .review-card .name { font-weight:600; color:#3a1a2a; font-size:14px; }
+        .review-card .date { font-size:11px; color:#9c7c8c; }
+        .review-card .text { font-size:13px; color:#6b4c5a; margin-top:6px; }
+        .detail-label { font-size:12px; color:#9c7c8c; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+        .detail-value { font-size:15px; color:#3a1a2a; font-weight:500; }
+        .add-cart-page-btn { background:linear-gradient(135deg,#c25a80,#a04060); color:white; border:none; border-radius:14px; padding:16px 32px; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.3s; width:100%; }
+        .add-cart-page-btn:hover { box-shadow:0 8px 24px rgba(194,90,128,0.35); transform:translateY(-1px); }
+        .qty-selector { display:flex; align-items:center; gap:0; border:1.5px solid #f0d0d8; border-radius:12px; overflow:hidden; }
+        .qty-selector button { width:42px; height:42px; background:#fce8f0; border:none; font-size:18px; font-weight:700; color:#3a1a2a; cursor:pointer; transition:background 0.2s; }
+        .qty-selector button:hover { background:#f0d0d8; }
+        .qty-selector span { width:48px; text-align:center; font-weight:700; font-size:16px; color:#3a1a2a; }
+
+        @media (max-width:768px) { .product-page-image { max-width:100%; } }
+    </style>
+</head>
+<body class="bg-stone-50">
+    <div id="pageLoader">
+        <div class="loader-logo">VORA</div>
+        <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+    </div>
+    <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu">
+        <div class="menu-header">
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase">Menu</span>
+            <button onclick="closeMobileMenu()">✕</button>
+        </div>
+        <div class="menu-link" onclick="navigateTo('index.html')">👤 Profile</div>
+        <div class="menu-link" onclick="navigateTo('home.html')">🏠 Home</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="navigateTo('about.html')">📖 About</div>
+        <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
+        <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
+        <div class="border-t border-white/10 my-2"></div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')">🔑 Sign in</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')">📝 Create an account</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium">🌐 EN</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();">🚪 Logout</div>
+    </div>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex md:hidden items-center gap-2">
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" id="userNavMobile">👤</a>
+                <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
+            </div>
+            <div class="flex flex-col items-center md:items-start md:flex-1">
+                <a href="home.html" id="navLogo" class="text-center md:text-right">
+                    <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm">🏪 الماركات</a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm">⚙️ الإدارة</a>
+            </div>
+            <div class="flex items-center gap-3 md:gap-5">
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" id="userNavLink">👤</a>
+                <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
+                    <span class="text-xl">🛍️</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full w-4.5 h-4.5 flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <section class="pt-28 pb-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <nav class="breadcrumb mb-6" id="breadcrumb" role="navigation" aria-label="breadcrumbs">
+                <a class="link home-link" href="home.html" id="breadcrumbHome">Home</a>
+                <span class="separate" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M 7.75 1.34375 L 6.25 2.65625 L 14.65625 12 L 6.25 21.34375 L 7.75 22.65625 L 16.75 12.65625 L 17.34375 12 L 16.75 11.34375 Z"></path></svg></span>
+                <a class="breadcrumb-collection" href="shop.html" id="breadcrumbShop">Products</a>
+                <span class="separate" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M 7.75 1.34375 L 6.25 2.65625 L 14.65625 12 L 6.25 21.34375 L 7.75 22.65625 L 16.75 12.65625 L 17.34375 12 L 16.75 11.34375 Z"></path></svg></span>
+                <span id="breadcrumbProduct">Product</span>
+            </nav>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12" id="productMain">
+                <div class="flex justify-center md:justify-end">
+                    <div id="productImageContainer" class="product-page-image flex items-center justify-center bg-gradient-to-br from-amber-50 to-pink-50">
+                        <div id="productImageFallback" class="text-amber-600 opacity-40"><svg width="120" height="200" viewBox="0 0 64 180" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="24" y="10" width="16" height="8" rx="2" fill="currentColor" opacity="0.5"/><path d="M18 22 Q18 18 22 18 L42 18 Q46 18 46 22 L50 50 Q52 70 52 90 L52 150 Q52 160 46 160 L18 160 Q12 160 12 150 L12 90 Q12 70 14 50 Z" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.6"/><line x1="14" y1="70" x2="50" y2="70" stroke="currentColor" stroke-width="1" opacity="0.4"/></svg></div>
+                    </div>
+                </div>
+                <div class="space-y-5" id="productInfo">
+                    <span class="text-amber-600 text-xs font-bold tracking-widest uppercase" id="productBrand">VORA</span>
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 mt-1" style="font-family:'Playfair Display',serif;" id="productName">Loading...</h1>
+                    <div class="flex items-center gap-3" id="productRating"></div>
+                    <p class="text-stone-600 leading-relaxed" id="productDescription"></p>
+                    <div id="productGender"></div>
+                    <div id="productVendor"></div>
+                    <div id="productStock"></div>
+                    <div id="productHotStock" class="productView-hotStock style-2" style="display:none">
+                        <span class="hotStock-text"></span>
+                        <div class="hotStock-progress"><span class="hotStock-progress-item" style="width:0%"></span></div>
+                    </div>
+                    <div id="productPrice"></div>
+                    <div class="grid grid-cols-2 gap-4 pt-2" id="productDetails"></div>
+                    <div class="flex items-center gap-4 pt-2">
+                        <div class="qty-selector">
+                            <button onclick="changeQty(-1)">−</button>
+                            <span id="productQty">1</span>
+                            <button onclick="changeQty(1)">+</button>
+                        </div>
+                        <button class="add-cart-page-btn flex-1" id="addToCartBtn" onclick="addToCartFromPage()">➕ أضف للسلة</button>
+                    </div>
+                    <div class="product-subtotal" id="productSubtotal"></div>
+                    <button class="buy-now-btn" onclick="buyNow()" id="buyNowBtn">💳 اشتري الآن</button>
+                    <div id="productAdditionalInfo" style="display:none">
+                        <div class="toggleLink" onclick="toggleAdditionalInfo(this)">
+                            <span class="text" data-i18n="additionalInfo">معلومات إضافية</span>
+                            <span class="icon-dropdown"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 330"><path d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path></svg></span>
+                        </div>
+                        <div class="toggle-content" id="additionalInfoContent"></div>
+                    </div>
+                    <button onclick="shareOnWhatsApp()" class="w-full py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2">📱 استفسر عبر واتساب</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title" id="relatedTitle">Related Products</h2>
+            <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide" id="relatedProducts" style="scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;"></div>
+        </div>
+    </section>
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title" id="recentlyTitle">Recently Viewed Products</h2>
+            <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide" id="recentlyViewedProducts" style="scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;"></div>
+        </div>
+    </section>
+    <section class="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title">Customer Reviews</h2>
+            <div id="reviewsContainer" class="space-y-4"></div>
+            <div class="mt-8 bg-stone-50 rounded-2xl p-6 border border-stone-200">
+                <h3 class="font-bold text-stone-900 mb-4">✍️ اكتب تقييمك</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-1 text-2xl" id="reviewStarRating">
+                        <span onclick="setReviewStar(1)" class="cursor-pointer hover:scale-110 transition">☆</span>
+                        <span onclick="setReviewStar(2)" class="cursor-pointer hover:scale-110 transition">☆</span>
+                        <span onclick="setReviewStar(3)" class="cursor-pointer hover:scale-110 transition">☆</span>
+                        <span onclick="setReviewStar(4)" class="cursor-pointer hover:scale-110 transition">☆</span>
+                        <span onclick="setReviewStar(5)" class="cursor-pointer hover:scale-110 transition">☆</span>
+                    </div>
+                    <input type="text" id="reviewName" placeholder="اسمك" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg text-sm">
+                    <textarea id="reviewText" placeholder="اكتب تقييمك للمنتج..." rows="3" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg text-sm resize-none"></textarea>
+                    <button onclick="submitReview()" class="px-6 py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition text-sm">إرسال التقييم</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer id="footer" class="bg-stone-900 text-stone-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="text-2xl font-bold text-white tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+            <p class="text-xs text-stone-500 mt-3">© 2026 VORA. All rights reserved.</p>
+        </div>
+    </footer>
+    <div id="messageBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl border border-stone-100 space-y-4">
+            <div id="messageIcon" class="mx-auto text-4xl">✓</div>
+            <p id="messageText" class="text-base font-medium text-stone-800 leading-relaxed"></p>
+            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">حسناً</button>
+        </div>
+    </div>
+    <script type="module" src="product.js"></script>
+</body>
+</html>

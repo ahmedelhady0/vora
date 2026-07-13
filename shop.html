@@ -29,8 +29,9 @@
         <div class="menu-link" onclick="navigateTo('home.html')">🏠 Home</div>
         <div class="menu-link active" onclick="navigateTo('shop.html')">🛍️ Shop</div>
         <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
-        <div class="menu-link" onclick="navigateTo('shop.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
         <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="navigateTo('about.html')">📖 About</div>
         <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
         <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
         <div class="border-t border-white/10 my-2"></div>
@@ -58,7 +59,7 @@
             
             <!-- Mobile: Left - Profile + Menu -->
             <div class="flex md:hidden items-center gap-2">
-                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول" id="userNavMobile">👤</a>
                 <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
             </div>
             
@@ -74,6 +75,8 @@
             <div class="hidden md:flex items-center gap-8">
                 <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
                 <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop">المتجر</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm">🏪 الماركات</a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
                 <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
             
@@ -81,7 +84,7 @@
             <div class="flex items-center gap-3 md:gap-5">
                 <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
                 <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
-                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول" id="userNavLink">👤</a>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
                     <span class="text-xl">🛍️</span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
@@ -92,8 +95,14 @@
     </nav>
 
     <!-- Page Header -->
-    <section class="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto text-center space-y-3">
+    <section class="pt-32 pb-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-sm text-stone-400 mb-4" id="breadcrumbs">
+                <a href="home.html" class="hover:text-amber-600 transition">Home</a>
+                <span class="mx-1">›</span>
+                <span class="text-stone-600 font-medium">Shop</span>
+            </div>
+            <div class="text-center space-y-3">
             <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle">✨ تشكيلة كاملة</span>
             <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">متجر VORA</h1>
             <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc">تصفح جميع عطورنا الفاخرة، وفلتر حسب الفئة والسعر لتجد توقيعك العطري</p>
@@ -315,6 +324,9 @@
                         <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
                         <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
                         <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
+                        <li><a href="return-policy.html" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy">سياسة الإرجاع</a></li>
+                        <li><a href="tracking.html" class="hover:text-[var(--primary)] transition">📦 تتبع الطلب</a></li>
+                        <li><a href="account.html" class="hover:text-[var(--primary)] transition">👤 حسابي</a></li>
                     </ul>
                 </div>
                 <div>

@@ -29,8 +29,9 @@
         <div class="menu-link active" onclick="navigateTo('home.html')">🏠 Home</div>
         <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
         <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
-        <div class="menu-link" onclick="navigateTo('shop.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
         <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="navigateTo('about.html')">📖 About</div>
         <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
         <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
         <div class="border-t border-white/10 my-2"></div>
@@ -58,7 +59,7 @@
             
             <!-- Mobile: Left - Profile + Menu -->
             <div class="flex md:hidden items-center gap-2">
-                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول" id="userNavMobile">👤</a>
                 <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
             </div>
             
@@ -74,6 +75,8 @@
             <div class="hidden md:flex items-center gap-8">
                 <a href="home.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navHome">الرئيسية</a>
                 <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm">🏪 الماركات</a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
                 <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">⚙️ الإدارة</a>
             </div>
             
@@ -81,7 +84,7 @@
             <div class="flex items-center gap-3 md:gap-5">
                 <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg">🔍</button>
                 <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
-                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول">👤</a>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg" title="تسجيل الدخول" id="userNavLink">👤</a>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
                     <span class="text-xl">🛍️</span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full w-4.5 h-4.5 flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
@@ -182,23 +185,23 @@
     </section>
 
     <!-- Features Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <section class="py-8 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
-                    <div class="text-4xl">🚚</div>
-                    <h3 class="font-bold text-lg text-stone-900" data-i18n="featShippingTitle">شحن سريع</h3>
-                    <p class="text-stone-600 text-sm" data-i18n="featShippingDesc">توصيل إلى جميع المحافظات خلال 48 ساعة</p>
+            <div class="flex flex-nowrap gap-1.5 justify-center overflow-x-auto scrollbar-hide">
+                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
+                    <div class="text-xl">🚚</div>
+                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featShippingTitle">شحن سريع</h3>
+                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featShippingDesc">توصيل إلى جميع المحافظات خلال 48 ساعة</p>
                 </div>
-                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
-                    <div class="text-4xl">💳</div>
-                    <h3 class="font-bold text-lg text-stone-900" data-i18n="featPaymentTitle">دفع آمن</h3>
-                    <p class="text-stone-600 text-sm" data-i18n="featPaymentDesc">تشفير عالي وطرق دفع متعددة</p>
+                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
+                    <div class="text-xl">💳</div>
+                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featPaymentTitle">دفع آمن</h3>
+                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featPaymentDesc">تشفير عالي وطرق دفع متعددة</p>
                 </div>
-                <div class="text-center space-y-3 p-6 rounded-xl hover:bg-amber-50 transition">
-                    <div class="text-4xl">🎁</div>
-                    <h3 class="font-bold text-lg text-stone-900" data-i18n="featPackagingTitle">تغليف فاخر</h3>
-                    <p class="text-stone-600 text-sm" data-i18n="featPackagingDesc">عطرك يستحق تغليفاً يليق به</p>
+                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
+                    <div class="text-xl">🎁</div>
+                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featPackagingTitle">تغليف فاخر</h3>
+                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featPackagingDesc">عطرك يستحق تغليفاً يليق به</p>
                 </div>
             </div>
         </div>
@@ -222,6 +225,14 @@
                     عرض كل التشكيلة ←
                 </a>
             </div>
+        </div>
+    </section>
+
+    <!-- Bundle Offers -->
+    <section id="bundlesSection" class="py-16 px-4 sm:px-6 lg:px-8 bg-white" style="display:none;">
+        <div class="max-w-7xl mx-auto">
+            <div class="section-divider mb-8"><span id="bundlesSectionTitle">🎁 عروض الحزم</span></div>
+            <div id="bundlesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </section>
 
@@ -270,6 +281,18 @@
             <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">
                 حسناً
             </button>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="quick-view-modal">
+        <div class="overlay" onclick="closeQuickViewHome()"></div>
+        <div class="content">
+            <button class="close-btn" onclick="closeQuickViewHome()">✕</button>
+            <div class="modal-grid">
+                <div class="modal-image"></div>
+                <div class="modal-info"></div>
+            </div>
         </div>
     </div>
 
@@ -387,6 +410,9 @@
                         <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
                         <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
                         <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
+                        <li><a href="return-policy.html" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy">سياسة الإرجاع</a></li>
+                        <li><a href="tracking.html" class="hover:text-[var(--primary)] transition">📦 تتبع الطلب</a></li>
+                        <li><a href="account.html" class="hover:text-[var(--primary)] transition">👤 حسابي</a></li>
                     </ul>
                 </div>
                 <div>

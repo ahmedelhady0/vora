@@ -5,6 +5,7 @@ const TRANSLATIONS = {
         // Nav
         navHome: 'الرئيسية',
         navShop: 'المتجر',
+        navAbout: 'عن المتجر',
         navAdmin: 'الإدارة',
         navLogout: 'خروج',
         // Search
@@ -64,6 +65,7 @@ const TRANSLATIONS = {
         // Product Card
         addToCart: 'أضف للسلة',
         outOfStock: 'نفد من المخزون',
+        inStock: 'متوفر',
         outOfStockBadge: 'نفد',
         newBadge: 'جديد',
         saleBadge: 'تخفيض',
@@ -142,12 +144,25 @@ const TRANSLATIONS = {
         // Brand Slider
         brandVora: 'VORA',
         currency: 'ج.م',
+        man: 'رجل',
+        woman: 'امرأة',
+        unisex: 'للجنسين',
+        vendor: 'البائع',
+        subtotal: 'المجموع الفرعي',
+        buyNow: 'اشتري الآن',
+        hurryText: 'أسرع! لم يتبق سوى {n} قطع',
+        additionalInfo: 'معلومات إضافية',
+        size: 'الحجم',
+        category: 'الفئة',
+        brand: 'الماركة',
+        returnPolicy: 'سياسة الإرجاع',
     },
     en: {
         lang: 'en',
         dir: 'ltr',
         navHome: 'Home',
         navShop: 'Shop',
+        navAbout: 'About',
         navAdmin: 'Admin',
         navLogout: 'Logout',
         searchPlaceholder: 'Search for a perfume...',
@@ -199,6 +214,7 @@ const TRANSLATIONS = {
         shopHeaderDesc: 'Browse all our luxury perfumes, filter by category and price to find your scent signature',
         addToCart: 'Add to Cart',
         outOfStock: 'Out of Stock',
+        inStock: 'In Stock',
         outOfStockBadge: 'Sold Out',
         newBadge: 'New',
         saleBadge: 'Sale',
@@ -269,6 +285,18 @@ const TRANSLATIONS = {
         adminSaved: 'All settings saved successfully!',
         brandVora: 'VORA',
         currency: 'EGP',
+        man: 'Man',
+        woman: 'Woman',
+        unisex: 'Unisex',
+        vendor: 'Vendor',
+        subtotal: 'Subtotal',
+        buyNow: 'Buy Now',
+        hurryText: 'Hurry! Only {n} left',
+        additionalInfo: 'Additional Information',
+        size: 'Size',
+        category: 'Category',
+        brand: 'Brand',
+        returnPolicy: 'Return Policy',
     }
 };
 

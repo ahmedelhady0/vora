@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - عن المتجر | عطور فاخرة</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+</head>
+<body class="bg-stone-50">
+    <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu">
+        <div class="menu-header">
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase">Menu</span>
+            <button onclick="closeMobileMenu()">✕</button>
+        </div>
+        <div class="menu-link" onclick="navigateTo('index.html')">👤 Profile</div>
+        <div class="menu-link" onclick="navigateTo('home.html')">🏠 Home</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
+        <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
+        <div class="border-t border-white/10 my-2"></div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')">🔑 Sign in</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')">📝 Create an account</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium">🌐 EN</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();">🚪 Logout</div>
+    </div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex md:hidden items-center gap-2">
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+                <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
+            </div>
+            <div class="flex flex-col items-center md:items-start md:flex-1">
+                <a href="home.html" id="navLogo" class="text-center md:text-right">
+                    <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="about.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navAbout">عن المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm">⚙️ الإدارة</a>
+            </div>
+            <div class="flex items-center gap-3 md:gap-5">
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">About VORA</span>
+                <h1 class="text-4xl lg:text-5xl font-bold text-stone-900 mt-3" style="font-family:'Playfair Display',serif;">قصتنا</h1>
+                <div class="w-16 h-0.5 bg-gradient-to-r from-amber-600 to-amber-400 mx-auto mt-6 rounded"></div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 md:p-12">
+                <div class="max-w-3xl mx-auto space-y-8">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-3xl">🌿</span>
+                        </div>
+                        <p class="text-lg md:text-xl text-stone-700 leading-relaxed" style="font-family:'Playfair Display',serif;font-style:italic;">
+                            "A fragrance is more than a scent — it's an experience."
+                        </p>
+                    </div>
+
+                    <p class="text-stone-600 leading-relaxed text-base md:text-lg">
+                        At VORA, we believe that a great fragrance is more than a scent — it's an experience. That's why we carefully import original Gulf perfumes from trusted suppliers and deliver them to customers across Egypt with complete confidence.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-stone-100">
+                        <div class="text-center p-6 rounded-2xl bg-amber-50/50">
+                            <span class="text-3xl">🛩️</span>
+                            <h3 class="font-bold text-stone-900 mt-3">استيراد مباشر</h3>
+                            <p class="text-sm text-stone-500 mt-2">نستورد العطور الأصلية من موردين موثوقين في الخليج</p>
+                        </div>
+                        <div class="text-center p-6 rounded-2xl bg-amber-50/50">
+                            <span class="text-3xl">✅</span>
+                            <h3 class="font-bold text-stone-900 mt-3">جودة مضمونة</h3>
+                            <p class="text-sm text-stone-500 mt-2">جميع المنتجات أصلية 100% ومضمونة</p>
+                        </div>
+                        <div class="text-center p-6 rounded-2xl bg-amber-50/50">
+                            <span class="text-3xl">🚚</span>
+                            <h3 class="font-bold text-stone-900 mt-3">توصيل لكل مصر</h3>
+                            <p class="text-sm text-stone-500 mt-2">نوصل طلبك لباب البيت بثقة وأمان</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer" class="bg-stone-900 text-stone-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="text-2xl font-bold text-white tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+            <p class="text-xs text-stone-500 mt-3">© 2026 VORA. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openMobileMenu() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+        function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; }
+        window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
+        window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.applyTranslations) applyTranslations();
+        });
+        document.addEventListener('langchange', () => {
+            if (window.applyTranslations) applyTranslations();
+        });
+    </script>
+</body>
+</html>

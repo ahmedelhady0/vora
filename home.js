@@ -8,15 +8,24 @@ const BOTTLE_SVG = `
     <line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
 </svg>`;
 
+let allProducts = [];
+
 const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (userData && (userData.role === 'admin' || userData.role === 'manager')) {
-    document.addEventListener("DOMContentLoaded", () => {
-        const el = document.getElementById('adminNavLink');
-        if (el) el.classList.remove('hidden');
-        const mob = document.getElementById('adminNavMobile');
-        if (mob) mob.classList.remove('hidden');
-    });
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem('vora_user'));
+    if (user) {
+        const userLink = document.getElementById('userNavLink');
+        if (userLink) { userLink.href = 'account.html'; userLink.title = 'حسابي'; }
+        const userMob = document.getElementById('userNavMobile');
+        if (userMob) { userMob.href = 'account.html'; userMob.title = 'حسابي'; }
+        if (user.role === 'admin' || user.role === 'manager') {
+            const el = document.getElementById('adminNavLink');
+            if (el) el.classList.remove('hidden');
+            const mob = document.getElementById('adminNavMobile');
+            if (mob) mob.classList.remove('hidden');
+        }
+    }
+});
 
 function getSettings() {
     const local = JSON.parse(localStorage.getItem('vora_settings'));
@@ -71,6 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLogo();
     applyFooterSettings();
     loadProducts();
+    updateUserNav();
     document.querySelectorAll('.btn-primary, .btn-secondary, .btn, button.bg-gradient-to-r').forEach(el => {
         el.classList.add('ripple-btn');
         el.addEventListener('click', function(e) {
@@ -150,9 +160,10 @@ function loadBanners() {
 // ===== Hero Section Dynamic =====
 function loadHeroSettings() {
     const s = getSettings();
+    const lang = getLang();
     document.getElementById('heroBadgeText').textContent = s.heroBadge || t('heroBadge');
     document.getElementById('heroTitleText').textContent = s.heroTitle || t('heroTitle');
-    document.getElementById('heroSubText').textContent = s.heroSubtitle || t('heroSubtitle');
+    document.getElementById('heroSubText').textContent = lang === 'ar' ? (s.heroSubtitleAr || t('heroSubtitle')) : (s.heroSubtitleEn || t('heroSubtitle'));
     if (s.heroImage) {
         const img = document.getElementById('heroCustomImage');
         img.src = s.heroImage;
@@ -164,6 +175,7 @@ function loadHeroSettings() {
 document.addEventListener('langchange', () => {
     loadHeroSettings();
     loadBanners();
+    renderBundles();
     updateCartCount();
     applyFooterSettings();
     const text = getLang() === 'ar' ? 'EN' : 'AR';
@@ -201,6 +213,53 @@ function applyFooterSettings() {
         ig.innerHTML = t('footerInstagramLabel') + ' <a href="https://instagram.com/' + handle + '" target="_blank" rel="noopener" class="hover:text-[var(--primary)] transition">@' + handle + '</a>';
     }
 }
+
+// ===== Quick View =====
+window.quickViewHome = function(id) {
+    const prod = allProducts.find(p => p.id === id);
+    if (!prod) return;
+    const modal = document.getElementById('quickViewModal');
+    if (!modal) return;
+    const imageContent = prod.image
+        ? `<img src="${prod.image}" alt="${prod.name}" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        : '';
+
+    modal.querySelector('.modal-image').innerHTML = `
+        ${imageContent}
+        <div class="qv-fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+            ${BOTTLE_SVG}
+        </div>
+    `;
+    const stock = prod.stock ?? 50;
+    const outOfStock = stock <= 0;
+    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('inStock')}</span>`;
+
+    modal.querySelector('.modal-info').innerHTML = `
+        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.vendor || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>
+        <h2>${prod.name}</h2>
+        ${stockLabel}
+        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"★".repeat(Math.round(parseFloat(prod.rating)))+"☆".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
+        <div class="modal-price">
+            ${prod.price} ${t('currency')}
+            ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
+        </div>
+        <p class="modal-desc">${prod.description || ''}</p>
+        <div class="flex gap-2 mt-3">
+            ${!outOfStock ? `<button class="modal-add-btn flex-1" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}); closeQuickViewHome();">
+                ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
+            </button>` : ''}
+            <button onclick="shareOnWhatsApp('${prod.name}', ${prod.price}, '${(prod.image || '').replace(/'/g, "\\'")}')" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold flex items-center gap-1">📱</button>
+        </div>`;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    trackRecentlyViewed(prod.id);
+};
+
+window.closeQuickViewHome = function() {
+    const modal = document.getElementById('quickViewModal');
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+};
 
 // ===== Mobile Menu =====
 window.openMobileMenu = function() {
@@ -241,8 +300,8 @@ window.liveSearch = function(q) {
         return;
     }
     results.innerHTML = matches.slice(0, 8).map(p => `
-        <a class="search-result-item" href="shop.html" onclick="closeSearchOverlay()">
-            <div class="result-icon">🧴</div>
+        <a class="search-result-item" href="product.html?id=${p.id}" onclick="closeSearchOverlay()">
+            <div class="result-icon">${p.image ? '<img src="'+p.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
             <div class="result-info">
                 <p>${p.name}</p>
                 <span>${p.category || ''}</span>
@@ -340,7 +399,7 @@ function buildHomeCard(prod, index) {
     const groupHtml = !outOfStock ? `
         <div class="card-product__group group-left">
             <button onclick="toggleWishlistHome('${safeId}', '${safeName}', ${prod.price})" title="المفضلة">🤍</button>
-            <button onclick="window.location.href='shop.html'" title="عرض سريع">👁️</button>
+            <button onclick="quickViewHome('${safeId}')" title="عرض سريع">👁️</button>
         </div>` : '';
 
     card.innerHTML = `
@@ -350,7 +409,7 @@ function buildHomeCard(prod, index) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="shop.html" title="${prod.name}"></a>
+            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
@@ -360,8 +419,8 @@ function buildHomeCard(prod, index) {
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="shop.html">${prod.brand || prod.category || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="shop.html"><span class="text">${prod.name}</span></a>
+                <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${prod.name}</span></a>
                 <div class="rating-row"><span class="stars">${stars}</span></div>
                 <div class="card-price">
                     <span class="price-current">${prod.price} ${t('currency')}</span>
@@ -392,6 +451,7 @@ async function loadProducts() {
     renderHomeSkeletons(container);
     try {
         const products = await getProducts();
+        allProducts = products;
         container.innerHTML = "";
 
         if (products.length === 0) {
@@ -480,6 +540,7 @@ async function loadProducts() {
         console.error('Error loading products:', err);
         container.innerHTML = `<p class="text-red-500 text-center w-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
     }
+    renderBundles();
 }
 
 let wishlistHome = JSON.parse(localStorage.getItem('vora_wishlist')) || [];
@@ -646,5 +707,90 @@ window.subscribeNewsletter = function() {
     document.getElementById('newsletterEmail').value = '';
     showMessage(`✅ ${t('footerSubSuccess')}`);
 };
+
+function renderBundles() {
+    const section = document.getElementById('bundlesSection');
+    const grid = document.getElementById('bundlesGrid');
+    if (!section || !grid) return;
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const bundles = settings.bundles || [];
+    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    if (bundles.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    const lang = getLang();
+    const title = lang === 'ar' ? '🎁 عروض الحزم' : '🎁 Bundle Offers';
+    document.getElementById('bundlesSectionTitle').textContent = title;
+    grid.innerHTML = bundles.map(bundle => {
+        const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
+        const img = bundleProds.find(p => p.image)?.image || '';
+        const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
+        const savings = total - bundle.price;
+        return `
+        <div class="bg-gradient-to-br from-amber-50 to-pink-50 rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="aspect-video bg-white flex items-center justify-center p-4">
+                ${img ? `<img src="${img}" alt="${bundle.name}" class="max-w-full max-h-full object-contain">` : '<span class="text-5xl text-amber-600 opacity-40">🎁</span>'}
+            </div>
+            <div class="p-4 space-y-2">
+                <h3 class="font-bold text-stone-900 text-lg" style="font-family:'Playfair Display',serif;">${bundle.name}</h3>
+                ${bundle.description ? `<p class="text-sm text-stone-500">${bundle.description}</p>` : ''}
+                ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${lang === 'ar' ? `وفر ${savings} ${t('currency')}` : `Save ${savings} ${t('currency')}`}</p>` : ''}
+                <div class="flex items-center justify-between pt-2">
+                    <span class="text-xl font-bold text-amber-600">${bundle.price} ${t('currency')}</span>
+                    <button onclick='addBundleToCart(${JSON.stringify(bundle).replace(/'/g, "\\'")})' class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold hover:bg-amber-700 transition">${t('addToCart')}</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+window.addBundleToCart = function(bundle) {
+    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
+    if (bundleProds.length === 0) { showMessage('⚠️ المنتجات غير متوفرة'); return; }
+    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    const bundleItem = { id: 'bundle_' + Date.now(), name: bundle.name, price: bundle.price, qty: 1, isBundle: true, productIds: bundle.products };
+    cart.push(bundleItem);
+    localStorage.setItem('vora_cart', JSON.stringify(cart));
+    updateCartCount();
+    showMessage(`✅ تمت إضافة "${bundle.name}" إلى السلة`);
+};
+
+function trackRecentlyViewed(id) {
+    let viewed = JSON.parse(localStorage.getItem('vora_recently_viewed')) || [];
+    viewed = viewed.filter(v => v !== id);
+    viewed.unshift(id);
+    if (viewed.length > 10) viewed = viewed.slice(0, 10);
+    localStorage.setItem('vora_recently_viewed', JSON.stringify(viewed));
+}
+
+window.shareOnWhatsApp = function(name, price, image) {
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const wa = settings.whatsapp || '201000000000';
+    const lang = getLang();
+    const msg = lang === 'ar'
+        ? `👋 مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
+        : `👋 Hello! I'd like to ask about: ${name} (${price} EGP)`;
+    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+function updateUserNav() {
+    const user = JSON.parse(localStorage.getItem('vora_user'));
+    const desktopEl = document.getElementById('userNavLink');
+    const mobileEl = document.getElementById('userNavMobile');
+    if (user && user.username) {
+        const name = user.username.length > 10 ? user.username.substring(0, 10) + '…' : user.username;
+        if (desktopEl) {
+            desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`;
+            desktopEl.href = 'home.html';
+        }
+        if (mobileEl) {
+            mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`;
+            mobileEl.href = 'home.html';
+        }
+    } else {
+        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'index.html'; }
+        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'index.html'; }
+    }
+}
 
 

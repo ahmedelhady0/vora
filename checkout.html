@@ -131,6 +131,16 @@
                     <div id="orderItems" class="space-y-3 border-b border-stone-200 pb-4 mb-4">
                         <!-- Items will be loaded here -->
                     </div>
+                    <div class="space-y-4 border-b border-stone-200 pb-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1.5">🏷️ كود الخصم</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="couponCode" placeholder="أدخل الكود" class="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm">
+                                <button onclick="applyCoupon()" class="px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition text-sm">تطبيق</button>
+                            </div>
+                            <p id="couponMessage" class="text-xs mt-1 hidden"></p>
+                        </div>
+                    </div>
                     <div class="space-y-2 text-stone-700">
                         <div class="flex justify-between">
                             <span>المجموع الفرعي:</span>
@@ -139,6 +149,10 @@
                         <div class="flex justify-between">
                             <span>مصاريف الشحن:</span>
                             <span id="shippingCost">اختر المحافظة</span>
+                        </div>
+                        <div class="flex justify-between text-green-600" id="discountRow" style="display:none;">
+                            <span>الخصم:</span>
+                            <span id="discountAmount">-0 ج.م</span>
                         </div>
                         <div class="flex justify-between font-bold text-lg text-stone-900 pt-4 border-t border-stone-200">
                             <span>المجموع النهائي:</span>

@@ -86,6 +86,7 @@
                     <span>الإجمالي المدفوع:</span>
                     <span>${order.total} ج.م</span>
                 </div>
+                <a href="tracking.html?orderId=${order.orderId}" class="block mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-semibold">📦 تتبع الطلب</a>
             `;
         } else {
             el.innerHTML = `<p class="text-stone-500 text-sm">لا توجد تفاصيل متاحة. يمكنك متابعة طلباتك عبر التواصل معنا.</p>`;

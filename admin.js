@@ -76,6 +76,13 @@ window.previewLoginLogo = function(e) {
     reader.readAsDataURL(file);
 };
 
+window.removeHeroImage = function() {
+    uploadedHeroImage = "";
+    document.getElementById('heroImagePreview').classList.add('hidden');
+    document.getElementById('heroPreviewImg').src = "";
+    document.getElementById('heroUploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة الزجاجة';
+};
+
 window.addSlideshowImages = function(e) {
     const files = e.target.files;
     for (const file of files) {
@@ -178,6 +185,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadSettings();
     initShippingRates();
     initCodGrid();
+    initCoupons();
+    initBundles();
 });
 
 window.switchTab = function(tabId) {
@@ -200,26 +209,55 @@ async function loadAdminOrders() {
         const orders = await getOrders();
         tbody.innerHTML = "";
         if (orders.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-stone-400">لا توجد طلبات حتى الآن.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-stone-400">لا توجد طلبات حتى الآن.</td></tr>`;
             return;
         }
         orders.forEach(order => {
             const row = document.createElement('tr');
             row.className = "border-b border-stone-100 hover:bg-stone-50";
             row.innerHTML = `
-                <td class="p-3 text-stone-500 text-xs">${order.date || ''}</td>
-                <td class="p-3 font-semibold text-stone-900">${order.customerName}</td>
-                <td class="p-3 text-stone-600" dir="ltr">${order.customerPhone}</td>
-                <td class="p-3 text-stone-600 text-xs max-w-xs truncate" title="${order.items}">${order.items}</td>
-                <td class="p-3 font-bold text-amber-600">${order.total} EGP</td>
-                <td class="p-3"><span class="px-2 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800">${order.status || 'قيد المراجعة'}</span></td>
+                <td class="p-3 font-mono text-[10px] text-stone-400">${order.orderId || '—'}</td>
+                <td class="p-3 text-stone-500 text-xs whitespace-nowrap">${order.date || ''}</td>
+                <td class="p-3 font-semibold text-stone-900 text-xs">${order.customerName}</td>
+                <td class="p-3 text-stone-600 text-xs" dir="ltr">${order.customerPhone}</td>
+                <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${order.items}">${order.items}</td>
+                <td class="p-3 font-bold text-amber-600 text-xs">${order.total} EGP</td>
+                <td class="p-3">
+                    <select onchange="updateOrderField('${order.orderId}','status',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 bg-white">
+                        <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
+                        <option value="قيد التجهيز" ${order.status === 'قيد التجهيز' ? 'selected' : ''}>قيد التجهيز</option>
+                        <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>تم الشحن</option>
+                        <option value="تم التسليم" ${order.status === 'تم التسليم' ? 'selected' : ''}>تم التسليم</option>
+                        <option value="ملغي" ${order.status === 'ملغي' ? 'selected' : ''}>ملغي</option>
+                    </select>
+                </td>
+                <td class="p-3">
+                    <input type="text" value="${order.trackingId || ''}" placeholder="رقم التتبع" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
+                </td>
+                <td class="p-3">
+                    <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">📋 نسخ</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500">حدث خطأ أثناء تحميل الطلبات.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-red-500">حدث خطأ أثناء تحميل الطلبات.</td></tr>`;
     }
 }
+
+window.updateOrderField = function(orderId, field, value) {
+    let orders = JSON.parse(localStorage.getItem('vora_orders')) || [];
+    const idx = orders.findIndex(o => o.orderId === orderId);
+    if (idx === -1) return;
+    orders[idx][field] = value;
+    localStorage.setItem('vora_orders', JSON.stringify(orders));
+    showMessage('✅ تم التحديث');
+};
+
+window.copyTrackingLink = function(orderId) {
+    const link = window.location.origin + '/tracking.html?orderId=' + orderId;
+    navigator.clipboard.writeText(link).then(() => showMessage('✅ تم نسخ رابط التتبع'));
+};
 
 // معاينة محلية ذكية وسريعة للصورة المحددة للمنتج
 window.previewImage = function(e) {
@@ -237,13 +275,14 @@ window.previewImage = function(e) {
 
 window.saveProduct = async function() {
     const name = document.getElementById('prodName').value.trim();
-    const brand = document.getElementById('prodBrand').value.trim() || 'VORA';
-    const category = document.getElementById('prodCategory').value.trim();
     const size = document.getElementById('prodSize').value;
     const price = parseFloat(document.getElementById('prodPrice').value);
     const stock = parseInt(document.getElementById('prodStock').value) || 0;
     const discountPercent = parseFloat(document.getElementById('prodDiscountPercent').value) || 0;
     const description = document.getElementById('prodDesc').value.trim();
+    const vendor = document.getElementById('prodVendor').value.trim();
+    const gender = document.getElementById('prodGender').value;
+    const additionalInfo = document.getElementById('prodAdditionalInfo').value.trim();
     
     const sections = [];
     if (document.getElementById('sct_bestSellers').checked) sections.push('best-sellers');
@@ -252,7 +291,7 @@ window.saveProduct = async function() {
     if (document.getElementById('sct_unisex').checked) sections.push('unisex');
     if (document.getElementById('sct_newArrivals').checked) sections.push('new-arrivals');
     
-    if (!name || !category || !price) return showMessage("يرجى ملء: الاسم، الفئة، والسعر");
+    if (!name || !price) return showMessage("يرجى ملء الاسم والسعر");
 
     let originalPrice = null;
     if (discountPercent > 0) {
@@ -273,13 +312,14 @@ window.saveProduct = async function() {
         }
 
         const prodData = {
-            name, brand, category, size, price, stock, description,
+            name, size, price, stock, description,
             image: finalImageUrl,
             originalPrice: originalPrice || "",
-            discount: discountPercent > 0 ? true : false,
+            discount: !!(originalPrice || discountPercent > 0),
             discountPercent: discountPercent,
             sections: sections,
-            rating: 5, ratingCount: 1
+            rating: 5, ratingCount: 1,
+            vendor, gender, additionalInfo
         };
 
         let response;
@@ -306,14 +346,15 @@ window.editProduct = async function(id) {
 
     editingProductId = id; 
     document.getElementById('prodName').value = prod.name || '';
-    document.getElementById('prodBrand').value = prod.brand || 'VORA';
-    document.getElementById('prodCategory').value = prod.category || '';
     if (prod.size) document.getElementById('prodSize').value = prod.size;
     document.getElementById('prodPrice').value = prod.price || '';
     document.getElementById('prodOriginalPrice').value = prod.originalPrice || '';
     document.getElementById('prodStock').value = prod.stock ?? 50;
     document.getElementById('prodDiscountPercent').value = prod.discountPercent || '';
     document.getElementById('prodDesc').value = prod.description || '';
+    document.getElementById('prodVendor').value = prod.vendor || '';
+    if (prod.gender) document.getElementById('prodGender').value = prod.gender;
+    document.getElementById('prodAdditionalInfo').value = prod.additionalInfo || '';
     
     // Populate section checkboxes
     const prodSections = prod.sections || [];
@@ -381,13 +422,13 @@ function clearForm() {
     editingProductId = null;
     uploadedImageData = "";
     window.selectedProductFile = null;
-    ['prodName', 'prodCategory', 'prodPrice', 'prodDesc', 'prodOriginalPrice', 'prodDiscountPercent', 'prodStock', 'prodBrand'].forEach(id => {
+    ['prodName', 'prodPrice', 'prodDesc', 'prodOriginalPrice', 'prodDiscountPercent', 'prodStock', 'prodVendor', 'prodAdditionalInfo'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = "";
     });
     document.getElementById('prodStock').value = "50";
-    document.getElementById('prodBrand').value = "VORA";
     document.getElementById('prodSize').value = "50ml";
+    document.getElementById('prodGender').value = "";
     document.getElementById('formTitle').textContent = '➕ إضافة عطر جديد';
     document.getElementById('saveProductBtn').innerHTML = '💾 حفظ العطر';
     document.getElementById('cancelEditBtn').classList.add('hidden');
@@ -453,7 +494,10 @@ async function loadSettings() {
     
     if (s.heroBadge) document.getElementById('hero_badge').value = s.heroBadge;
     if (s.heroTitle) document.getElementById('hero_title').value = s.heroTitle;
-    if (s.heroSubtitle) document.getElementById('hero_subtitle').value = s.heroSubtitle;
+    if (s.heroSubtitleAr) document.getElementById('hero_subtitle_ar').value = s.heroSubtitleAr;
+    if (s.heroSubtitleEn) document.getElementById('hero_subtitle_en').value = s.heroSubtitleEn;
+    if (s.returnPolicyAr) document.getElementById('set_returnPolicyAr').value = s.returnPolicyAr;
+    if (s.returnPolicyEn) document.getElementById('set_returnPolicyEn').value = s.returnPolicyEn;
     if (s.heroImage) {
         uploadedHeroImage = s.heroImage;
         document.getElementById('heroPreviewImg').src = s.heroImage;
@@ -508,6 +552,91 @@ function initCodGrid() {
     `).join("");
 }
 
+function initCoupons() {
+    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    window._couponData = s.coupons || {};
+    renderCoupons();
+}
+
+function renderCoupons() {
+    const container = document.getElementById('couponsContainer');
+    if (!container) return;
+    const coupons = window._couponData || {};
+    const entries = Object.entries(coupons);
+    if (entries.length === 0) {
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد أكواد خصم مضافة</p>';
+        return;
+    }
+    container.innerHTML = entries.map(([code, discount], i) => `
+        <div class="flex items-center gap-2">
+            <input type="text" value="${code}" id="coupon_code_${i}" class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center font-bold uppercase" placeholder="الكود" dir="ltr">
+            <input type="number" value="${discount}" id="coupon_discount_${i}" class="w-20 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center" placeholder="%" min="0" max="100">
+            <span class="text-xs text-stone-400">%</span>
+            <button onclick="removeCoupon(${i})" class="text-red-500 hover:text-red-700 px-2">✕</button>
+        </div>
+    `).join('');
+}
+
+window.addCouponField = function() {
+    const coupons = window._couponData || {};
+    const key = 'NEWCODE' + (Object.keys(coupons).length + 1);
+    coupons[key] = 10;
+    window._couponData = coupons;
+    renderCoupons();
+};
+
+window.removeCoupon = function(index) {
+    const coupons = window._couponData || {};
+    const entries = Object.entries(coupons);
+    if (entries[index]) delete coupons[entries[index][0]];
+    window._couponData = coupons;
+    renderCoupons();
+};
+
+function initBundles() {
+    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    window._bundleData = s.bundles || [];
+    renderBundles();
+}
+
+function renderBundles() {
+    const container = document.getElementById('bundlesContainer');
+    if (!container) return;
+    const bundles = window._bundleData || [];
+    if (bundles.length === 0) {
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد عروض حزم مضافة</p>';
+        return;
+    }
+    container.innerHTML = bundles.map((b, i) => `
+        <div class="border border-stone-200 rounded-lg p-3 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-stone-700">عرض ${i + 1}</span>
+                <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">✕ حذف</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض">
+                <input type="number" value="${b.price || ''}" id="bundle_price_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="السعر">
+            </div>
+            <input type="text" value="${(b.products || []).join(',')}" id="bundle_products_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="معرفات المنتجات (مفصولة بفواصل)">
+            <textarea id="bundle_desc_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="وصف العرض">${b.description || ''}</textarea>
+        </div>
+    `).join('');
+}
+
+window.addBundleField = function() {
+    const bundles = window._bundleData || [];
+    bundles.push({ name: '', price: '', products: [], description: '' });
+    window._bundleData = bundles;
+    renderBundles();
+};
+
+window.removeBundle = function(index) {
+    const bundles = window._bundleData || [];
+    bundles.splice(index, 1);
+    window._bundleData = bundles;
+    renderBundles();
+};
+
 window.saveSettings = async function() {
     const settings = {
         instaName: document.getElementById('set_instaName').value.trim(),
@@ -519,10 +648,13 @@ window.saveSettings = async function() {
         loginTitle: document.getElementById('set_loginTitle').value.trim(),
         heroBadge: document.getElementById('hero_badge').value.trim(),
         heroTitle: document.getElementById('hero_title').value.trim(),
-        heroSubtitle: document.getElementById('hero_subtitle').value.trim(),
+        heroSubtitleAr: document.getElementById('hero_subtitle_ar').value.trim(),
+        heroSubtitleEn: document.getElementById('hero_subtitle_en').value.trim(),
         heroImage: uploadedHeroImage,
         logo: uploadedLogo,
         loginLogo: uploadedLoginLogo,
+        returnPolicyAr: document.getElementById('set_returnPolicyAr').value.trim(),
+        returnPolicyEn: document.getElementById('set_returnPolicyEn').value.trim(),
         slideshowImages: slideshowImages,
         banners: [0,1,2].map(i => ({
             image: uploadedBannerImages[i] || '',
@@ -533,6 +665,32 @@ window.saveSettings = async function() {
             tagStyle: document.getElementById(`bannerTagStyle${i}`)?.value.trim() || ''
         }))
     };
+
+    // Collect coupons
+    const couponInputs = document.querySelectorAll('#couponsContainer input');
+    const coupons = {};
+    for (let i = 0; i < couponInputs.length; i += 2) {
+        const code = couponInputs[i].value.trim().toUpperCase();
+        const disc = parseFloat(couponInputs[i+1].value) || 0;
+        if (code && disc > 0) coupons[code] = disc;
+    }
+    settings.coupons = coupons;
+
+    // Collect bundles
+    const bundleNames = document.querySelectorAll('[id^="bundle_name_"]');
+    const bundles = [];
+    bundleNames.forEach((el, i) => {
+        const name = el.value.trim();
+        const price = parseFloat(document.getElementById(`bundle_price_${i}`)?.value) || 0;
+        const productsStr = document.getElementById(`bundle_products_${i}`)?.value || '';
+        const products = productsStr.split(',').map(s => s.trim()).filter(Boolean);
+        const description = document.getElementById(`bundle_desc_${i}`)?.value.trim() || '';
+        if (name && price > 0 && products.length > 0) {
+            bundles.push({ name, price, products, description });
+        }
+    });
+    settings.bundles = bundles;
+
     localStorage.setItem('vora_settings', JSON.stringify(settings));
     const shipping = {};
     ALL_GOVERNORATES.forEach(gov => {

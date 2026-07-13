@@ -26,6 +26,7 @@ let sortMode = "default";
 let minPrice = null;
 let maxPrice = null;
 let activeSection = '';
+let activeVendor = null;
 
 async function loadSettingsFromCloud() {
     try {
@@ -65,10 +66,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     applyFooterSettings();
     loadProducts();
 
+    updateBreadcrumbs();
+    updateUserNav();
+
     document.addEventListener('langchange', () => {
         updateCartCount();
         applyFooterSettings();
         renderProducts();
+        updateBreadcrumbs();
         const text = getLang() === 'ar' ? 'EN' : 'AR';
         document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
     });
@@ -221,8 +226,8 @@ window.liveSearch = function(q) {
         return;
     }
     results.innerHTML = matches.slice(0, 8).map(p => `
-        <div class="search-result-item" onclick="selectSearchResult('${p.id}')">
-            <div class="result-icon">🧴</div>
+        <div class="search-result-item" onclick="closeSearchOverlay(); window.location.href='product.html?id=${p.id}'">
+            <div class="result-icon">${p.image ? '<img src="'+p.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
             <div class="result-info">
                 <p>${p.name}</p>
                 <span>${p.category || ''}</span>
@@ -279,6 +284,8 @@ function applySectionFilter() {
     if (s && ['new-arrivals','best-sellers','for-him','for-her','unisex'].includes(s)) {
         activeSection = s;
     }
+    const v = params.get('vendor');
+    if (v) activeVendor = v;
 }
 
 const SECTION_META = {
@@ -288,6 +295,26 @@ const SECTION_META = {
     'for-her': { icon: '👗', labelAr: 'For Her', labelEn: 'For Her' },
     'unisex': { icon: '🔄', labelAr: 'Unisex', labelEn: 'Unisex' }
 };
+
+function updateBreadcrumbs() {
+    const el = document.getElementById('breadcrumbs');
+    if (!el) return;
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get('section');
+    const v = params.get('vendor');
+    const lang = getLang();
+    const homeLabel = lang === 'ar' ? 'الرئيسية' : 'Home';
+    const shopLabel = lang === 'ar' ? 'المتجر' : 'Shop';
+    if (s && SECTION_META[s]) {
+        const sec = SECTION_META[s];
+        const secLabel = lang === 'ar' ? sec.labelAr : sec.labelEn;
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><a href="shop.html" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${secLabel}</span>`;
+    } else if (v) {
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><a href="shop.html" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${v}</span>`;
+    } else {
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${shopLabel}</span>`;
+    }
+}
 
 function renderSkeletons(container) {
     container.innerHTML = `<div class="products-grid">${Array.from({ length: 6 }).map(() => `
@@ -344,6 +371,9 @@ function getFilteredProducts() {
     if (activeSection) {
         list = list.filter(p => (p.sections || []).includes(activeSection));
     }
+    if (activeVendor) {
+        list = list.filter(p => (p.vendor || 'VORA').trim().toLowerCase() === activeVendor.trim().toLowerCase());
+    }
 
     switch (sortMode) {
         case "price-asc":
@@ -388,6 +418,19 @@ function renderProducts() {
                 </div>
             </div>
             <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">✕ إزالة الفلتر</button>
+        </div>`;
+    } else if (activeVendor) {
+        const label = getLang() === 'ar' ? activeVendor : activeVendor;
+        sectionHeader = `
+        <div class="w-full mb-6 pb-4 border-b border-stone-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🏪</span>
+                <div>
+                    <h2 class="text-2xl font-bold text-stone-900">${label}</h2>
+                    <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
+                </div>
+            </div>
+            <button onclick="window.clearVendorFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">✕ إزالة الفلتر</button>
         </div>`;
     }
 
@@ -468,7 +511,7 @@ function buildProductCard(prod) {
         ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
         : '';
 
-    const stockLabel = outOfStock ? '' : (stock <= 5 ? `<span style="color:#ea580c;font-weight:700;font-size:10px;">${t('lastItems')} ${stock} ${t('pieces')}</span>` : '');
+    const stockLabel = outOfStock ? '' : `<span style="color:#16a34a;font-size:10px;font-weight:600;">✓ ${t('inStock')}</span>`;
 
     const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
     const groupHtml = !outOfStock ? `
@@ -484,7 +527,7 @@ function buildProductCard(prod) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="#" onclick="quickView('${safeId}'); return false;" title="${prod.name}"></a>
+            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
@@ -494,8 +537,8 @@ function buildProductCard(prod) {
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="shop.html">${prod.brand || prod.category || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="#" onclick="quickView('${safeId}'); return false;"><span class="text">${prod.name}</span></a>
+                <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${prod.name}</span></a>
                 ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
                 <div class="card-desc">${stockLabel}</div>
                 <div class="card-price">
@@ -524,7 +567,7 @@ window.quickView = function(id) {
     `;
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
-    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('shopProducts')} ${stock}</span>`;
+    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('inStock')}</span>`;
     const safeImage = (prod.image || "").replace(/'/g, "\\'");
 
     modal.querySelector('.modal-info').innerHTML = `
@@ -537,12 +580,16 @@ window.quickView = function(id) {
             ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
         </div>
         <p class="modal-desc">${prod.description || ''}</p>
-        ${!outOfStock ? `<button class="modal-add-btn" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}, '${safeImage}'); closeQuickView();">
-            ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
-        </button>` : ''}
+        <div class="flex gap-2 mt-3">
+            ${!outOfStock ? `<button class="modal-add-btn flex-1" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}, '${safeImage}'); closeQuickView();">
+                ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
+            </button>` : ''}
+            <button onclick="shareOnWhatsApp('${prod.name}', ${prod.price}, '${safeImage}')" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold flex items-center gap-1">📱</button>
+        </div>
     `;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    trackRecentlyViewed(prod.id);
 };
 
 window.closeQuickView = function() {
@@ -580,6 +627,12 @@ function showWishlistToast(msg) {
 
 window.clearSectionFilter = function() {
     activeSection = '';
+    window.history.replaceState({}, '', window.location.pathname);
+    renderProducts();
+};
+
+window.clearVendorFilter = function() {
+    activeVendor = null;
     window.history.replaceState({}, '', window.location.pathname);
     renderProducts();
 };
@@ -740,6 +793,44 @@ window.logout = function() {
     localStorage.removeItem('vora_cart');
     window.location.href = "home.html";
 };
+
+function trackRecentlyViewed(id) {
+    let viewed = JSON.parse(localStorage.getItem('vora_recently_viewed')) || [];
+    viewed = viewed.filter(v => v !== id);
+    viewed.unshift(id);
+    if (viewed.length > 10) viewed = viewed.slice(0, 10);
+    localStorage.setItem('vora_recently_viewed', JSON.stringify(viewed));
+}
+
+window.shareOnWhatsApp = function(name, price, image) {
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const wa = settings.whatsapp || '201000000000';
+    const lang = getLang();
+    const msg = lang === 'ar'
+        ? `👋 مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
+        : `👋 Hello! I'd like to ask about: ${name} (${price} EGP)`;
+    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+function updateUserNav() {
+    const user = JSON.parse(localStorage.getItem('vora_user'));
+    const desktopEl = document.getElementById('userNavLink');
+    const mobileEl = document.getElementById('userNavMobile');
+    if (user && user.username) {
+        const name = user.username.length > 10 ? user.username.substring(0, 10) + '…' : user.username;
+        if (desktopEl) {
+            desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`;
+            desktopEl.href = 'home.html';
+        }
+        if (mobileEl) {
+            mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`;
+            mobileEl.href = 'home.html';
+        }
+    } else {
+        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'index.html'; }
+        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'index.html'; }
+    }
+}
 
 window.subscribeNewsletter = function() {
     const email = document.getElementById('newsletterEmail')?.value.trim();

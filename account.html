@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - حسابي</title>
+    <meta name="description" content="حسابي في VORA - متابعة الطلبات والعناوين المحفوظة">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+</head>
+<body class="bg-stone-50">
+    <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu">
+        <div class="menu-header">
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase">Menu</span>
+            <button onclick="closeMobileMenu()">✕</button>
+        </div>
+        <div class="menu-link" onclick="navigateTo('index.html')">👤 Profile</div>
+        <div class="menu-link" onclick="navigateTo('home.html')">🏠 Home</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="navigateTo('about.html')">📖 About</div>
+        <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
+        <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
+        <div class="border-t border-white/10 my-2"></div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')">🔑 Sign in</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')">📝 Create an account</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium">🌐 EN</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();">🚪 Logout</div>
+    </div>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex md:hidden items-center gap-2">
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+                <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
+            </div>
+            <div class="flex flex-col items-center md:items-start md:flex-1">
+                <a href="home.html" id="navLogo" class="text-center md:text-right">
+                    <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm">🏪 الماركات</a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm">⚙️ الإدارة</a>
+            </div>
+            <div class="flex items-center gap-3 md:gap-5">
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+            </div>
+        </div>
+    </nav>
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-stone-900" style="font-family:'Playfair Display',serif;" id="accountTitle">👤 حسابي</h1>
+                    <p class="text-stone-500 text-sm" id="accountWelcome">مرحباً بك في حسابك</p>
+                </div>
+                <button onclick="logout()" class="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1.5 border border-red-200 rounded-lg">🚪 تسجيل الخروج</button>
+            </div>
+
+            <div id="loginRequired" style="display:none;">
+                <div class="bg-white rounded-2xl p-12 text-center border border-stone-200">
+                    <span class="text-5xl">🔑</span>
+                    <h2 class="text-xl font-bold text-stone-900 mt-4" id="loginRequiredTitle">تسجيل الدخول مطلوب</h2>
+                    <p class="text-stone-500 text-sm mt-2" id="loginRequiredDesc">يجب تسجيل الدخول أولاً لعرض حسابك</p>
+                    <a href="index.html" class="inline-block mt-6 px-8 py-3 bg-amber-600 text-white rounded-lg font-bold">تسجيل الدخول</a>
+                </div>
+            </div>
+
+            <div id="accountContent" style="display:none;">
+                <!-- User Info -->
+                <div class="bg-white rounded-2xl p-6 border border-stone-200 mb-6">
+                    <h2 class="font-bold text-stone-900 mb-4" id="infoTitle">📋 معلوماتي</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        <div><span class="text-stone-400" id="infoUsername">اسم المستخدم:</span> <span class="font-semibold text-stone-900" id="displayUsername"></span></div>
+                        <div><span class="text-stone-400" id="infoEmail">البريد:</span> <span class="font-semibold text-stone-900" id="displayEmail"></span></div>
+                        <div><span class="text-stone-400" id="infoPhone">الهاتف:</span> <span class="font-semibold text-stone-900" id="displayPhone"></span></div>
+                    </div>
+                </div>
+
+                <!-- Addresses -->
+                <div class="bg-white rounded-2xl p-6 border border-stone-200 mb-6">
+                    <h2 class="font-bold text-stone-900 mb-4" id="addressTitle">📍 العناوين المحفوظة</h2>
+                    <div id="addressesList"><p class="text-stone-400 text-sm" id="noAddresses">لا توجد عناوين محفوظة</p></div>
+                </div>
+
+                <!-- Order History -->
+                <div class="bg-white rounded-2xl p-6 border border-stone-200">
+                    <h2 class="font-bold text-stone-900 mb-4" id="ordersTitle">📦 طلباتي السابقة</h2>
+                    <div id="ordersList"><p class="text-stone-400 text-sm" id="noOrders">لا توجد طلبات بعد</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer id="footer" class="bg-stone-900 text-stone-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="text-2xl font-bold text-white tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+            <p class="text-xs text-stone-500 mt-3">© 2026 VORA. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        function openMobileMenu() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+        function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; }
+        window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
+        window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+        function loadAccount() {
+            const user = JSON.parse(localStorage.getItem('vora_user'));
+            const required = document.getElementById('loginRequired');
+            const content = document.getElementById('accountContent');
+            if (!user) { required.style.display = 'block'; content.style.display = 'none'; return; }
+            required.style.display = 'none'; content.style.display = 'block';
+            document.getElementById('displayUsername').textContent = user.username || '—';
+            document.getElementById('displayEmail').textContent = user.email || '—';
+            document.getElementById('displayPhone').textContent = user.phone || '—';
+
+            const orders = JSON.parse(localStorage.getItem('vora_orders')) || [];
+            const list = document.getElementById('ordersList');
+            if (orders.length === 0) { list.innerHTML = '<p class="text-stone-400 text-sm">لا توجد طلبات بعد</p>'; return; }
+            const lang = localStorage.getItem('vora_lang') || 'ar';
+            list.innerHTML = orders.slice().reverse().map((o, i) => {
+                const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US') : o.date || '—';
+                const status = o.status || (lang === 'ar' ? 'قيد المراجعة' : 'Pending');
+                const total = o.total || o.subtotal || 0;
+                return `
+                <div class="border border-stone-200 rounded-lg p-4 mb-3 hover:border-amber-200 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-stone-400">${date}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">${status}</span>
+                    </div>
+                    <p class="text-sm font-semibold text-stone-900">${o.customerName || '—'}</p>
+                    <p class="text-xs text-stone-500">${o.items || ''}</p>
+                    <div class="flex items-center justify-between mt-2 pt-2 border-t border-stone-100">
+                        <span class="text-sm font-bold text-amber-600">${total} ${lang === 'ar' ? 'ج.م' : 'EGP'}</span>
+                        ${o.trackingId ? `<span class="text-[10px] text-blue-600">📦 ${lang === 'ar' ? 'تتبع: ' : 'Track: '}${o.trackingId}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            const addresses = JSON.parse(localStorage.getItem('vora_addresses')) || [];
+            const addrList = document.getElementById('addressesList');
+            if (addresses.length === 0) { addrList.innerHTML = '<p class="text-stone-400 text-sm">لا توجد عناوين محفوظة</p>'; return; }
+            addrList.innerHTML = addresses.map(a => `
+                <div class="border border-stone-200 rounded-lg p-3 mb-2 text-sm">
+                    <p class="font-semibold text-stone-900">${a.name || '—'}</p>
+                    <p class="text-stone-500 text-xs">${a.address || ''}${a.governorate ? ' - ' + a.governorate : ''}</p>
+                    <p class="text-stone-400 text-xs">${a.phone || ''}</p>
+                </div>
+            `).join('');
+        }
+        document.addEventListener('DOMContentLoaded', loadAccount);
+        document.addEventListener('langchange', loadAccount);
+    </script>
+</body>
+</html>

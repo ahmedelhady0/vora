@@ -29,23 +29,27 @@
         <!-- Orders Tab -->
         <div id="orders-tab" class="tab-content">
             <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
-                <div class="p-4 border-b border-stone-200">
+                <div class="p-4 border-b border-stone-200 flex items-center justify-between">
                     <h3 class="font-bold text-stone-900">📋 جميع الطلبات</h3>
+                    <button onclick="loadAdminOrders()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold">⟳ تحديث</button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-sm">
                         <thead>
                             <tr class="bg-stone-100 text-stone-600">
+                                <th class="p-3">رقم الطلب</th>
                                 <th class="p-3">التاريخ</th>
                                 <th class="p-3">العميل</th>
                                 <th class="p-3">الهاتف</th>
                                 <th class="p-3">المنتجات</th>
                                 <th class="p-3">الإجمالي</th>
                                 <th class="p-3">الحالة</th>
+                                <th class="p-3">رقم التتبع</th>
+                                <th class="p-3"></th>
                             </tr>
                         </thead>
                         <tbody id="adminOrdersTable">
-                            <tr><td colspan="6" class="p-8 text-center text-stone-400">جاري تحميل الطلبات...</td></tr>
+                            <tr><td colspan="9" class="p-8 text-center text-stone-400">جاري تحميل الطلبات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -59,21 +63,26 @@
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
                     <h3 class="font-bold text-stone-900 mb-4" id="formTitle">➕ إضافة عطر جديد</h3>
                     <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">اسم العطر</label>
-                                <input type="text" id="prodName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="Vora Luxury Oud">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">النوع</label>
-                                <input type="text" id="prodBrand" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="VORA" value="VORA">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">اسم العطر</label>
+                            <input type="text" id="prodName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="Vora Luxury Oud">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">الماركة</label>
-                                <input type="text" id="prodCategory" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="عطور شرقية">
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النوع (Man / Woman / Unisex)</label>
+                                <select id="prodGender" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm bg-white">
+                                    <option value="">— اختر —</option>
+                                    <option value="man">رجل (Man)</option>
+                                    <option value="woman">امرأة (Woman)</option>
+                                    <option value="unisex">للجنسين (Unisex)</option>
+                                </select>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">اسم البائع (Vendor)</label>
+                                <input type="text" id="prodVendor" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اسم المورد أو المتجر">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-stone-700 mb-1">الحجم</label>
                                 <select id="prodSize" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm bg-white">
@@ -84,28 +93,26 @@
                                     <option value="150ml">150 مل</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-stone-700 mb-1">السعر (ج.م)</label>
                                 <input type="number" id="prodPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="1250">
                             </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-stone-700 mb-1">السعر الأصلي (قبل الخصم)</label>
                                 <input type="number" id="prodOriginalPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اتركه فارغاً">
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-stone-700 mb-1">المخزون (عدد القطع)</label>
                                 <input type="number" id="prodStock" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="50" value="50" min="0">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">نسبة الخصم (%)</label>
-                                <div class="flex items-center gap-2">
-                                    <input type="number" id="prodDiscountPercent" class="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="0" min="0" max="100">
-                                    <span class="text-stone-400 text-sm">%</span>
-                                </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">نسبة الخصم (%)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="prodDiscountPercent" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="0" min="0" max="100">
+                                <span class="text-stone-400 text-sm">%</span>
                             </div>
                         </div>
                         <div>
@@ -146,6 +153,10 @@
                         <div>
                             <label class="block text-sm font-medium text-stone-700 mb-1">الوصف</label>
                             <textarea id="prodDesc" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="مكونات العطر وملاحظات..." rows="3"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">معلومات إضافية (Additional Information)</label>
+                            <textarea id="prodAdditionalInfo" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-20 resize-none" placeholder="وصف أطول، تعليمات الاستخدام، المكونات بالتفصيل..." rows="4"></textarea>
                         </div>
                         <div class="flex gap-2">
                             <button id="saveProductBtn" onclick="saveProduct()" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition text-sm uppercase tracking-wider">
@@ -231,6 +242,14 @@
                     </div>
                 </div>
 
+                <!-- Coupon Settings -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🏷️ أكواد الخصم</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف كود الخصم ونسبة الخصم مئوية (مثال: VORA10 = 10% خصم)</p>
+                    <div id="couponsContainer" class="space-y-2"></div>
+                    <button onclick="addCouponField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full">➕ إضافة كود خصم</button>
+                </div>
+
                 <!-- WhatsApp & Email -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
                     <h3 class="font-bold text-stone-900 mb-4">💬 التواصل</h3>
@@ -264,9 +283,15 @@
                                 <input type="text" id="hero_title" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اكتشف توقيعك العطري">
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي</label>
-                            <textarea id="hero_subtitle" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="عطور فاخرة تجمع بين الأصالة والحداثة..." rows="2"></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي (عربي)</label>
+                                <textarea id="hero_subtitle_ar" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="عطور فاخرة تجمع بين الأصالة والحداثة..." rows="2"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي (English)</label>
+                                <textarea id="hero_subtitle_en" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="Luxury perfumes blending authenticity and modernity..." rows="2"></textarea>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-stone-700 mb-1">صورة الزجاجة (جانب الهيرو)</label>
@@ -277,8 +302,9 @@
                                         📁 اضغط لرفع صورة الزجاجة
                                     </div>
                                 </label>
-                                <div id="heroImagePreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50">
+                                <div id="heroImagePreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 relative">
                                     <img id="heroPreviewImg" class="w-full h-full object-cover">
+                                    <button onclick="removeHeroImage()" class="absolute top-0 right-0 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center hover:bg-red-700 transition">✕</button>
                                 </div>
                             </div>
                             <p class="text-xs text-stone-400 mt-1">اتركه فارغاً لاستخدام شكل الزجاجة الافتراضي</p>
@@ -318,6 +344,30 @@
                     <h3 class="font-bold text-stone-900 mb-4">💰 محافظات الدفع عند الاستلام (COD)</h3>
                     <p class="text-xs text-stone-400 mb-3">اختر المحافظات المتاح فيها الدفع عند الاستلام</p>
                     <div id="codGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"></div>
+                </div>
+
+                <!-- Bundle Offers -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">🎁 عروض الحزم (Bundle Offers)</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف عروض مجموعة منتجات بسعر مخفض. اكتب IDs المنتجات مفصولة بفواصل.</p>
+                    <div id="bundlesContainer" class="space-y-3"></div>
+                    <button onclick="addBundleField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full">➕ إضافة عرض حزمة</button>
+                </div>
+
+                <!-- Return Policy -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="font-bold text-stone-900 mb-4">📜 سياسة الإرجاع والاستبدال</h3>
+                    <p class="text-xs text-stone-400 mb-3">محتوى صفحة سياسة الإرجاع. يظهر حسب اللغة المختارة.</p>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">النسخة العربية</label>
+                            <textarea id="set_returnPolicyAr" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-24 resize-none" placeholder="اكتب سياسة الإرجاع بالعربية..." rows="4"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">النسخة الإنجليزية</label>
+                            <textarea id="set_returnPolicyEn" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-24 resize-none" placeholder="Write the return policy in English..." rows="4"></textarea>
+                        </div>
+                    </div>
                 </div>
 
                 <button onclick="saveSettings()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition">

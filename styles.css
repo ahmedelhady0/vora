@@ -1280,6 +1280,51 @@ html { scroll-behavior: smooth; }
 }
 [dir="rtl"] .banner-tag { right: auto; left: 16px; }
 
+/* ===== Product Page Hot Stock ===== */
+.productView-hotStock.style-2 { margin-top: 4px; }
+.hotStock-text { font-size:12px; font-weight:600; color:#dc2626; display:flex; align-items:center; gap:6px; }
+.hotStock-progress { width:100%; height:6px; background:#fce8f0; border-radius:4px; margin-top:4px; overflow:hidden; }
+.hotStock-progress-item { display:block; height:100%; background:linear-gradient(90deg,#dc2626,#ef4444); border-radius:4px; transition:width 0.3s; }
+
+/* ===== Product Page Price ===== */
+.price dl { display:flex; flex-direction:column; gap:2px; margin:0; }
+.price .price__regular .price-item { font-size:28px; font-weight:800; color:#3a1a2a; }
+.price--on-sale .price__regular .price-item { font-size:16px; color:#9c7c8c; text-decoration:line-through; }
+.price--on-sale .price__sale .price-item--sale { font-size:28px; font-weight:800; color:#c25a80; }
+.price--on-sale .price__sale .price-item--regular { font-size:16px; color:#9c7c8c; }
+.price__compare { margin:0; }
+.price .unit-price { display:none; }
+.price--medium .price__regular .price-item { font-size:24px; }
+.price--medium.price--on-sale .price__regular .price-item { font-size:16px; }
+.price--medium.price--on-sale .price__sale .price-item--sale { font-size:24px; }
+
+/* ===== Product Page Subtotal ===== */
+.product-subtotal { font-size:14px; color:#3a1a2a; font-weight:600; text-align:center; }
+
+/* ===== Buy Now Button ===== */
+.buy-now-btn { background:linear-gradient(135deg,#3a1a2a,#5c2a40); color:white; border:none; border-radius:14px; padding:16px 32px; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.3s; width:100%; }
+.buy-now-btn:hover { box-shadow:0 8px 24px rgba(60,26,42,0.35); transform:translateY(-1px); }
+.buy-now-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+/* ===== Product Gender Badge ===== */
+.product-gender { display:inline-block; padding:2px 12px; border-radius:100px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.product-gender.man { background:#e0e7ff; color:#4338ca; }
+.product-gender.woman { background:#fce8f0; color:#c25a80; }
+.product-gender.unisex { background:#f0f0f0; color:#6b7280; }
+
+/* ===== Product Vendor ===== */
+.product-vendor { font-size:12px; color:#9c7c8c; font-weight:500; }
+.product-vendor span { color:#3a1a2a; font-weight:700; }
+
+/* ===== Toggle / Collapsible ===== */
+.toggleLink { display:flex; align-items:center; justify-content:space-between; padding:16px 0; cursor:pointer; border-top:1px solid #f0d0d8; font-size:14px; font-weight:700; color:#3a1a2a; transition:color 0.2s; }
+.toggleLink:hover { color:#c25a80; }
+.toggleLink .icon-dropdown svg { width:14px; height:14px; fill:currentColor; transition:transform 0.3s; }
+.toggleLink.open .icon-dropdown svg { transform:rotate(180deg); }
+.toggle-content { max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.35s ease; padding:0 0; }
+.toggle-content.open { max-height:600px; padding:8px 0 16px; }
+.toggle-content p, .toggle-content div { font-size:13px; color:#6b4c5a; line-height:1.8; }
+
 /* ===== 13. Brand Slider ===== */
 .brand-slider-section {
     background: white;

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORA - سياسة الإرجاع</title>
+    <meta name="description" content="سياسة الإرجاع والاستبدال في VORA. تعرف على شروط وأحكام إرجاع المنتجات.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+</head>
+<body class="bg-stone-50">
+    <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu">
+        <div class="menu-header">
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase">Menu</span>
+            <button onclick="closeMobileMenu()">✕</button>
+        </div>
+        <div class="menu-link" onclick="navigateTo('index.html')">👤 Profile</div>
+        <div class="menu-link" onclick="navigateTo('home.html')">🏠 Home</div>
+        <div class="menu-link" onclick="navigateTo('shop.html')">🛍️ Shop</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')">🏷️ Special offers</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')">🏪 Shop by brand</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')">🆕 New arrival</div>
+        <div class="menu-link" onclick="navigateTo('about.html')">📖 About</div>
+        <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);">📞 Contact</div>
+        <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()">⚙️ Admin</a>
+        <div class="border-t border-white/10 my-2"></div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')">🔑 Sign in</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')">📝 Create an account</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium">🌐 EN</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();">🚪 Logout</div>
+    </div>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            <div class="flex md:hidden items-center gap-2">
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+                <button onclick="openMobileMenu()" class="text-stone-700 text-xl">☰</button>
+            </div>
+            <div class="flex flex-col items-center md:items-start md:flex-1">
+                <a href="home.html" id="navLogo" class="text-center md:text-right">
+                    <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm">🏪 الماركات</a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm">⚙️ الإدارة</a>
+            </div>
+            <div class="flex items-center gap-3 md:gap-5">
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg">👤</a>
+            </div>
+        </div>
+    </nav>
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">VORA</span>
+                <h1 class="text-4xl lg:text-5xl font-bold text-stone-900 mt-3" style="font-family:'Playfair Display',serif;" id="policyTitle">سياسة الإرجاع</h1>
+                <div class="w-16 h-0.5 bg-gradient-to-r from-amber-600 to-amber-400 mx-auto mt-4 rounded"></div>
+            </div>
+            <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-8 md:p-12">
+                <div id="policyContent" class="text-stone-600 leading-relaxed text-base space-y-4">جاري تحميل سياسة الإرجاع...</div>
+            </div>
+        </div>
+    </section>
+    <footer id="footer" class="bg-stone-900 text-stone-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <span class="text-2xl font-bold text-white tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
+            <p class="text-xs text-stone-500 mt-3">© 2026 VORA. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        function openMobileMenu() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+        function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; }
+        window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
+        window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+        function loadPolicy() {
+            const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+            const lang = localStorage.getItem('vora_lang') || 'ar';
+            const content = lang === 'ar' ? (settings.returnPolicyAr || 'سيتم إضافة سياسة الإرجاع قريباً...') : (settings.returnPolicyEn || 'Return policy will be added soon...');
+            document.getElementById('policyContent').innerHTML = content.replace(/\n/g, '<br>');
+            document.getElementById('policyTitle').textContent = lang === 'ar' ? 'سياسة الإرجاع' : 'Return Policy';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPolicy();
+            if (window.applyTranslations) applyTranslations();
+        });
+        document.addEventListener('langchange', loadPolicy);
+    </script>
+</body>
+</html>
