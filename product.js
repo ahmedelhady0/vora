@@ -1,3 +1,4 @@
+﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
 
 const BOTTLE_SVG = `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="24" y="4" width="16" height="8" rx="1.5" fill="currentColor" opacity="0.7"/><path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z" stroke="currentColor" stroke-width="2" fill="none"/><line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/></svg>`;
@@ -34,9 +35,9 @@ function buildCard(prod, index) {
     const safeId = prod.id.replace(/'/g, "\\'");
     const imageContent = prod.image ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">` : '';
     let badgeHtml = "";
-    if (index === 0) badgeHtml += `<span class="badge badge-new">جديد</span>`;
+    if (index === 0) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
     if (discount > 0) badgeHtml += `<span class="badge badge-sale">-${discount}%</span>`;
-    if (outOfStock) badgeHtml += `<span class="badge badge-out">نفد</span>`;
+    if (outOfStock) badgeHtml += `<span class="badge badge-out">${t('outOfStockBadge')}</span>`;
     const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
 
     const card = document.createElement('div');
@@ -67,7 +68,7 @@ function buildCard(prod, index) {
 
 async function loadProduct() {
     const id = getProductId();
-    if (!id) { document.getElementById('productName').textContent = 'المنتج غير موجود'; return; }
+    if (!id) { document.getElementById('productName').textContent = t('prodNotFound'); return; }
 
     let products = JSON.parse(localStorage.getItem('vora_products'));
     if (!products || products.length === 0) {
@@ -77,7 +78,7 @@ async function loadProduct() {
     allProds = products || [];
 
     product = allProds.find(p => p.id === id);
-    if (!product) { document.getElementById('productName').textContent = 'المنتج غير موجود'; return; }
+    if (!product) { document.getElementById('productName').textContent = t('prodNotFound'); return; }
 
     renderProduct();
     renderRecentlyViewed();
@@ -141,7 +142,7 @@ function renderProduct() {
     const outOfStock = stock <= 0;
     document.getElementById('productStock').innerHTML = outOfStock
         ? `<span style="color:#dc2626;font-weight:700;font-size:14px;">${t('outOfStock')}</span>`
-        : `<span style="color:#16a34a;font-size:14px;">✓ ${t('inStock')}</span>`;
+        : `<span style="color:#16a34a;font-size:14px;">${Icon.check()} ${t('inStock')}</span>`;
 
     const hotStock = document.getElementById('productHotStock');
     if (!outOfStock && stock <= 5 && stock > 0) {
@@ -289,7 +290,7 @@ window.setReviewStar = function(n) {
 
 window.submitReview = function() {
     if (!reviewRating) { showMessage('⚠️ اختر تقييماً بالنجوم'); return; }
-    const name = document.getElementById('reviewName').value.trim() || 'مستخدم';
+    const name = document.getElementById('reviewName').value.trim() || t('navLogin');
     const text = document.getElementById('reviewText').value.trim();
     if (!text) { showMessage('⚠️ اكتب رأيك في المنتج'); return; }
     const allReviews = JSON.parse(localStorage.getItem('vora_reviews')) || {};
@@ -335,7 +336,7 @@ window.addToCartFromPage = function() {
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
-    showMessage(`✓ تمت إضافة "${product.name}" إلى السلة`);
+    showMessage(`${Icon.check()} تمت إضافة "${product.name}" إلى السلة`);
 };
 
 window.buyNow = function() {
@@ -363,8 +364,8 @@ window.shareOnWhatsApp = function() {
     const wa = settings.whatsapp || '201000000000';
     const lang = getLang();
     const msg = lang === 'ar'
-        ? `👋 مرحباً! أود الاستفسار عن: ${product.name} (${product.price} ج.م)`
-        : `👋 Hello! I'd like to ask about: ${product.name} (${product.price} EGP)`;
+        ? `${Icon.phone()} مرحباً! أود الاستفسار عن: ${product.name} (${product.price} ج.م)`
+        : `${Icon.phone()} Hello! I'd like to ask about: ${product.name} (${product.price} EGP)`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
@@ -390,14 +391,24 @@ function updateUserNav() {
     }
 }
 
-function openMobileMenu() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
-function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; }
+window.openMobileMenu = function() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
+window.closeMobileMenu = function() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; };
 window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
+window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
 
 window.showMessage = function(msg) {
     const box = document.getElementById('messageBox');
     const text = document.getElementById('messageText');
-    if (box && text) { text.textContent = msg; box.classList.remove('hidden'); }
+    const iconEl = document.getElementById('messageIcon');
+    if (box && text) {
+        text.innerHTML = msg;
+        if (iconEl) {
+            const isSuccess = msg.includes(t('success')) || msg.includes('✅');
+            iconEl.innerHTML = isSuccess ? Icon.check() : Icon.warning();
+            iconEl.className = 'flex justify-center text-4xl mb-2 ' + (isSuccess ? 'text-green-600' : 'text-red-500');
+        }
+        box.classList.remove('hidden');
+    }
 };
 window.hideMessage = function() { document.getElementById('messageBox').classList.add('hidden'); };
 
@@ -423,7 +434,7 @@ function renderCartDrawer() {
     const body = document.getElementById('cartDrawerBody');
     const footer = document.getElementById('cartDrawerFooter');
     if (cart.length === 0) {
-        body.innerHTML = '<div class="text-center py-16 space-y-4"><div class="text-6xl">🛍️</div><p class="font-bold text-stone-900 text-lg">السلة فارغة</p><p class="text-stone-600 text-sm">أضف بعض العطور الفاخرة إلى سلتك</p></div>';
+        body.innerHTML = `<div class="text-center py-16 space-y-4"><div class="text-6xl">🛍️</div><p class="font-bold text-stone-900 text-lg">${t('cartEmptyTitle')}</p><p class="text-stone-600 text-sm">${t('cartEmptyHint')}</p></div>`;
         footer.classList.add('hidden'); return;
     }
     footer.classList.remove('hidden');
@@ -433,7 +444,7 @@ function renderCartDrawer() {
         total += item.price * item.qty;
         const subtotal = item.price * item.qty;
         const itemSrc = item.image || (allProds.find(p => p.id === item.id)?.image) || '';
-        const drawerImage = itemSrc ? `<img src="${itemSrc}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` : BOTTLE_SVG;
+        const drawerImage = itemSrc ? `<img src="${itemSrc}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover rounded-lg">` : BOTTLE_SVG;
         const row = document.createElement('div');
         row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
         row.innerHTML = `
@@ -444,7 +455,7 @@ function renderCartDrawer() {
             <div class="flex-1 space-y-2">
                 <div>
                     <p class="font-bold text-stone-900 text-sm">${item.name}</p>
-                    <p class="text-xs text-stone-500">${item.price} ج.م</p>
+                    <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
                     <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
@@ -453,13 +464,13 @@ function renderCartDrawer() {
                 </div>
             </div>
             <div class="flex flex-col items-end justify-between">
-                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
-                <p class="font-bold text-amber-600 text-sm">${subtotal} ج.م</p>
+                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">${Icon.trash()}</button>
+                <p class="font-bold text-amber-600 text-sm">${subtotal} ${t('currency')}</p>
             </div>`;
         body.appendChild(row);
     });
-    document.getElementById('cartDrawerTotal').textContent = `${total} ج.م`;
-    document.getElementById('cartSubtotal').textContent = `${total} ج.م`;
+    document.getElementById('cartDrawerTotal').textContent = `${total} ${t('currency')}`;
+    document.getElementById('cartSubtotal').textContent = `${total} ${t('currency')}`;
 }
 window.changeDrawerQty = function(index, change) {
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];

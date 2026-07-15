@@ -1,3 +1,4 @@
+﻿import Icon from './icons.js';
 import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
 import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -105,7 +106,7 @@ function renderSlideshowAdmin() {
     container.innerHTML = slideshowImages.map((img, i) => `
         <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-stone-200 group flex-shrink-0">
             <img src="${img}" class="w-full h-full object-cover">
-            <button onclick="removeSlideshowImage(${i})" class="absolute top-1 left-1 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700">✕</button>
+            <button onclick="removeSlideshowImage(${i})" class="absolute top-1 left-1 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700">${Icon.close()}</button>
             <span class="absolute bottom-1 right-1 text-[10px] bg-black/60 text-white px-1.5 rounded-full">${i+1}</span>
         </div>
     `).join('');
@@ -158,7 +159,7 @@ function renderBannersSettings() {
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-stone-600 mb-1">نص الوسم (Tag)</label>
-                    <input type="text" id="bannerTag${i}" value="${b.tag || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="🧬 جديد">
+                    <input type="text" id="bannerTag${i}" value="${b.tag || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="${Icon.hot()} جديد">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-stone-600 mb-1">العنوان</label>
@@ -225,7 +226,7 @@ async function loadAdminOrders() {
                 <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${order.items}">${order.items}</td>
                 <td class="p-3 font-bold text-amber-600 text-xs">${order.total} EGP</td>
                 <td class="p-3">
-                    <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">📦 تفاصيل</button>
+                    <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">${Icon.pkg()} تفاصيل</button>
                 </td>
                 <td class="p-3">
                     <select onchange="updateOrderField('${order.orderId}','status',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 bg-white">
@@ -240,7 +241,7 @@ async function loadAdminOrders() {
                     <input type="text" value="${order.trackingId || ''}" placeholder="رقم التتبع" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
                 </td>
                 <td class="p-3">
-                    <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">📋 نسخ</button>
+                    <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">${Icon.clip()} نسخ</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -384,7 +385,7 @@ window.saveProduct = async function() {
         }
         
         if (response.success) {
-            showMessage(editingProductId ? `✅ تم تحديث "${name}" بنجاح!` : `✅ تم إضافة "${name}" بنجاح!`);
+            showMessage(editingProductId ? `${Icon.check()} تم تحديث "${name}" بنجاح!` : `${Icon.check()} تم إضافة "${name}" بنجاح!`);
             clearForm();
             loadProductList();
         } else showMessage(`خطأ: ${response.error}`);
@@ -451,7 +452,7 @@ window.duplicateProduct = async function(id) {
     try {
         const response = await addProduct(copy);
         if (response.success) {
-            showMessage(`✅ تم نسخ "${prod.name}" بنجاح`);
+            showMessage(`${Icon.check()} تم نسخ "${prod.name}" بنجاح`);
             loadProductList();
         } else showMessage(`خطأ: ${response.error}`);
     } catch (err) { showMessage("فشل الاتصال."); }
@@ -465,7 +466,7 @@ window.deleteProduct = async function(id) {
     try {
         const response = await deleteProductFromService(id);
         if (response.success) {
-            showMessage(`✅ تم حذف "${prod?.name || id}" بنجاح`);
+            showMessage(`${Icon.check()} تم حذف "${prod?.name || id}" بنجاح`);
             loadProductList();
             if (editingProductId === id) clearForm();
         } else showMessage(`خطأ: ${response.error}`);
@@ -505,7 +506,7 @@ async function loadProductList() {
         return;
     }
     container.innerHTML = products.map(prod => {
-        const img = prod.image ? `<img src="${prod.image}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">🧴</div>`;
+        const img = prod.image ? `<img src="${prod.image}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">${Icon.pkg()}</div>`;
         const stock = prod.stock ?? '—';
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
         const discountBadge = prod.discount && prod.discountPercent ? `<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">-${prod.discountPercent}%</span>` : '';
@@ -518,9 +519,9 @@ async function loadProductList() {
                 <p class="text-xs text-stone-400">${prod.category || '—'} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
             </div>
             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">✏️</button>
-                <button onclick="duplicateProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded transition" title="نسخ">📋</button>
-                <button onclick="deleteProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded transition" title="حذف">🗑️</button>
+                <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">${Icon.edit()}</button>
+                <button onclick="duplicateProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded transition" title="نسخ">${Icon.clip()}</button>
+                <button onclick="deleteProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded transition" title="حذف">${Icon.trash()}</button>
             </div>
         </div>`;
     }).join("");
@@ -626,7 +627,7 @@ function renderCoupons() {
             <input type="text" value="${code}" id="coupon_code_${i}" class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center font-bold uppercase" placeholder="الكود" dir="ltr">
             <input type="number" value="${discount}" id="coupon_discount_${i}" class="w-20 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center" placeholder="%" min="0" max="100">
             <span class="text-xs text-stone-400">%</span>
-            <button onclick="removeCoupon(${i})" class="text-red-500 hover:text-red-700 px-2">✕</button>
+            <button onclick="removeCoupon(${i})" class="text-red-500 hover:text-red-700 px-2">${Icon.close()}</button>
         </div>
     `).join('');
 }
@@ -665,7 +666,7 @@ function renderBundles() {
         <div class="border border-stone-200 rounded-lg p-3 space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-stone-700">عرض ${i + 1}</span>
-                <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">✕ حذف</button>
+                <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} حذف</button>
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض">
@@ -710,13 +711,13 @@ function renderBrands() {
         <div class="border border-stone-200 rounded-lg p-3 space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-stone-700">براند ${i + 1}</span>
-                <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">✕ حذف</button>
+                <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} حذف</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <input type="text" value="${b.name || ''}" id="brand_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم البراند (مثال: Dior)">
                 <div class="flex items-center gap-2">
                     <input type="file" accept="image/*" class="hidden" id="brand_file_${i}" onchange="previewBrandImage(${i}, this)">
-                    <button onclick="document.getElementById('brand_file_${i}').click()" class="px-3 py-2 border border-stone-300 rounded-lg text-sm text-stone-500 hover:text-amber-600 hover:border-amber-500 transition">📷 اختيار صورة</button>
+                    <button onclick="document.getElementById('brand_file_${i}').click()" class="px-3 py-2 border border-stone-300 rounded-lg text-sm text-stone-500 hover:text-amber-600 hover:border-amber-500 transition">${Icon.image()} اختيار صورة</button>
                     ${b.image ? `<img src="${b.image}" class="w-10 h-10 rounded object-cover border">` : ''}
                     <input type="hidden" id="brand_image_${i}" value="${b.image || ''}">
                 </div>

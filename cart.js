@@ -1,4 +1,4 @@
-// cart.js
+﻿// cart.js
 import { placeOrder } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
@@ -14,7 +14,7 @@ function renderCart() {
     const form = document.getElementById('checkoutForm');
 
     if (cart.length === 0) {
-        content.innerHTML = `<p class="text-gray-500 text-center py-12">السلة فارغة حالياً.. اذهب للرئيسية واكتشف عطورنا الفاخرة!</p>`;
+        content.innerHTML = `<p class="text-gray-500 text-center py-12">${t('cartEmptyMsg')}</p>`;
         form.classList.add('hidden');
         return;
     }
@@ -34,7 +34,7 @@ function renderCart() {
             <!-- إضافة حاوية الصورة والاسم معاً لتنسيق احترافي -->
             <div class="flex items-center gap-4 flex-1 w-full sm:w-auto text-right">
                 <!-- 👈 عنصر الصورة المحدث والرابط السحابي -->
-                <img src="${itemImage}" class="w-16 h-16 rounded-lg object-cover border border-stone-200 flex-shrink-0" alt="${item.name}">
+                <img src="${itemImage}" loading="lazy" class="w-16 h-16 rounded-lg object-cover border border-stone-200 flex-shrink-0" alt="${item.name}">
                 
                 <div class="min-w-0 flex-1">
                     <h4 class="text-base font-bold truncate" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${item.name}</h4>
@@ -95,13 +95,13 @@ window.submitOrder = async function() {
     const email = document.getElementById('customerEmail').value.trim();
 
     if (!name || !phone || !address || !email) {
-        return showMessage("يرجى ملء جميع تفاصيل الشحن والتوصيل");
+        return showMessage(t('checkoutRequired'));
     }
 
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     if (cart.length === 0) return;
 
-    const itemsSummary = cart.map(item => `${item.name} (${item.qty} قطع)`).join(' + ');
+    const itemsSummary = cart.map(item => `${item.name} (${item.qty} ${t('pieces')})`).join(' + ');
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     const orderData = {
@@ -111,25 +111,25 @@ window.submitOrder = async function() {
         customerAddress: address,
         items: itemsSummary,
         total: totalAmount,
-        status: "قيد المراجعة",
+        status: t('statusPending'),
         date: new Date().toLocaleString('ar-EG')
     };
 
-    showMessage("جاري إرسال طلبك الفاخر إلى النظام...");
+    showMessage(t('checkoutProcessing'));
 
     try {
         const response = await placeOrder(orderData);
         if (response.success) {
             localStorage.removeItem('vora_cart');
-            showMessage("تم استلام طلبك بنجاح! شكراً لاختيارك Vora ✨");
+            showMessage(t('orderSuccess'));
             setTimeout(() => {
                 window.location.href = "home.html";
             }, 2500);
         } else {
-            showMessage(`عذراً، فشل إرسال الطلب: ${response.error}`);
+            showMessage(`${t('orderFailed')}: ${response.error}`);
         }
     } catch (err) {
-        showMessage("حدث خطأ في الاتصال بالخادم، يرجى المحاولة مرة أخرى.");
+        showMessage(t('orderError'));
     }
 };
 

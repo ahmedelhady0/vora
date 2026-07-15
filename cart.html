@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,8 @@
     <title>Vora - سلة المشتريات</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="translations.js"></script>
+    <script src="translations.js" charset="utf-8"></script>
+    <script type="module" src="icons.js"></script>
 </head>
 <body class="p-4 md:p-8">
 
@@ -14,10 +15,10 @@
 
         <div class="site-header">
             <div>
-                <h1 class="brand-logo" style="font-size:1.8rem;">🛍️ السلة</h1>
-                <p class="brand-tagline">راجع عطورك المفضلة وأكمل طلبك</p>
+                <h1 class="brand-logo" style="font-size:1.8rem;" data-i18n="cartPageTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> السلة</h1>
+                <p class="brand-tagline" data-i18n="cartPageDesc">راجع عطورك المفضلة وأكمل طلبك</p>
             </div>
-            <a href="home.html" class="btn-ghost">← العودة للرئيسية</a>
+            <a href="home.html" class="btn-ghost" data-i18n="cartBackHome"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> العودة للرئيسية</a>
         </div>
 
         <div id="cartContent" class="space-y-4">
@@ -25,7 +26,7 @@
         </div>
 
         <div id="checkoutForm" class="hidden mt-8 pt-8 space-y-4" style="border-top: 1px solid var(--border);">
-            <h3 class="section-title" style="font-size:1.4rem; margin-bottom:16px;">📍 تفاصيل الشحن والتوصيل</h3>
+            <h3 class="section-title" style="font-size:1.4rem; margin-bottom:16px;"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> تفاصيل الشحن والتوصيل</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" id="customerName" class="input-field w-full" placeholder="الاسم بالكامل">
@@ -37,7 +38,7 @@
 
             <div class="p-6 rounded mt-6 space-y-2" style="background: var(--bg-warm);">
                 <div class="flex justify-between" style="color: var(--text-primary);">
-                    <span>إجمالي المنتجات:</span>
+                    <span data-i18n="cartDrawerSubtotal">إجمالي المنتجات:</span>
                     <span id="subtotalPrice">0 ج.م</span>
                 </div>
                 <div class="flex justify-between" style="color: var(--text-primary);">
@@ -45,13 +46,13 @@
                     <span class="font-medium" style="color: var(--primary);">مكافأة (شحن مجاني)</span>
                 </div>
                 <div class="flex justify-between text-xl font-bold pt-2" style="color: var(--text-primary); border-top: 1px solid var(--primary);">
-                    <span>المجموع النهائي:</span>
+                    <span data-i18n="cartTotalFinal">المجموع النهائي:</span>
                     <span id="totalPrice">0 ج.م</span>
                 </div>
             </div>
 
             <button onclick="submitOrder()" class="btn-primary w-full py-4 text-lg mt-6">
-                🚀 تأكيد الطلب وإرساله
+                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> <span data-i18n="cartSubmitOrder">تأكيد الطلب وإرساله</span>
             </button>
         </div>
 
@@ -59,11 +60,13 @@
 
     <div id="messageBox" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div class="bg-white p-8 rounded-3xl max-w-xs text-center">
+            <div id="messageIcon" class="flex justify-center text-4xl mb-2"></div>
             <p id="messageText" class="text-lg font-medium"></p>
-            <button onclick="hideMessage()" class="mt-6 btn-primary px-8">إغلاق</button>
+            <button onclick="hideMessage()" class="mt-6 btn-primary px-8" data-i18n="cartClose">إغلاق</button>
         </div>
     </div>
 
     <script type="module" src="cart.js"></script>
-</body>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r=>r.forEach(reg=>reg.unregister()));</script></body>
 </html>
+

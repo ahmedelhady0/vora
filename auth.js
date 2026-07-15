@@ -1,4 +1,4 @@
-import { showMessage, hideMessage, usernameToEmail } from "./firebase-config.js";
+﻿import { showMessage, hideMessage, usernameToEmail } from "./firebase-config.js";
 import { getUserFromFirestore, registerUser } from "./sheets-service.js";
 
 function getUsers() {
@@ -22,7 +22,7 @@ ensureAdmin();
 window.signIn = async function() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
-    if (!user || !pass) return showMessage("يرجى ملء اسم المستخدم وكلمة المرور");
+    if (!user || !pass) return showMessage(t('authFillFields'));
 
     try {
         const fbUser = await getUserFromFirestore(user);
@@ -42,31 +42,31 @@ window.signIn = async function() {
         hideMessage();
         window.location.href = "home.html";
     } else {
-        showMessage("اسم المستخدم أو كلمة المرور غير صحيحة");
+        showMessage(t('authInvalid'));
     }
 };
 
 window.signUp = async function() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
-    if (!user || pass.length < 6) return showMessage("اسم المستخدم مطلوب وكلمة المرور 6 أحرف على الأقل");
+    if (!user || pass.length < 6) return showMessage(t('authWeakPassword'));
 
     try {
         const existing = await getUserFromFirestore(user);
-        if (existing) return showMessage("اسم المستخدم موجود بالفعل");
+        if (existing) return showMessage(t('authExists'));
     } catch (e) {
         console.warn("Firestore check unavailable:", e);
     }
 
     const users = getUsers();
-    if (users[user]) return showMessage("اسم المستخدم موجود بالفعل");
+    if (users[user]) return showMessage(t('authExists'));
 
     const userData = { username: user, password: pass, role: 'customer', email: usernameToEmail(user) };
     await registerUser(userData);
 
     users[user] = { password: pass, role: 'customer', email: usernameToEmail(user) };
     saveUsers(users);
-    showMessage("✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن");
+    showMessage(t('authCreated'));
 };
 
 window.hideMessage = hideMessage;

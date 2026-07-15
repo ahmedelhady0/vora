@@ -1,3 +1,4 @@
+﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
 // استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
 import { db } from "./firebase-config.js";
@@ -20,7 +21,7 @@ if (userData && (userData.role === 'admin' || userData.role === 'manager')) {
 }
 
 let allProducts = [];
-let activeCategory = "الكل";
+let activeCategory = t('catAll');
 let searchQuery = "";
 let sortMode = "default";
 let minPrice = null;
@@ -201,7 +202,7 @@ window.showMessage = function(msg) {
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast-item';
-    const isSuccess = msg.includes('✓') || msg.includes('✅') || msg.includes('تم');
+    const isSuccess = msg.includes('✓') || msg.includes('✅') || msg.includes(t('success'));
     toast.innerHTML = `<div class="toast-icon ${isSuccess ? 'success' : 'warning'}">${isSuccess ? '✓' : '!'}</div><div class="toast-text">${msg}</div>`;
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));
@@ -305,7 +306,7 @@ async function loadProducts() {
             renderProducts();
         } catch (sheetErr) {
             console.error('Error loading products from Sheets:', sheetErr);
-            container.innerHTML = `<p class="text-red-500 text-center py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
+            container.innerHTML = `<p class="text-red-500 text-center py-12">${Icon.warning()} حدث خطأ أثناء تحميل المنتجات</p>`;
         }
     }
 }
@@ -321,11 +322,11 @@ function applySectionFilter() {
 }
 
 const SECTION_META = {
-    'new-arrivals': { icon: '🆕', labelAr: 'جديد', labelEn: 'New Arrivals' },
-    'best-sellers': { icon: '🏆', labelAr: 'الأكثر مبيعاً', labelEn: 'Best Sellers' },
-    'for-him': { icon: '👔', labelAr: 'For Him', labelEn: 'For Him' },
-    'for-her': { icon: '👗', labelAr: 'For Her', labelEn: 'For Her' },
-    'unisex': { icon: '🔄', labelAr: 'Unisex', labelEn: 'Unisex' }
+    'new-arrivals': { icon: '🆕', labelAr: t('catNew'), labelEn: 'New Arrivals' },
+    'best-sellers': { icon: '🏆', labelAr: t('catBestsellers'), labelEn: 'Best Sellers' },
+    'for-him': { icon: '👔', labelAr: t('catForHim'), labelEn: 'For Him' },
+    'for-her': { icon: '👗', labelAr: t('catForHer'), labelEn: 'For Her' },
+    'unisex': { icon: '🔄', labelAr: t('catUnisex'), labelEn: 'Unisex' }
 };
 
 function updateBreadcrumbs() {
@@ -335,8 +336,8 @@ function updateBreadcrumbs() {
     const s = params.get('section');
     const v = params.get('vendor');
     const lang = getLang();
-    const homeLabel = lang === 'ar' ? 'الرئيسية' : 'Home';
-    const shopLabel = lang === 'ar' ? 'المتجر' : 'Shop';
+    const homeLabel = t('navHome');
+    const shopLabel = t('navShop');
     if (s && SECTION_META[s]) {
         const sec = SECTION_META[s];
         const secLabel = lang === 'ar' ? sec.labelAr : sec.labelEn;
@@ -360,7 +361,7 @@ function renderSkeletons(container) {
 }
 
 function buildCategoryPills() {
-    const categories = ["الكل", ...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    const categories = [t('catAll'), ...new Set(allProducts.map(p => p.category).filter(Boolean))];
     const wrap = document.getElementById('categoryPills');
     wrap.innerHTML = categories.map(cat => `
         <button class="category-pill ${cat === activeCategory ? 'active' : ''}" data-category="${cat}">
@@ -381,7 +382,7 @@ function buildCategoryPills() {
 function getFilteredProducts() {
     let list = [...allProducts];
 
-    if (activeCategory !== "الكل") {
+    if (activeCategory !== t('catAll')) {
         list = list.filter(p => p.category === activeCategory);
     }
 
@@ -449,20 +450,20 @@ function renderProducts() {
                     <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
                 </div>
             </div>
-            <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">✕ إزالة الفلتر</button>
+            <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} إزالة الفلتر</button>
         </div>`;
     } else if (activeVendor) {
         const label = getLang() === 'ar' ? activeVendor : activeVendor;
         sectionHeader = `
         <div class="w-full mb-6 pb-4 border-b border-stone-200 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <span class="text-2xl">🏪</span>
+                <span class="text-2xl">${Icon.store()}</span>
                 <div>
                     <h2 class="text-2xl font-bold text-stone-900">${label}</h2>
                     <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
                 </div>
             </div>
-            <button onclick="window.clearVendorFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">✕ إزالة الفلتر</button>
+            <button onclick="window.clearVendorFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} إزالة الفلتر</button>
         </div>`;
     }
 
@@ -471,7 +472,7 @@ function renderProducts() {
     if (allProducts.length === 0) {
         container.innerHTML = `
             <div class="text-center py-16 space-y-4">
-                <p class="text-4xl">🎁</p>
+                <p class="text-4xl">${Icon.gift()}</p>
                 <p class="text-2xl font-bold text-stone-900">${t('shopNoProducts')}</p>
                 <p class="text-stone-600">${t('shopNoProductsHint')}</p>
             </div>`;
@@ -481,7 +482,7 @@ function renderProducts() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="text-center py-16 space-y-4">
-                <p class="text-4xl">🔍</p>
+                <p class="text-4xl">${Icon.search()}</p>
                 <p class="text-2xl font-bold text-stone-900">${t('shopNoResults')}</p>
                 <p class="text-stone-600">${t('shopNoResultsHint')}</p>
                 <button onclick="window.resetFilters()" class="px-6 py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transition">${t('shopReset')}</button>
@@ -543,13 +544,13 @@ function buildProductCard(prod) {
         ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
         : '';
 
-    const stockLabel = outOfStock ? '' : `<span style="color:#16a34a;font-size:10px;font-weight:600;">✓ ${t('inStock')}</span>`;
+    const stockLabel = outOfStock ? '' : `<span style="color:#16a34a;font-size:10px;font-weight:600;">${Icon.check()} ${t('inStock')}</span>`;
 
     const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
     const groupHtml = !outOfStock ? `
         <div class="card-product__group group-left">
-            <button onclick="toggleWishlist('${safeId}', '${safeName}', ${prod.price})" title="${t('wishlist')}">🤍</button>
-            <button onclick="quickView('${safeId}')" title="${t('quickView')}">👁️</button>
+            <button onclick="toggleWishlist('${safeId}', '${safeName}', ${prod.price})" title="${t('wishlist')}">${Icon.heart()}</button>
+            <button onclick="quickView('${safeId}')" title="${t('quickView')}">${Icon.eye()}</button>
         </div>` : '';
 
     card.innerHTML = `
@@ -563,7 +564,7 @@ function buildProductCard(prod) {
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
-                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">🛒 ${t('addToCart')}</button>`
+                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">${Icon.cart()} ${t('addToCart')}</button>`
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
@@ -588,7 +589,7 @@ window.quickView = function(id) {
     if (!prod) return;
     const modal = document.getElementById('quickViewModal');
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
         : '';
 
     modal.querySelector('.modal-image').innerHTML = `
@@ -599,7 +600,7 @@ window.quickView = function(id) {
     `;
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
-    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">✓ ${t('inStock')}</span>`;
+    const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">${Icon.check()} ${t('inStock')}</span>`;
     const safeImage = (prod.image || "").replace(/'/g, "\\'");
 
     modal.querySelector('.modal-info').innerHTML = `
@@ -614,9 +615,9 @@ window.quickView = function(id) {
         <p class="modal-desc">${prod.description || ''}</p>
         <div class="flex gap-2 mt-3">
             ${!outOfStock ? `<button class="modal-add-btn flex-1" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}, '${safeImage}'); closeQuickView();">
-                ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
+                ${Icon.plus()} ${t('addToCart')} - ${prod.price} ${t('currency')}
             </button>` : ''}
-            <button onclick="shareOnWhatsApp('${prod.name}', ${prod.price}, '${safeImage}')" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold flex items-center gap-1">📱</button>
+            <button onclick="shareOnWhatsApp('${prod.name}', ${prod.price}, '${safeImage}')" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold flex items-center gap-1">${Icon.mobile()}</button>
         </div>
     `;
     modal.classList.add('active');
@@ -638,7 +639,7 @@ window.toggleWishlist = function(id, name, price) {
         showWishlistToast(t('notifWishlistRemoved'));
     } else {
         wishlist.push({ id, name, price });
-        showWishlistToast(`✓ ${t('notifWishlistAdded')}`);
+        showWishlistToast(`${Icon.check()} ${t('notifWishlistAdded')}`);
     }
     localStorage.setItem('vora_wishlist', JSON.stringify(wishlist));
 };
@@ -651,7 +652,7 @@ function showWishlistToast(msg) {
         toast.className = 'wishlist-toast';
         document.body.appendChild(toast);
     }
-    toast.textContent = msg;
+    toast.innerHTML = msg;
     toast.classList.add('show');
     clearTimeout(toast._timer);
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2500);
@@ -670,7 +671,7 @@ window.clearVendorFilter = function() {
 };
 
 window.resetFilters = function() {
-    activeCategory = "الكل";
+    activeCategory = t('catAll');
     searchQuery = "";
     sortMode = "default";
     minPrice = null;
@@ -708,7 +709,7 @@ window.addToCart = function(id, name, price, image) {
     renderCartDrawer();
     const badge = document.getElementById('cartCount');
     if (badge) { badge.classList.remove('cart-badge-bounce'); void badge.offsetWidth; badge.classList.add('cart-badge-bounce'); }
-    showMessage(`✓ ${t('notifAdded')}`);
+    showMessage(`${Icon.check()} ${t('notifAdded')}`);
 };
 
 function updateCartCount() {
@@ -737,7 +738,7 @@ window.closeCartDrawer = function() {
 window.goToCheckout = function() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     if (cart.length === 0) {
-        showMessage(`⚠️ ${t('notifCartEmpty')}`);
+        showMessage(`${Icon.warning()} ${t('notifCartEmpty')}`);
         return;
     }
     window.location.href = 'checkout.html';
@@ -751,7 +752,7 @@ function renderCartDrawer() {
     if (cart.length === 0) {
         body.innerHTML = `
             <div class="text-center py-16 space-y-4">
-                <div class="text-6xl">🛍️</div>
+                <div class="text-6xl">${Icon.bag()}</div>
                 <p class="font-bold text-stone-900 text-lg">${t('cartEmpty')}</p>
                 <p class="text-stone-600 text-sm">${t('cartEmptyHint')}</p>
             </div>`;
@@ -770,7 +771,7 @@ function renderCartDrawer() {
         // التحقق الذكي لعرض صورة المنتج الحقيقية المخزنة أو الـ SVG كاحتياط
         const itemSrc = item.image || (allProducts.find(p => p.id === item.id)?.image) || '';
         const drawerImage = itemSrc 
-            ? `<img src="${itemSrc}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` 
+            ? `<img src="${itemSrc}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover rounded-lg">` 
             : BOTTLE_SVG;
 
         const row = document.createElement('div');
@@ -792,7 +793,7 @@ function renderCartDrawer() {
                 </div>
             </div>
             <div class="flex flex-col items-end justify-between">
-                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
+                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">${Icon.trash()}</button>
                 <p class="font-bold text-amber-600 text-sm">${subtotal} ${t('currency')}</p>
             </div>
         `;
@@ -839,8 +840,8 @@ window.shareOnWhatsApp = function(name, price, image) {
     const wa = settings.whatsapp || '201000000000';
     const lang = getLang();
     const msg = lang === 'ar'
-        ? `👋 مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
-        : `👋 Hello! I'd like to ask about: ${name} (${price} EGP)`;
+        ? `${Icon.phone()} مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
+        : `${Icon.phone()} Hello! I'd like to ask about: ${name} (${price} EGP)`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
@@ -866,11 +867,11 @@ function updateUserNav() {
 
 window.subscribeNewsletter = function() {
     const email = document.getElementById('newsletterEmail')?.value.trim();
-    if (!email || !email.includes('@')) return showMessage(`✉️ ${t('footerSubInvalid')}`);
+    if (!email || !email.includes('@')) return showMessage(`${Icon.mail()} ${t('footerSubInvalid')}`);
     let subs = JSON.parse(localStorage.getItem('vora_newsletter')) || [];
-    if (subs.includes(email)) return showMessage(`✅ ${t('footerSubExists')}`);
+    if (subs.includes(email)) return showMessage(`${Icon.check()} ${t('footerSubExists')}`);
     subs.push(email);
     localStorage.setItem('vora_newsletter', JSON.stringify(subs));
     document.getElementById('newsletterEmail').value = '';
-    showMessage(`✅ ${t('footerSubSuccess')}`);
+    showMessage(`${Icon.check()} ${t('footerSubSuccess')}`);
 };

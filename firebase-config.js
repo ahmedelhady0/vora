@@ -1,8 +1,9 @@
-// firebase-config.js
+﻿// firebase-config.js
 
 // 1. استيراد المكتبات عبر الـ CDN لتعمل مباشرة في المتصفح
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import Icon from './icons.js';
 
 // 2. إعدادات مشروع VORA الحقيقية والخاصة بك
 const firebaseConfig = {
@@ -19,6 +20,15 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 // 4. الدوال المساعدة الحالية الخاصة بنظامك (أبقها كما هي لضمان عمل بقية الصفحات)
+function setMessageIcon(text) {
+    const iconEl = document.getElementById('messageIcon');
+    if (!iconEl) return;
+    const isSuccess = text.includes('تم') || text.includes('✅') || text.includes('success') || text.includes('بن');
+    const iconSvg = isSuccess ? Icon.check() : Icon.warning();
+    iconEl.innerHTML = iconSvg;
+    iconEl.className = 'flex justify-center text-4xl mb-2 ' + (isSuccess ? 'text-green-500' : 'text-red-500');
+}
+
 export function showMessage(text) {
     const toastContainer = document.getElementById('toastContainer');
     if (toastContainer && typeof window.showMessage === 'function') {
@@ -28,7 +38,8 @@ export function showMessage(text) {
     const box = document.getElementById('messageBox');
     if (!box) return;
     const el = document.getElementById('messageText');
-    if (el) el.textContent = text;
+    if (el) el.innerHTML = text;
+    setMessageIcon(text);
     box.classList.remove('hidden');
 }
 

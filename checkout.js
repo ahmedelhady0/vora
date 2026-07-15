@@ -1,14 +1,15 @@
+﻿import Icon from './icons.js';
 import { placeOrder, getSettingsFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const DEFAULT_SHIPPING = {
-    "القاهرة": 50, "الجيزة": 50, "الإسكندرية": 70, "الدقهلية": 80,
-    "الشرقية": 80, "القليوبية": 60, "كفر الشيخ": 80, "الغربية": 80,
-    "المنوفية": 80, "البحيرة": 80, "الإسماعيلية": 90, "السويس": 90,
-    "بني سويف": 100, "الفيوم": 100, "المنيا": 120, "أسيوط": 130,
-    "سوهاج": 130, "قنا": 140, "الأقصر": 150, "أسوان": 160,
-    "البحر الأحمر": 150, "الوادي الجديد": 200, "مطروح": 150,
-    "شمال سيناء": 180, "جنوب سيناء": 180, "دمياط": 80, "بورسعيد": 90
+    [t('govCairo')]: 50, [t('govGiza')]: 50, [t('govAlex')]: 70, [t('govDakahlia')]: 80,
+    [t('govSharqia')]: 80, [t('govQalyubia')]: 60, [t('govKafr')]: 80, [t('govGharbia')]: 80,
+    [t('govMonufia')]: 80, [t('govBeheira')]: 80, [t('govIsmailia')]: 90, [t('govSuez')]: 90,
+    [t('govBeniSuef')]: 100, [t('govFayoum')]: 100, [t('govMinya')]: 120, [t('govAsyut')]: 130,
+    [t('govSohag')]: 130, [t('govQena')]: 140, [t('govLuxor')]: 150, [t('govAswan')]: 160,
+    [t('govRedSea')]: 150, [t('govNewValley')]: 200, [t('govMatrouh')]: 150,
+    [t('govNorthSinai')]: 180, [t('govSouthSinai')]: 180, [t('govDamietta')]: 80, [t('govPortSaid')]: 90
 };
 
 let stripe, elements, cardElement;
@@ -99,7 +100,7 @@ window.updateShipping = function() {
 function updateTotals(subtotal, shipping) {
     const total = subtotal + shipping;
     document.getElementById('subtotal').textContent = `${subtotal} ${t('currency')}`;
-    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && document.getElementById('governorate').value ? `${t('cartFree')} ✓` : `${t('checkoutGovernorate')}`;
+    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && document.getElementById('governorate').value ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
     document.getElementById('total').textContent = `${total} ${t('currency')}`;
     document.getElementById('sidebarTotal').textContent = `${total} ${t('currency')}`;
     localStorage.setItem('vora_checkout_total', total);
@@ -112,7 +113,7 @@ function loadInstapayInfo() {
     if (settings.instaName) {
         el.innerHTML = `${settings.instaName}<br><span dir="ltr" class="text-blue-600">${settings.instaNumber || ''}</span>`;
     } else {
-        el.textContent = 'يرجى إضافة بيانات InstaPay من لوحة الإدارة';
+        el.textContent = t('checkoutInstapayRequired');
     }
 }
 
@@ -125,14 +126,14 @@ window.applyCoupon = function() {
     const coupons = settings.coupons || {};
     if (!code) {
         msg.className = 'text-xs mt-1 text-red-600';
-        msg.textContent = 'يرجى إدخال كود الخصم';
+        msg.textContent = t('checkoutDiscountPrompt');
         msg.classList.remove('hidden');
         return;
     }
     if (coupons[code]) {
         appliedDiscount = parseFloat(coupons[code]) || 0;
         msg.className = 'text-xs mt-1 text-green-600';
-        msg.textContent = `✅ تم تطبيق الخصم! خصم ${appliedDiscount}%`;
+        msg.textContent = `${Icon.check()} تم تطبيق الخصم! خصم ${appliedDiscount}%`;
         msg.classList.remove('hidden');
         document.getElementById('discountRow').style.display = 'flex';
         updateTotalsWithDiscount();
@@ -155,7 +156,7 @@ function updateTotalsWithDiscount() {
     const discount = subtotal * (appliedDiscount / 100);
     const total = subtotal + shipping - discount;
     document.getElementById('subtotal').textContent = `${subtotal} ${t('currency')}`;
-    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && gov ? `${t('cartFree')} ✓` : `${t('checkoutGovernorate')}`;
+    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && gov ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
     document.getElementById('discountAmount').textContent = `-${Math.round(discount)} ${t('currency')}`;
     document.getElementById('total').textContent = `${Math.round(total)} ${t('currency')}`;
     document.getElementById('sidebarTotal').textContent = `${Math.round(total)} ${t('currency')}`;
@@ -199,7 +200,7 @@ window.submitOrder = async function() {
             discount: appliedDiscount > 0 ? `${appliedDiscount}%` : '',
             orderDate: new Date().toISOString(),
             date: new Date().toLocaleString('ar-EG'),
-            status: 'قيد المراجعة',
+            status: t('statusPending'),
             userEmail: document.getElementById('customerEmail').value.trim()
         };
         if (paymentMethod === 'card') {
@@ -245,17 +246,17 @@ function validateForm() {
     const address = document.getElementById('customerAddress').value.trim();
     const governorate = document.getElementById('governorate').value;
     const errors = [];
-    if (!name) errors.push('الاسم');
-    if (!phone) errors.push('رقم الهاتف');
-    if (!email) errors.push('البريد الإلكتروني');
-    if (!address) errors.push('العنوان');
-    if (!governorate) errors.push('المحافظة');
-    if (errors.length > 0) { showMessage('⚠️ الحقول التالية مطلوبة: ' + errors.join('، ')); return false; }
-    if (!/^01[0-2][0-9]{8}$/.test(phone)) { showMessage('⚠️ رقم الهاتف يجب أن يكون 11 رقماً مصرياً (مثال: 01012345678)'); return false; }
+    if (!name) errors.push(t('checkoutName'));
+    if (!phone) errors.push(t('checkoutPhone'));
+    if (!email) errors.push(t('checkoutEmail'));
+    if (!address) errors.push(t('checkoutAddress'));
+    if (!governorate) errors.push(t('checkoutGovernorate'));
+    if (errors.length > 0) { showMessage(t('checkoutRequiredFields')); return false; }
+    if (!/^01[0-2][0-9]{8}$/.test(phone)) { showMessage(t('checkoutPhoneInvalid')); return false; }
     return true;
 }
 
-function showLoading(show, text = 'جاري المعالجة...') {
+function showLoading(show, text = t('checkoutProcessing')) {
     const loadingBox = document.getElementById('loadingBox');
     const loadingText = document.getElementById('loadingText');
     if (show) { loadingText.textContent = text; loadingBox.classList.remove('hidden'); document.getElementById('submitBtn').disabled = true; }
