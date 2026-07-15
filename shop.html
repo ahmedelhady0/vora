@@ -10,10 +10,10 @@
     <script src="translations.js"></script>
     <script src="fallback-data.js"></script>
 </head>
-<body class="bg-white">
+<body class="bg-white" style="display:flex;flex-direction:column;height:100vh;margin:0;">
 
     <!-- Page Loader -->
-    <div id="pageLoader">
+    <div id="pageLoader" style="position:absolute;inset:0;z-index:99999;">
         <div class="loader-logo">VORA</div>
         <div class="loader-bar"><div class="loader-bar-inner"></div></div>
     </div>
@@ -54,7 +54,8 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
+    <div id="topFixed" style="flex-shrink:0;z-index:9990;">
+    <nav class="bg-white/95 backdrop-blur-md border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
             
             <!-- Mobile: Left - Profile + Menu -->
@@ -94,24 +95,9 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <section class="pt-32 pb-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-sm text-stone-400 mb-4" id="breadcrumbs">
-                <a href="home.html" class="hover:text-amber-600 transition">Home</a>
-                <span class="mx-1">›</span>
-                <span class="text-stone-600 font-medium">Shop</span>
-            </div>
-            <div class="text-center space-y-3">
-            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle">✨ تشكيلة كاملة</span>
-            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">متجر VORA</h1>
-            <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc">تصفح جميع عطورنا الفاخرة، وفلتر حسب الفئة والسعر لتجد توقيعك العطري</p>
-        </div>
-    </section>
-
-    <!-- Filters Toolbar -->
-    <section class="px-4 sm:px-6 lg:px-8 sticky top-20 z-30">
-        <div class="max-w-7xl mx-auto bg-stone-50 border border-stone-200 rounded-2xl shadow-sm p-4 md:p-5 space-y-4">
+    <div id="filterWrapper" style="padding:0 16px;background:#fafaf9;border-bottom:1px solid #e7e5e4;">
+    <section id="filterToolbar" class="px-0 sm:px-0 lg:px-0" style="max-width:1280px;margin:0 auto;">
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl shadow-sm p-4 md:p-5 space-y-4">
             <div class="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
                 <!-- Category Pills -->
                 <div id="categoryPills" class="flex flex-wrap gap-2">
@@ -144,11 +130,30 @@
             <p id="resultsCount" class="text-sm text-stone-500"></p>
         </div>
     </section>
+    </div><!-- end filterWrapper -->
+    </div><!-- end topFixed -->
+
+    <div id="scrollContent" style="flex:1;overflow-y:auto;">
+
+    <!-- Page Header -->
+    <section class="pb-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-sm text-stone-400 mb-4" id="breadcrumbs">
+                <a href="home.html" class="hover:text-amber-600 transition">Home</a>
+                <span class="mx-1">›</span>
+                <span class="text-stone-600 font-medium">Shop</span>
+            </div>
+            <div class="text-center space-y-3">
+            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle">✨ تشكيلة كاملة</span>
+            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">متجر VORA</h1>
+            <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc">تصفح جميع عطورنا الفاخرة، وفلتر حسب الفئة والسعر لتجد توقيعك العطري</p>
+        </div>
+    </section>
 
     <input type="text" id="shopSearch" class="hidden">
 
     <!-- Products Grid -->
-    <section class="py-10 px-4 sm:px-6 lg:px-8">
+    <section id="productsGrid" class="px-4 sm:px-6 lg:px-8 pb-10" style="min-height:100vh;">
         <div class="max-w-7xl mx-auto">
             <div id="productsContainer" class="space-y-14">
                 <!-- Category sections loaded by shop.js -->
@@ -175,7 +180,7 @@
                     <span>المجموع الفرعي:</span>
                     <span id="cartSubtotal">0 ج.م</span>
                 </div>
-                <div class="flex justify-between text-sm text-stone-600">
+                <div class="flex justify-between text-sm text-stone-600" style="display:none">
                     <span>الشحن:</span>
                     <span id="cartShipping">مجاني</span>
                 </div>
@@ -284,6 +289,7 @@
             height: 10px;
             background: radial-gradient(ellipse at center, rgba(0,0,0,0.18) 0%, transparent 70%);
         }
+        #filterPlaceholder { padding:0; margin:0; }
     </style>
 
     <!-- Brand Logo Slider -->
@@ -352,6 +358,8 @@
             </div>
         </div>
     </footer>
+
+    </div><!-- end scrollContent -->
 
     <script type="module" src="shop.js"></script>
 </body>

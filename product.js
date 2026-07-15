@@ -331,7 +331,7 @@ window.addToCartFromPage = function() {
     if (existing > -1) {
         cart[existing].qty += productQty;
     } else {
-        cart.push({ id: product.id, name: product.name, price: product.price, qty: productQty });
+        cart.push({ id: product.id, name: product.name, price: product.price, image: product.image || '', qty: productQty });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
@@ -400,6 +400,82 @@ window.showMessage = function(msg) {
     if (box && text) { text.textContent = msg; box.classList.remove('hidden'); }
 };
 window.hideMessage = function() { document.getElementById('messageBox').classList.add('hidden'); };
+
+// Cart Drawer
+window.openCartDrawer = function() {
+    renderCartDrawer();
+    document.getElementById('cartDrawer').classList.remove('translate-x-full');
+    document.getElementById('cartDrawerOverlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+};
+window.closeCartDrawer = function() {
+    document.getElementById('cartDrawer').classList.add('translate-x-full');
+    document.getElementById('cartDrawerOverlay').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+};
+window.goToCheckout = function() {
+    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    if (cart.length === 0) { showMessage('⚠️ السلة فارغة. أضف منتجات أولاً'); return; }
+    window.location.href = 'checkout.html';
+};
+function renderCartDrawer() {
+    const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    const body = document.getElementById('cartDrawerBody');
+    const footer = document.getElementById('cartDrawerFooter');
+    if (cart.length === 0) {
+        body.innerHTML = '<div class="text-center py-16 space-y-4"><div class="text-6xl">🛍️</div><p class="font-bold text-stone-900 text-lg">السلة فارغة</p><p class="text-stone-600 text-sm">أضف بعض العطور الفاخرة إلى سلتك</p></div>';
+        footer.classList.add('hidden'); return;
+    }
+    footer.classList.remove('hidden');
+    body.innerHTML = "";
+    let total = 0;
+    cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        const subtotal = item.price * item.qty;
+        const itemSrc = item.image || (allProds.find(p => p.id === item.id)?.image) || '';
+        const drawerImage = itemSrc ? `<img src="${itemSrc}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` : BOTTLE_SVG;
+        const row = document.createElement('div');
+        row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
+        row.innerHTML = `
+            <div class="relative w-20 h-24 bg-gradient-to-br from-amber-100 to-stone-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 shadow-md overflow-hidden">
+                ${drawerImage}
+                <div class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+            </div>
+            <div class="flex-1 space-y-2">
+                <div>
+                    <p class="font-bold text-stone-900 text-sm">${item.name}</p>
+                    <p class="text-xs text-stone-500">${item.price} ج.م</p>
+                </div>
+                <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
+                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
+                    <span class="w-8 text-center font-bold text-stone-900 text-sm">${item.qty}</span>
+                    <button onclick="changeDrawerQty(${index}, 1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">+</button>
+                </div>
+            </div>
+            <div class="flex flex-col items-end justify-between">
+                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
+                <p class="font-bold text-amber-600 text-sm">${subtotal} ج.م</p>
+            </div>`;
+        body.appendChild(row);
+    });
+    document.getElementById('cartDrawerTotal').textContent = `${total} ج.م`;
+    document.getElementById('cartSubtotal').textContent = `${total} ج.م`;
+}
+window.changeDrawerQty = function(index, change) {
+    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    cart[index].qty += change;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    localStorage.setItem('vora_cart', JSON.stringify(cart));
+    renderCartDrawer();
+    updateCartCount();
+};
+window.removeDrawerItem = function(index) {
+    let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('vora_cart', JSON.stringify(cart));
+    renderCartDrawer();
+    updateCartCount();
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadSettings();

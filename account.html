@@ -136,7 +136,12 @@
                         <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">${status}</span>
                     </div>
                     <p class="text-sm font-semibold text-stone-900">${o.customerName || '—'}</p>
-                    <p class="text-xs text-stone-500">${o.items || ''}</p>
+                    <p class="text-xs text-stone-500">${(() => {
+                        let items = [];
+                        try { items = o.itemDetails ? JSON.parse(o.itemDetails) : []; } catch(e) {}
+                        if (items.length) return items.map(i => `${i.name} (×${i.qty})`).join(' - ');
+                        return o.items || '';
+                    })()}</p>
                     <div class="flex items-center justify-between mt-2 pt-2 border-t border-stone-100">
                         <span class="text-sm font-bold text-amber-600">${total} ${lang === 'ar' ? 'ج.م' : 'EGP'}</span>
                         ${o.trackingId ? `<span class="text-[10px] text-blue-600">📦 ${lang === 'ar' ? 'تتبع: ' : 'Track: '}${o.trackingId}</span>` : ''}

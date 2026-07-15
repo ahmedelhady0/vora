@@ -1,5 +1,6 @@
 import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore } from "./sheets-service.js";
-import { showMessage, hideMessage } from "./firebase-config.js";
+import { showMessage, hideMessage, db } from "./firebase-config.js";
+import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const ALL_GOVERNORATES = [
     "القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "القليوبية",
@@ -187,6 +188,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initCodGrid();
     initCoupons();
     initBundles();
+    initBrands();
 });
 
 window.switchTab = function(tabId) {
@@ -209,7 +211,7 @@ async function loadAdminOrders() {
         const orders = await getOrders();
         tbody.innerHTML = "";
         if (orders.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-stone-400">لا توجد طلبات حتى الآن.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-stone-400">لا توجد طلبات حتى الآن.</td></tr>`;
             return;
         }
         orders.forEach(order => {
@@ -222,6 +224,9 @@ async function loadAdminOrders() {
                 <td class="p-3 text-stone-600 text-xs" dir="ltr">${order.customerPhone}</td>
                 <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${order.items}">${order.items}</td>
                 <td class="p-3 font-bold text-amber-600 text-xs">${order.total} EGP</td>
+                <td class="p-3">
+                    <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">📦 تفاصيل</button>
+                </td>
                 <td class="p-3">
                     <select onchange="updateOrderField('${order.orderId}','status',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 bg-white">
                         <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
@@ -241,7 +246,7 @@ async function loadAdminOrders() {
             tbody.appendChild(row);
         });
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-red-500">حدث خطأ أثناء تحميل الطلبات.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-red-500">حدث خطأ أثناء تحميل الطلبات.</td></tr>`;
     }
 }
 
@@ -251,12 +256,61 @@ window.updateOrderField = function(orderId, field, value) {
     if (idx === -1) return;
     orders[idx][field] = value;
     localStorage.setItem('vora_orders', JSON.stringify(orders));
+    // Sync to Firestore so tracking page gets the update
+    try {
+        const id = orders[idx].id;
+        if (id) {
+            const orderRef = doc(db, "orders", id);
+            updateDoc(orderRef, { [field]: value });
+        }
+    } catch (e) { console.warn('Firestore sync failed (offline):', e); }
     showMessage('✅ تم التحديث');
 };
 
 window.copyTrackingLink = function(orderId) {
     const link = window.location.origin + '/tracking.html?orderId=' + orderId;
     navigator.clipboard.writeText(link).then(() => showMessage('✅ تم نسخ رابط التتبع'));
+};
+
+window.showOrderDetails = function(orderId) {
+    const orders = JSON.parse(localStorage.getItem('vora_orders')) || [];
+    const order = orders.find(o => o.orderId === orderId);
+    if (!order) { showMessage('⚠️ الطلب غير موجود'); return; }
+    let itemsHtml = '';
+    let items = [];
+    try { items = order.itemDetails ? JSON.parse(order.itemDetails) : []; } catch(e) {}
+    if (items.length > 0) {
+        items.forEach((item, i) => {
+            itemsHtml += `<div class="flex justify-between items-center py-2 border-b border-stone-100 last:border-0">
+                <div><span class="font-semibold text-stone-900">${item.name}</span> <span class="text-stone-500 text-sm">×${item.qty}</span></div>
+                <span class="font-bold text-amber-600">${item.price * item.qty} ج.م</span>
+            </div>`;
+        });
+    } else {
+        itemsHtml = `<p class="text-stone-500 text-sm">${order.items || '—'}</p>`;
+    }
+    document.getElementById('orderDetailsBody').innerHTML = `
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-stone-500">رقم الطلب:</span><span class="font-mono text-stone-900">${order.orderId}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">العميل:</span><span class="text-stone-900">${order.customerName}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">الهاتف:</span><span class="text-stone-900">${order.customerPhone}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">العنوان:</span><span class="text-stone-900">${order.customerAddress}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">المحافظة:</span><span class="text-stone-900">${order.governorate || '—'}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">تاريخ الطلب:</span><span class="text-stone-900">${order.date || '—'}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">الحالة:</span><span class="text-stone-900">${order.status}</span></div>
+        </div>
+        <div class="border-t border-stone-200 pt-4">
+            <h4 class="font-bold text-stone-900 mb-2">المنتجات</h4>
+            ${itemsHtml}
+        </div>
+        <div class="border-t border-stone-200 pt-4 flex justify-between font-bold text-lg">
+            <span>الإجمالي:</span>
+            <span class="text-amber-600">${order.total} ج.م</span>
+        </div>`;
+    document.getElementById('orderDetailsModal').classList.remove('hidden');
+};
+window.closeOrderDetails = function() {
+    document.getElementById('orderDetailsModal').classList.add('hidden');
 };
 
 // معاينة محلية ذكية وسريعة للصورة المحددة للمنتج
@@ -637,6 +691,70 @@ window.removeBundle = function(index) {
     renderBundles();
 };
 
+// Brand Images Management
+function initBrands() {
+    const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    window._brandData = s.brands || [];
+    renderBrands();
+}
+
+function renderBrands() {
+    const container = document.getElementById('brandsContainer');
+    if (!container) return;
+    const brands = window._brandData || [];
+    if (brands.length === 0) {
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد براندات مضافة</p>';
+        return;
+    }
+    container.innerHTML = brands.map((b, i) => `
+        <div class="border border-stone-200 rounded-lg p-3 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-stone-700">براند ${i + 1}</span>
+                <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">✕ حذف</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" value="${b.name || ''}" id="brand_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم البراند (مثال: Dior)">
+                <div class="flex items-center gap-2">
+                    <input type="file" accept="image/*" class="hidden" id="brand_file_${i}" onchange="previewBrandImage(${i}, this)">
+                    <button onclick="document.getElementById('brand_file_${i}').click()" class="px-3 py-2 border border-stone-300 rounded-lg text-sm text-stone-500 hover:text-amber-600 hover:border-amber-500 transition">📷 اختيار صورة</button>
+                    ${b.image ? `<img src="${b.image}" class="w-10 h-10 rounded object-cover border">` : ''}
+                    <input type="hidden" id="brand_image_${i}" value="${b.image || ''}">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.previewBrandImage = function(index, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        document.getElementById('brand_image_' + index).value = dataUrl;
+        const brands = window._brandData || [];
+        while (brands.length <= index) brands.push({ name: '', image: '' });
+        brands[index].image = dataUrl;
+        window._brandData = brands;
+        renderBrands();
+    };
+    reader.readAsDataURL(file);
+};
+
+window.addBrandField = function() {
+    const brands = window._brandData || [];
+    brands.push({ name: '', image: '' });
+    window._brandData = brands;
+    renderBrands();
+};
+
+window.removeBrand = function(index) {
+    const brands = window._brandData || [];
+    brands.splice(index, 1);
+    window._brandData = brands;
+    renderBrands();
+};
+
 window.saveSettings = async function() {
     const settings = {
         instaName: document.getElementById('set_instaName').value.trim(),
@@ -690,6 +808,18 @@ window.saveSettings = async function() {
         }
     });
     settings.bundles = bundles;
+
+    // Collect brands
+    const brandNames = document.querySelectorAll('[id^="brand_name_"]');
+    const brands = [];
+    brandNames.forEach((el, i) => {
+        const name = el.value.trim();
+        const image = document.getElementById(`brand_image_${i}`)?.value || '';
+        if (name) {
+            brands.push({ name, image });
+        }
+    });
+    settings.brands = brands;
 
     localStorage.setItem('vora_settings', JSON.stringify(settings));
     const shipping = {};

@@ -71,9 +71,7 @@ nav.fixed a, nav.fixed span, nav.fixed button:not(.bg-gradient) {
 nav.fixed .text-amber-600 { color: var(--gold-light) !important; }
 
 /* Sticky header transition - Horizon scroll-up style */
-.header-hidden { transform: translateY(-100%); }
-.header-visible { transform: translateY(0); }
-nav.fixed { transition: transform 0.4s ease; }
+nav.fixed { }
 
 /* ===== Hero (Horizon-inspired) ===== */
 .bg-gradient-to-b.from-stone-50.to-amber-50 {
@@ -134,7 +132,7 @@ button, .btn, [class*="bg-gradient-to-r.from-amber"] {
     position: relative;
     z-index: 1;
 }
-@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) {
     .product-card:hover {
         transform: translateY(var(--hover-lift));
         box-shadow: var(--shadow-hover);
@@ -165,7 +163,7 @@ button, .btn, [class*="bg-gradient-to-r.from-amber"] {
 .product-card .card-media img.loaded {
     opacity: 1;
 }
-@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) {
     .product-card:hover .card-media img {
         transform: scale(var(--hover-scale));
     }
@@ -191,9 +189,7 @@ button, .btn, [class*="bg-gradient-to-r.from-amber"] {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
-@media (any-pointer: fine) {
-    .product-card:hover .card-product__group { opacity: 1; }
-}
+.product-card:hover .card-product__group { opacity: 1; }
 .product-card .card-product__group button {
     width: 36px;
     height: 36px;
@@ -234,11 +230,9 @@ button, .btn, [class*="bg-gradient-to-r.from-amber"] {
     transform: translateY(100%);
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-@media (any-pointer: fine) {
     .product-card:hover .card-action-overlay {
         transform: translateY(0);
     }
-}
 .product-card .card-action-overlay .add-cart-btn {
     width: 100%;
     padding: 10px 16px;
@@ -828,7 +822,7 @@ html { scroll-behavior: smooth; }
     bottom: 0;
     width: 280px;
     background: #3a1a2a;
-    z-index: 100;
+    z-index: 99999;
     transform: translateX(-100%);
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     padding: 24px;
@@ -885,7 +879,7 @@ html { scroll-behavior: smooth; }
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.6);
-    z-index: 99;
+    z-index: 99998;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
@@ -962,7 +956,7 @@ html { scroll-behavior: smooth; }
 #searchOverlay {
     position: fixed;
     inset: 0;
-    z-index: 90;
+    z-index: 99995;
     background: rgba(0,0,0,0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);

@@ -52,11 +52,11 @@
 
         function renderOrderStatus(order) {
             const lang = localStorage.getItem('vora_lang') || 'ar';
-            const statuses = lang === 'ar'
-                ? ['قيد المراجعة', 'قيد التجهيز', 'تم الشحن', 'تم التسليم']
-                : ['Pending Review', 'Processing', 'Shipped', 'Delivered'];
-            const currentIdx = statuses.indexOf(order.status);
+            const arStatuses = ['قيد المراجعة', 'قيد التجهيز', 'تم الشحن', 'تم التسليم'];
+            const enStatuses = ['Pending Review', 'Processing', 'Shipped', 'Delivered'];
+            const currentIdx = arStatuses.indexOf(order.status);
             const step = Math.max(0, currentIdx);
+            const displayStatuses = lang === 'ar' ? arStatuses : enStatuses;
             const result = document.getElementById('trackResult');
             result.style.display = 'block';
             result.innerHTML = `
@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="flex items-center justify-between mb-6">
-                        ${statuses.map((s, i) => `
+                        ${displayStatuses.map((s, i) => `
                             <div class="flex flex-col items-center ${i <= step ? 'text-amber-600' : 'text-stone-300'}">
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 ${i <= step ? 'bg-amber-600 text-white border-amber-600' : 'border-stone-300 bg-white'}">${i + 1}</div>
                                 <span class="text-[10px] mt-1 whitespace-nowrap font-semibold">${s}</span>
@@ -79,7 +79,20 @@
                         <div class="flex justify-between"><span class="text-stone-400">${lang === 'ar' ? 'العميل' : 'Customer'}:</span><span class="font-semibold">${order.customerName || ''}</span></div>
                         <div class="flex justify-between"><span class="text-stone-400">${lang === 'ar' ? 'الإجمالي' : 'Total'}:</span><span class="font-bold text-amber-600">${order.total} ${lang === 'ar' ? 'ج.م' : 'EGP'}</span></div>
                         ${order.trackingId ? `<div class="flex justify-between"><span class="text-stone-400">${lang === 'ar' ? 'رقم التتبع' : 'Tracking #'}:</span><span class="font-semibold text-blue-600">${order.trackingId}</span></div>` : ''}
-                        ${order.status === 'تم الشحن' || order.status === 'Shipped' ? `<a href="https://www.google.com/maps/dir/?api=1" target="_blank" class="block mt-3 text-center text-xs text-blue-600 underline">${lang === 'ar' ? 'تتبع الشحنة عبر الخريطة' : 'Track package on map'}</a>` : ''}
+                        ${step >= 2 && arStatuses.indexOf(order.status) >= 2 ? `<a href="https://www.google.com/maps/dir/?api=1" target="_blank" class="block mt-3 text-center text-xs text-blue-600 underline">${lang === 'ar' ? 'تتبع الشحنة عبر الخريطة' : 'Track package on map'}</a>` : ''}
+                    </div>
+                    <div class="border-t border-stone-100 pt-4 mt-4">
+                        <h4 class="text-xs font-bold text-stone-500 mb-2">${lang === 'ar' ? 'المنتجات' : 'Products'}</h4>
+                        <div class="space-y-1">
+                            ${(() => {
+                                let items = [];
+                                try { items = order.itemDetails ? JSON.parse(order.itemDetails) : []; } catch(e) {}
+                                if (items.length) {
+                                    return items.map(i => `<div class="flex justify-between text-sm"><span class="text-stone-700">${i.name} ×${i.qty}</span><span class="font-semibold text-amber-600">${i.price * i.qty} ${lang === 'ar' ? 'ج.م' : 'EGP'}</span></div>`).join('');
+                                }
+                                return `<p class="text-stone-500 text-xs">${order.items || ''}</p>`;
+                            })()}
+                        </div>
                     </div>
                 </div>
                 <a href="home.html" class="block text-center text-amber-600 hover:text-amber-700 text-sm font-semibold mt-2">← ${lang === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}</a>

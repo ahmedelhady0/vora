@@ -190,7 +190,6 @@ window.submitOrder = async function() {
             customerPhone: document.getElementById('customerPhone').value,
             customerAddress: document.getElementById('customerAddress').value,
             governorate: gov,
-            deliveryDate: document.getElementById('deliveryDate').value,
             paymentMethod: paymentMethod,
             items: cart.map(i => `${i.name} (${i.qty})`).join(' + '),
             itemDetails: JSON.stringify(cart),
@@ -245,8 +244,13 @@ function validateForm() {
     const email = document.getElementById('customerEmail').value.trim();
     const address = document.getElementById('customerAddress').value.trim();
     const governorate = document.getElementById('governorate').value;
-    const deliveryDate = document.getElementById('deliveryDate').value;
-    if (!name || !phone || !email || !address || !governorate || !deliveryDate) return false;
+    const errors = [];
+    if (!name) errors.push('الاسم');
+    if (!phone) errors.push('رقم الهاتف');
+    if (!email) errors.push('البريد الإلكتروني');
+    if (!address) errors.push('العنوان');
+    if (!governorate) errors.push('المحافظة');
+    if (errors.length > 0) { showMessage('⚠️ الحقول التالية مطلوبة: ' + errors.join('، ')); return false; }
     if (!/^01[0-2][0-9]{8}$/.test(phone)) { showMessage('⚠️ رقم الهاتف يجب أن يكون 11 رقماً مصرياً (مثال: 01012345678)'); return false; }
     return true;
 }

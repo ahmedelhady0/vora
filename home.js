@@ -176,6 +176,7 @@ document.addEventListener('langchange', () => {
     loadHeroSettings();
     loadBanners();
     renderBundles();
+    renderBrandSlider();
     updateCartCount();
     applyFooterSettings();
     const text = getLang() === 'ar' ? 'EN' : 'AR';
@@ -245,7 +246,7 @@ window.quickViewHome = function(id) {
         </div>
         <p class="modal-desc">${prod.description || ''}</p>
         <div class="flex gap-2 mt-3">
-            ${!outOfStock ? `<button class="modal-add-btn flex-1" onclick="addToCart('${prod.id}', '${prod.name}', ${prod.price}); closeQuickViewHome();">
+            ${!outOfStock ? `<button class="modal-add-btn flex-1" onclick="addToCart('${prod.id.replace(/'/g, "\\'")}', '${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '${(prod.image || '').replace(/'/g, "\\'")}'); closeQuickViewHome();">
                 ➕ ${t('addToCart')} - ${prod.price} ${t('currency')}
             </button>` : ''}
             <button onclick="shareOnWhatsApp('${prod.name}', ${prod.price}, '${(prod.image || '').replace(/'/g, "\\'")}')" class="px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold flex items-center gap-1">📱</button>
@@ -394,6 +395,7 @@ function buildHomeCard(prod, index) {
 
     const safeName = prod.name.replace(/'/g, "\\'");
     const safeId = prod.id.replace(/'/g, "\\'");
+    const safeImage = prod.image ? prod.image.replace(/'/g, "\\'") : '';
 
     const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
     const groupHtml = !outOfStock ? `
@@ -413,7 +415,7 @@ function buildHomeCard(prod, index) {
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
-                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price})">🛒 ${t('addToCart')}</button>`
+                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">🛒 ${t('addToCart')}</button>`
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
@@ -541,6 +543,7 @@ async function loadProducts() {
         container.innerHTML = `<p class="text-red-500 text-center w-full py-12">⚠️ حدث خطأ أثناء تحميل المنتجات</p>`;
     }
     renderBundles();
+    renderBrandSlider();
 }
 
 let wishlistHome = JSON.parse(localStorage.getItem('vora_wishlist')) || [];
@@ -571,13 +574,13 @@ function showWishlistToast(msg) {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-window.addToCart = function(id, name, price) {
+window.addToCart = function(id, name, price, image) {
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const itemIndex = cart.findIndex(item => item.id === id);
     if (itemIndex > -1) {
         cart[itemIndex].qty += 1;
     } else {
-        cart.push({ id, name, price, qty: 1 });
+        cart.push({ id, name, price, image: image || '', qty: 1 });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
@@ -643,12 +646,17 @@ function renderCartDrawer() {
         total += item.price * item.qty;
         const subtotal = item.price * item.qty;
 
+        const itemSrc = item.image || (allProducts.find(p => p.id === item.id)?.image) || '';
+        const drawerImage = itemSrc 
+            ? `<img src="${itemSrc}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` 
+            : BOTTLE_SVG;
+
         const row = document.createElement('div');
         row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
         row.innerHTML = `
-            <div class="relative w-20 h-24 bg-gradient-to-br from-amber-100 to-stone-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 shadow-md">
-                ${BOTTLE_SVG}
-                <div class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent"></div>
+            <div class="relative w-20 h-24 bg-gradient-to-br from-amber-100 to-stone-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0 shadow-md overflow-hidden">
+                ${drawerImage}
+                <div class="absolute inset-0 rounded-lg bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
             </div>
             <div class="flex-1 space-y-2">
                 <div>
@@ -662,7 +670,7 @@ function renderCartDrawer() {
                 </div>
             </div>
             <div class="flex flex-col items-end justify-between">
-                <button class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
+                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
                 <p class="font-bold text-amber-600 text-sm">${subtotal} ${t('currency')}</p>
             </div>
         `;
@@ -671,7 +679,6 @@ function renderCartDrawer() {
 
     document.getElementById('cartDrawerTotal').textContent = `${total} ${t('currency')}`;
     document.getElementById('cartSubtotal').textContent = `${total} ${t('currency')}`;
-    document.getElementById('cartShipping').textContent = t('cartFree');
 }
 
 window.changeDrawerQty = function(index, change) {
@@ -741,6 +748,80 @@ function renderBundles() {
             </div>
         </div>`;
     }).join('');
+}
+
+function renderBrandSlider() {
+    const section = document.getElementById('brandSliderSection');
+    const track = document.getElementById('brandSliderTrack');
+    if (!section || !track) return;
+    const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
+    const brands = settings.brands || [];
+    if (brands.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    const lang = getLang();
+    document.getElementById('brandSliderTitle').textContent = lang === 'ar' ? '🏪 برانداتنا' : '🏪 Our Brands';
+    const cardsHtml = brands.map(b => {
+        return `
+        <div class="flex flex-col items-center justify-center flex-shrink-0 w-28 sm:w-32 cursor-pointer brand-card" onclick="navigateTo('shop.html?vendor=${encodeURIComponent(b.name)}')">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-amber-50 to-pink-50 border-2 border-stone-100 flex items-center justify-center overflow-hidden hover:border-amber-300 hover:shadow-md transition-all">
+                ${b.image ? `<img src="${b.image}" alt="${b.name}" class="w-full h-full object-cover">` : `<span class="text-2xl font-bold text-stone-300" style="font-family:'Playfair Display',serif;">${(b.name || '?')[0]}</span>`}
+            </div>
+            <span class="text-xs font-semibold text-stone-700 mt-2 text-center">${b.name || ''}</span>
+        </div>`;
+    }).join('');
+    track.innerHTML = cardsHtml + cardsHtml;
+
+    // Setup horizontal auto-scroll with drag support
+    const slider = document.getElementById('brandSliderWrap');
+    if (!slider) return;
+    slider.style.scrollbarWidth = 'none';
+    slider.style.cursor = 'grab';
+    slider.scrollLeft = 0;
+
+    let brandAnimId = null, isDown = false, startX, scrollLeft;
+    const speed = 0.8; // pixels per frame
+
+    function autoScroll() {
+        if (isDown) { brandAnimId = requestAnimationFrame(autoScroll); return; }
+        slider.scrollLeft += speed;
+        const half = slider.scrollWidth / 2;
+        if (slider.scrollLeft >= half) slider.scrollLeft = 0;
+        brandAnimId = requestAnimationFrame(autoScroll);
+    }
+
+    const onStart = (e) => {
+        isDown = true;
+        slider.style.cursor = 'grabbing';
+        startX = (e.pageX || e.touches?.[0]?.pageX) - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    };
+    const onMove = (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = (e.pageX || e.touches?.[0]?.pageX) - slider.offsetLeft;
+        slider.scrollLeft = scrollLeft - (x - startX) * 1.5;
+    };
+    const onEnd = () => {
+        isDown = false;
+        slider.style.cursor = 'grab';
+    };
+    // Remove old listeners to avoid duplicates on re-render
+    if (slider._brandListeners) {
+        slider._brandListeners.forEach(({ev, fn}) => slider.removeEventListener(ev, fn));
+    }
+    const listeners = [
+        ['mousedown', onStart], ['touchstart', onStart],
+        ['mousemove', onMove], ['touchmove', onMove],
+        ['mouseup', onEnd], ['mouseleave', onEnd],
+        ['touchend', onEnd], ['mouseenter', () => isDown = false]
+    ];
+    listeners.forEach(([ev, fn]) => {
+        const opts = ev === 'touchmove' ? { passive: false } : (ev === 'touchstart' ? { passive: true } : undefined);
+        slider.addEventListener(ev, fn, opts);
+    });
+    slider._brandListeners = listeners.map(([ev, fn]) => ({ev, fn}));
+    cancelAnimationFrame(brandAnimId);
+    brandAnimId = requestAnimationFrame(autoScroll);
 }
 
 window.addBundleToCart = function(bundle) {

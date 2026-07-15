@@ -37,19 +37,7 @@ async function loadSettingsFromCloud() {
 
 let lastScrollY = 0;
 function initScrollNav() {
-    window.addEventListener('scroll', () => {
-        const nav = document.querySelector('nav.fixed');
-        if (!nav) return;
-        const y = window.scrollY;
-        if (y > 80 && y > lastScrollY) {
-            nav.classList.add('header-hidden');
-            nav.classList.remove('header-visible');
-        } else {
-            nav.classList.remove('header-hidden');
-            nav.classList.add('header-visible');
-        }
-        lastScrollY = y;
-    }, { passive: true });
+    // Keep nav always visible
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -64,7 +52,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     initBrandSlider();
     loadLogo();
     applyFooterSettings();
-    loadProducts();
+    await loadProducts();
+
+    // Hide filter on scroll down, show on scroll up
+    function initFilterScroll() {
+        const scrollEl = document.getElementById('scrollContent');
+        const filterWrap = document.getElementById('filterWrapper');
+        if (!scrollEl || !filterWrap) return;
+        let lastScroll = 0;
+        let filterHidden = false;
+        function collapseFilter() {
+            filterHidden = true;
+            const h = filterWrap.offsetHeight;
+            filterWrap.style.transition = 'none';
+            filterWrap.style.maxHeight = h + 'px';
+            filterWrap.style.overflow = 'hidden';
+            filterWrap.style.opacity = '1';
+            requestAnimationFrame(() => {
+                filterWrap.style.transition = 'max-height 0.35s ease, opacity 0.25s ease';
+                filterWrap.style.maxHeight = '0';
+                filterWrap.style.opacity = '0';
+            });
+        }
+        function expandFilter() {
+            filterHidden = false;
+            filterWrap.style.transition = 'max-height 0.35s ease, opacity 0.25s ease';
+            filterWrap.style.maxHeight = filterWrap.scrollHeight + 'px';
+            filterWrap.style.opacity = '1';
+            filterWrap.addEventListener('transitionend', function reset() {
+                filterWrap.style.maxHeight = '';
+                filterWrap.style.overflow = '';
+                filterWrap.removeEventListener('transitionend', reset);
+            });
+        }
+        scrollEl.addEventListener('scroll', () => {
+            const st = scrollEl.scrollTop;
+            const h = filterHidden ? 0 : filterWrap.offsetHeight;
+            if (st > h + 20 && st > lastScroll) {
+                if (!filterHidden) collapseFilter();
+            } else if (st < (h || 0) || st < lastScroll) {
+                if (filterHidden) expandFilter();
+            }
+            lastScroll = st;
+        }, { passive: true });
+    }
+    setTimeout(initFilterScroll, 500);
 
     updateBreadcrumbs();
     updateUserNav();
@@ -736,8 +768,9 @@ function renderCartDrawer() {
         const subtotal = item.price * item.qty;
 
         // التحقق الذكي لعرض صورة المنتج الحقيقية المخزنة أو الـ SVG كاحتياط
-        const drawerImage = item.image 
-            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` 
+        const itemSrc = item.image || (allProducts.find(p => p.id === item.id)?.image) || '';
+        const drawerImage = itemSrc 
+            ? `<img src="${itemSrc}" alt="${item.name}" class="w-full h-full object-cover rounded-lg">` 
             : BOTTLE_SVG;
 
         const row = document.createElement('div');
@@ -759,7 +792,7 @@ function renderCartDrawer() {
                 </div>
             </div>
             <div class="flex flex-col items-end justify-between">
-                <button class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
+                <button class="text-red-500 hover:text-red-700 opacity-100 transition text-lg" onclick="removeDrawerItem(${index})">🗑️</button>
                 <p class="font-bold text-amber-600 text-sm">${subtotal} ${t('currency')}</p>
             </div>
         `;
@@ -768,7 +801,6 @@ function renderCartDrawer() {
 
     document.getElementById('cartDrawerTotal').textContent = `${total} ${t('currency')}`;
     document.getElementById('cartSubtotal').textContent = `${total} ${t('currency')}`;
-    document.getElementById('cartShipping').textContent = t('cartFree');
 }
 
 window.changeDrawerQty = function(index, change) {

@@ -184,25 +184,12 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-8 px-4 bg-white">
+    <!-- Brand Slider -->
+    <section id="brandSliderSection" class="py-12 px-4 bg-white" style="display:none;">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-nowrap gap-1.5 justify-center overflow-x-auto scrollbar-hide">
-                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
-                    <div class="text-xl">🚚</div>
-                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featShippingTitle">شحن سريع</h3>
-                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featShippingDesc">توصيل إلى جميع المحافظات خلال 48 ساعة</p>
-                </div>
-                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
-                    <div class="text-xl">💳</div>
-                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featPaymentTitle">دفع آمن</h3>
-                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featPaymentDesc">تشفير عالي وطرق دفع متعددة</p>
-                </div>
-                <div class="text-center space-y-0.5 p-2 rounded-lg hover:bg-amber-50 transition flex-shrink-0 w-28 sm:w-36">
-                    <div class="text-xl">🎁</div>
-                    <h3 class="font-bold text-xs text-stone-900" data-i18n="featPackagingTitle">تغليف فاخر</h3>
-                    <p class="text-stone-600 text-[10px] leading-tight" data-i18n="featPackagingDesc">عطرك يستحق تغليفاً يليق به</p>
-                </div>
+            <div class="section-divider mb-6"><span id="brandSliderTitle">🏪 برانداتنا</span></div>
+            <div id="brandSliderWrap" class="relative scrollbar-hide" style="overflow-x:auto;">
+                <div id="brandSliderTrack" class="flex flex-nowrap gap-6" style="width: max-content;"></div>
             </div>
         </div>
     </section>
@@ -255,7 +242,7 @@
                     <span>المجموع الفرعي:</span>
                     <span id="cartSubtotal">0 ج.م</span>
                 </div>
-                <div class="flex justify-between text-sm text-stone-600">
+                <div class="flex justify-between text-sm text-stone-600" style="display:none">
                     <span>الشحن:</span>
                     <span id="cartShipping">مجاني</span>
                 </div>

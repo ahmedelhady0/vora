@@ -182,6 +182,17 @@ export async function getOrders() {
             fbOrders.push({ id: doc.id, ...doc.data() });
         });
         if (fbOrders.length > 0) {
+            // Merge with local changes (status, trackingId) made via updateOrderField
+            const local = STORE.orders;
+            if (local.length > 0) {
+                fbOrders.forEach(fb => {
+                    const localMatch = local.find(o => o.orderId === fb.orderId);
+                    if (localMatch) {
+                        if (localMatch.status && localMatch.status !== fb.status) fb.status = localMatch.status;
+                        if (localMatch.trackingId && localMatch.trackingId !== fb.trackingId) fb.trackingId = localMatch.trackingId;
+                    }
+                });
+            }
             STORE.orders = fbOrders;
             return fbOrders;
         }
