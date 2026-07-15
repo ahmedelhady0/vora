@@ -818,6 +818,7 @@ html { scroll-behavior: smooth; }
     flex-direction: column;
     gap: 8px;
     border-right: 1px solid rgba(240,168,192,0.2);
+    overflow-y: auto;
 }
 #mobileMenu.open { transform: translateX(0); }
 [dir="rtl"] #mobileMenu { left: auto; right: 0; transform: translateX(100%); }
