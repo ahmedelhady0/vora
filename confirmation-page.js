@@ -1,4 +1,5 @@
 ﻿import Icon from './icons.js';
+import { escapeHTML } from './security-utils.js';
 
 const order = JSON.parse(localStorage.getItem('vora_lastOrder'));
 const el = document.getElementById('orderDetails');
@@ -16,7 +17,7 @@ if (order) {
         </div>
         <div class="flex justify-between text-stone-600 text-sm">
             <span>${t('orderDate')}:</span>
-            <span class="font-bold text-stone-900">${order.date}</span>
+            <span class="font-bold text-stone-900">${escapeHTML(order.date)}</span>
         </div>
         <div class="flex justify-between text-stone-600 text-sm">
             <span>${t('orderPayment')}:</span>
@@ -24,7 +25,7 @@ if (order) {
         </div>
         <div class="flex justify-between text-stone-600 text-sm">
             <span>${t('orderGovernorate')}:</span>
-            <span class="font-bold text-stone-900">${order.governorate}</span>
+            <span class="font-bold text-stone-900">${escapeHTML(order.governorate)}</span>
         </div>
         <div class="border-t border-amber-200 pt-3 mt-3 flex justify-between font-bold text-amber-700">
             <span>${t('orderTotalPaid')}:</span>

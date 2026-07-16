@@ -1,6 +1,7 @@
 ﻿// cart.js
 import { placeOrder } from "./sheets-service.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
+import { escapeHTML } from "./security-utils.js";
 
 // التحقق من تسجيل الدخول
 document.addEventListener("DOMContentLoaded", () => {
@@ -34,10 +35,10 @@ function renderCart() {
             <!-- إضافة حاوية الصورة والاسم معاً لتنسيق احترافي -->
             <div class="flex items-center gap-4 flex-1 w-full sm:w-auto text-right">
                 <!-- 👈 عنصر الصورة المحدث والرابط السحابي -->
-                <img src="${itemImage}" loading="lazy" class="w-16 h-16 rounded-lg object-cover border border-stone-200 flex-shrink-0" alt="${item.name}">
+                <img src="${escapeHTML(itemImage)}" loading="lazy" class="w-16 h-16 rounded-lg object-cover border border-stone-200 flex-shrink-0" alt="${escapeHTML(item.name)}">
                 
                 <div class="min-w-0 flex-1">
-                    <h4 class="text-base font-bold truncate" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${item.name}</h4>
+                    <h4 class="text-base font-bold truncate" style="font-family: 'Playfair Display', serif; color: var(--text-primary);">${escapeHTML(item.name)}</h4>
                     <p class="text-sm font-medium" style="color: var(--primary);">${item.price} ${t('currency')}</p>
                 </div>
             </div>

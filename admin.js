@@ -1,7 +1,8 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
 import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { escapeHTML } from "./security-utils.js";
 
 const ALL_GOVERNORATES = [
     "القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "القليوبية",
@@ -22,8 +23,17 @@ const DEFAULT_SHIPPING = {
 };
 
 const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
+if (!userData || !userData.username) {
     window.location.href = "home.html";
+} else {
+    document.documentElement.style.visibility = 'hidden';
+    getUserFromFirestore(userData.username).then(liveUser => {
+        if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
+            document.documentElement.style.visibility = 'visible';
+        } else {
+            window.location.href = "home.html";
+        }
+    }).catch(() => { window.location.href = "home.html"; });
 }
 
 let editingProductId = null; 
@@ -219,11 +229,11 @@ async function loadAdminOrders() {
             const row = document.createElement('tr');
             row.className = "border-b border-stone-100 hover:bg-stone-50";
             row.innerHTML = `
-                <td class="p-3 font-mono text-[10px] text-stone-400">${order.orderId || '—'}</td>
-                <td class="p-3 text-stone-500 text-xs whitespace-nowrap">${order.date || ''}</td>
-                <td class="p-3 font-semibold text-stone-900 text-xs">${order.customerName}</td>
-                <td class="p-3 text-stone-600 text-xs" dir="ltr">${order.customerPhone}</td>
-                <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${order.items}">${order.items}</td>
+                <td class="p-3 font-mono text-[10px] text-stone-400">${escapeHTML(order.orderId || '—')}</td>
+                <td class="p-3 text-stone-500 text-xs whitespace-nowrap">${escapeHTML(order.date || '')}</td>
+                <td class="p-3 font-semibold text-stone-900 text-xs">${escapeHTML(order.customerName)}</td>
+                <td class="p-3 text-stone-600 text-xs" dir="ltr">${escapeHTML(order.customerPhone)}</td>
+                <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${escapeHTML(order.items)}">${escapeHTML(order.items)}</td>
                 <td class="p-3 font-bold text-amber-600 text-xs">${order.total} EGP</td>
                 <td class="p-3">
                     <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">${Icon.pkg()} تفاصيل</button>
@@ -238,7 +248,7 @@ async function loadAdminOrders() {
                     </select>
                 </td>
                 <td class="p-3">
-                    <input type="text" value="${order.trackingId || ''}" placeholder="رقم التتبع" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
+                    <input type="text" value="${escapeHTML(order.trackingId || '')}" placeholder="رقم التتبع" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
                 </td>
                 <td class="p-3">
                     <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">${Icon.clip()} نسخ</button>
@@ -283,22 +293,22 @@ window.showOrderDetails = function(orderId) {
     if (items.length > 0) {
         items.forEach((item, i) => {
             itemsHtml += `<div class="flex justify-between items-center py-2 border-b border-stone-100 last:border-0">
-                <div><span class="font-semibold text-stone-900">${item.name}</span> <span class="text-stone-500 text-sm">×${item.qty}</span></div>
+                <div><span class="font-semibold text-stone-900">${escapeHTML(item.name)}</span> <span class="text-stone-500 text-sm">×${item.qty}</span></div>
                 <span class="font-bold text-amber-600">${item.price * item.qty} ج.م</span>
             </div>`;
         });
     } else {
-        itemsHtml = `<p class="text-stone-500 text-sm">${order.items || '—'}</p>`;
+        itemsHtml = `<p class="text-stone-500 text-sm">${escapeHTML(order.items || '—')}</p>`;
     }
     document.getElementById('orderDetailsBody').innerHTML = `
         <div class="space-y-2 text-sm">
-            <div class="flex justify-between"><span class="text-stone-500">رقم الطلب:</span><span class="font-mono text-stone-900">${order.orderId}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">العميل:</span><span class="text-stone-900">${order.customerName}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">الهاتف:</span><span class="text-stone-900">${order.customerPhone}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">العنوان:</span><span class="text-stone-900">${order.customerAddress}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">المحافظة:</span><span class="text-stone-900">${order.governorate || '—'}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">تاريخ الطلب:</span><span class="text-stone-900">${order.date || '—'}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">الحالة:</span><span class="text-stone-900">${order.status}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">رقم الطلب:</span><span class="font-mono text-stone-900">${escapeHTML(order.orderId)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">العميل:</span><span class="text-stone-900">${escapeHTML(order.customerName)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">الهاتف:</span><span class="text-stone-900">${escapeHTML(order.customerPhone)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">العنوان:</span><span class="text-stone-900">${escapeHTML(order.customerAddress)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">المحافظة:</span><span class="text-stone-900">${escapeHTML(order.governorate || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">تاريخ الطلب:</span><span class="text-stone-900">${escapeHTML(order.date || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">الحالة:</span><span class="text-stone-900">${escapeHTML(order.status)}</span></div>
         </div>
         <div class="border-t border-stone-200 pt-4">
             <h4 class="font-bold text-stone-900 mb-2">المنتجات</h4>
@@ -506,7 +516,7 @@ async function loadProductList() {
         return;
     }
     container.innerHTML = products.map(prod => {
-        const img = prod.image ? `<img src="${prod.image}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">${Icon.pkg()}</div>`;
+        const img = prod.image ? `<img src="${escapeHTML(prod.image)}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">${Icon.pkg()}</div>`;
         const stock = prod.stock ?? '—';
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
         const discountBadge = prod.discount && prod.discountPercent ? `<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">-${prod.discountPercent}%</span>` : '';
@@ -515,8 +525,8 @@ async function loadProductList() {
         <div class="flex items-center gap-3 p-3 rounded-lg border border-stone-100 hover:border-amber-200 hover:bg-amber-50/30 transition group">
             ${img}
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-stone-900 truncate">${prod.name} ${discountBadge}</p>
-                <p class="text-xs text-stone-400">${prod.category || '—'} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
+                <p class="text-sm font-bold text-stone-900 truncate">${escapeHTML(prod.name)} ${discountBadge}</p>
+                <p class="text-xs text-stone-400">${escapeHTML(prod.category || prod.vendor || '—')} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
             </div>
             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
                 <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">${Icon.edit()}</button>

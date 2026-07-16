@@ -9,16 +9,6 @@ function saveUsers(users) {
     localStorage.setItem('vora_users', JSON.stringify(users));
 }
 
-function ensureAdmin() {
-    const users = getUsers();
-    if (!users['admin']) {
-        users['admin'] = { password: '123456', role: 'admin', email: 'admin@vora.app' };
-        saveUsers(users);
-    }
-}
-
-ensureAdmin();
-
 window.signIn = async function() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;

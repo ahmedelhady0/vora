@@ -1,5 +1,6 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
+import { escapeHTML } from "./security-utils.js";
 
 const BOTTLE_SVG = `
 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -385,8 +386,10 @@ function buildHomeCard(prod, index) {
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
 
+    const safeNameHtml = escapeHTML(prod.name);
+    const safeImageHtml = escapeHTML(prod.image);
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
+        ? `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
         : '';
 
     let badgeHtml = "";
@@ -412,7 +415,7 @@ function buildHomeCard(prod, index) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
+            <a class="card-link" href="product.html?id=${safeId}" title="${safeNameHtml}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
@@ -422,8 +425,8 @@ function buildHomeCard(prod, index) {
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${prod.name}</span></a>
+                <div class="card-vendor"><a href="product.html?id=${safeId}">${escapeHTML(prod.vendor || 'VORA')}</a>${sizeHtml}</div>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${safeNameHtml}</span></a>
                 <div class="rating-row"><span class="stars">${stars}</span></div>
                 <div class="card-price">
                     <span class="price-current">${prod.price} ${t('currency')}</span>

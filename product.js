@@ -1,5 +1,6 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
+import { escapeHTML } from "./security-utils.js";
 
 const BOTTLE_SVG = `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="24" y="4" width="16" height="8" rx="1.5" fill="currentColor" opacity="0.7"/><path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z" stroke="currentColor" stroke-width="2" fill="none"/><line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/></svg>`;
 
@@ -33,7 +34,9 @@ function buildCard(prod, index) {
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
     const safeId = prod.id.replace(/'/g, "\\'");
-    const imageContent = prod.image ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">` : '';
+    const safeNameHtml = escapeHTML(prod.name);
+    const safeImageHtml = escapeHTML(prod.image);
+    const imageContent = prod.image ? `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">` : '';
     let badgeHtml = "";
     if (index === 0) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
     if (discount > 0) badgeHtml += `<span class="badge badge-sale">-${discount}%</span>`;
@@ -48,12 +51,12 @@ function buildCard(prod, index) {
             ${badgeHtml}
             ${imageContent}
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">${BOTTLE_SVG}</div>
-            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
+            <a class="card-link" href="product.html?id=${safeId}" title="${safeNameHtml}"></a>
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor">${prod.vendor || 'VORA'}${sizeHtml}</div>
-                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${prod.name}</span></a>
+                <div class="card-vendor">${escapeHTML(prod.vendor || 'VORA')}${sizeHtml}</div>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${safeNameHtml}</span></a>
                 <div class="rating-row"><span class="stars">${stars}</span></div>
                 <div class="card-price">
                     <span class="price-current">${prod.price} ${t('currency')}</span>
@@ -70,11 +73,9 @@ async function loadProduct() {
     const id = getProductId();
     if (!id) { document.getElementById('productName').textContent = t('prodNotFound'); return; }
 
-    let products = JSON.parse(localStorage.getItem('vora_products'));
-    if (!products || products.length === 0) {
-        try { products = await getProducts(); localStorage.setItem('vora_products', JSON.stringify(products)); }
-        catch { products = []; }
-    }
+    let products;
+    try { products = await getProducts(); }
+    catch { products = []; }
     allProds = products || [];
 
     product = allProds.find(p => p.id === id);

@@ -1,5 +1,6 @@
 ﻿import Icon from './icons.js';
 import { placeOrder, getSettingsFromFirestore } from "./sheets-service.js";
+import { escapeHTML } from "./security-utils.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const DEFAULT_SHIPPING = {
@@ -65,11 +66,12 @@ function loadCartItems() {
         itemsCount += item.qty;
         const itemDiv = document.createElement('div');
         itemDiv.className = 'flex justify-between items-center py-2 border-b border-stone-100 last:border-0';
-        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${item.name}</p><p class="text-sm text-stone-500">${item.qty} × ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
+        const safeItemName = escapeHTML(item.name);
+        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${safeItemName}</p><p class="text-sm text-stone-500">${item.qty} × ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
         orderItems.appendChild(itemDiv);
         const sidebarDiv = document.createElement('div');
         sidebarDiv.className = 'flex justify-between text-sm py-2 border-b border-stone-100 last:border-0';
-        sidebarDiv.innerHTML = `<span class="text-stone-600">${item.name} ×${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
+        sidebarDiv.innerHTML = `<span class="text-stone-600">${safeItemName} ×${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
         sidebarItems.appendChild(sidebarDiv);
     });
     itemCount.textContent = itemsCount;
@@ -111,7 +113,7 @@ function loadInstapayInfo() {
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const el = document.getElementById('instapayDisplay');
     if (settings.instaName) {
-        el.innerHTML = `${settings.instaName}<br><span dir="ltr" class="text-blue-600">${settings.instaNumber || ''}</span>`;
+        el.innerHTML = `${escapeHTML(settings.instaName)}<br><span dir="ltr" class="text-blue-600">${escapeHTML(settings.instaNumber || '')}</span>`;
     } else {
         el.textContent = t('checkoutInstapayRequired');
     }
@@ -204,8 +206,9 @@ window.submitOrder = async function() {
             userEmail: document.getElementById('customerEmail').value.trim()
         };
         if (paymentMethod === 'card') {
-            const { token } = await stripe.createToken(cardElement);
-            if (token) orderData.stripeToken = token.id;
+            showMessage('⚠️ الدفع الإلكتروني بالكارت غير مفعّل حالياً على الموقع. برجاء اختيار فودافون كاش أو إنستاباي أو الدفع عند الاستلام.');
+            showLoading(false);
+            return;
         } else if (paymentMethod === 'vodafone') {
             const vf = document.getElementById('vodafoneNumber').value;
             if (!vf || vf.length < 11) { showMessage('⚠️ رقم فودافون غير صحيح'); showLoading(false); return; }
@@ -220,7 +223,12 @@ window.submitOrder = async function() {
         const addrExists = addresses.find(a => a.name === addrEntry.name && a.phone === addrEntry.phone);
         if (!addrExists) addresses.push(addrEntry);
         localStorage.setItem('vora_addresses', JSON.stringify(addresses));
-        await submitOrderToSheet(orderData);
+        const saved = await submitOrderToSheet(orderData);
+        if (!saved) {
+            showMessage('⚠️ تم تسجيل طلبك محلياً، لكن حدث خطأ في إرساله لقاعدة البيانات. برجاء إبلاغنا برقم الطلب ' + orderData.orderId + ' عبر واتساب للتأكيد.');
+            showLoading(false);
+            return;
+        }
         localStorage.removeItem('vora_cart');
         showMessage('✓ تم استلام طلبك بنجاح! جاري تحويلك لصفحة التأكيد...');
         setTimeout(() => { window.location.href = 'confirmation.html'; }, 1500);
@@ -232,11 +240,15 @@ window.submitOrder = async function() {
 
 async function submitOrderToSheet(orderData) {
     try {
-        await placeOrder({
+        const result = await placeOrder({
             ...orderData,
             action: 'placeOrder'
         });
-    } catch (e) { console.log('Sheets save optional:', e); }
+        return !!(result && result.success);
+    } catch (e) {
+        console.error('Order save failed:', e);
+        return false;
+    }
 }
 
 function validateForm() {

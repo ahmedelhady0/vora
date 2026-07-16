@@ -1,8 +1,7 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
 // استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
-import { db } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 
 const BOTTLE_SVG = `
 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -280,34 +279,13 @@ async function loadProducts() {
     renderSkeletons(container);
 
     try {
-        // محاولة جلب البيانات مباشرة من Firestore أولاً لتحقيق الربط الفعلي التلقائي
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const fbProducts = [];
-        querySnapshot.forEach((doc) => {
-            fbProducts.push({ id: doc.id, ...doc.data() });
-        });
-
-        if (fbProducts.length > 0) {
-            allProducts = fbProducts;
-        } else {
-            // كخيار احتياطي في حال كانت المجموعة فارغة في فاير ستور، يستمر بالاعتماد على sheets
-            allProducts = await getProducts();
-        }
-
+        allProducts = await getProducts();
         buildCategoryPills();
         applySectionFilter();
         renderProducts();
     } catch (err) {
-        console.error('Error loading products from Firestore, trying Sheets...', err);
-        try {
-            allProducts = await getProducts();
-            buildCategoryPills();
-            applySectionFilter();
-            renderProducts();
-        } catch (sheetErr) {
-            console.error('Error loading products from Sheets:', sheetErr);
-            container.innerHTML = `<p class="text-red-500 text-center py-12">${Icon.warning()} حدث خطأ أثناء تحميل المنتجات</p>`;
-        }
+        console.error('Error loading products:', err);
+        container.innerHTML = `<p class="text-red-500 text-center py-12">${Icon.warning()} حدث خطأ أثناء تحميل المنتجات</p>`;
     }
 }
 
@@ -361,7 +339,7 @@ function renderSkeletons(container) {
 }
 
 function buildCategoryPills() {
-    const categories = [t('catAll'), ...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    const categories = [t('catAll'), ...new Set(allProducts.map(p => p.category || p.vendor).filter(Boolean))];
     const wrap = document.getElementById('categoryPills');
     wrap.innerHTML = categories.map(cat => `
         <button class="category-pill ${cat === activeCategory ? 'active' : ''}" data-category="${cat}">
@@ -383,7 +361,7 @@ function getFilteredProducts() {
     let list = [...allProducts];
 
     if (activeCategory !== t('catAll')) {
-        list = list.filter(p => p.category === activeCategory);
+        list = list.filter(p => (p.category || p.vendor) === activeCategory);
     }
 
     if (searchQuery) {
@@ -492,7 +470,7 @@ function renderProducts() {
 
     const groups = new Map();
     filtered.forEach(prod => {
-        const key = prod.category || 'VORA';
+        const key = prod.category || prod.vendor || 'VORA';
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(prod);
     });
