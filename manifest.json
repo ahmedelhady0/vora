@@ -1,0 +1,116 @@
+{
+    "name": "VORA - عطور فاخرة",
+    "short_name": "VORA",
+    "description": "عطور فاخرة تجمع بين الأصالة والحداثة. اكتشف توقيعك العطري مع VORA.",
+    "start_url": "/home.html",
+    "display": "standalone",
+    "background_color": "#f8c8dc",
+    "theme_color": "#c25a80",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "ar",
+    "dir": "rtl",
+    "icons": [
+        {
+            "src": "/icons/icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["shopping", "lifestyle"],
+    "shortcuts": [
+        {
+            "name": "المتجر",
+            "short_name": "المتجر",
+            "description": "تصفح جميع العطور",
+            "url": "/shop.html",
+            "icons": [{ "src": "/icons/shortcut-shop.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "تتبع الطلب",
+            "short_name": "تتبع",
+            "description": "تتبع حالة طلبك",
+            "url": "/tracking.html",
+            "icons": [{ "src": "/icons/shortcut-track.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "حسابي",
+            "short_name": "حسابي",
+            "description": "إدارة حسابك وطلباتك",
+            "url": "/account.html",
+            "icons": [{ "src": "/icons/shortcut-account.png", "sizes": "192x192" }]
+        }
+    ],
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "screenshots": [
+        {
+            "src": "/screenshots/home.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "الصفحة الرئيسية - VORA"
+        },
+        {
+            "src": "/screenshots/shop.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "متجر العطور - VORA"
+        },
+        {
+            "src": "/screenshots/product.png",
+            "sizes": "720x1280",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "صفحة المنتج - VORA"
+        }
+    ],
+    "display_override": ["window-controls-overlay", "standalone"],
+    "edge_side_panel": {
+        "preferred_width": 400
+    }
+}

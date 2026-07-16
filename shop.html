@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORA - المتجر | تسوق عطور VORA الفاخرة</title>
+    <title data-i18n="shopPageTitle"></title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,23 +23,23 @@
     <div id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
     <div id="mobileMenu">
         <div class="menu-header">
-            <span class="text-sm font-bold text-white/40 tracking-widest uppercase" data-i18n="menuTitle">القائمة</span>
+            <span class="text-sm font-bold text-white/40 tracking-widest uppercase" data-i18n="menuTitle"></span>
             <button onclick="closeMobileMenu()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
-        <div class="menu-link" onclick="navigateTo('index.html')" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</div>
-        <div class="menu-link" onclick="navigateTo('home.html')" data-i18n="menuHome"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</div>
-        <div class="menu-link active" onclick="navigateTo('shop.html')" data-i18n="menuShop"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Shop</div>
-        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')" data-i18n="menuOffers"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> Special offers</div>
-        <div class="menu-link" onclick="navigateTo('brands.html')" data-i18n="menuBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> Shop by brand</div>
-        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')" data-i18n="menuNewArrivals"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New arrival</div>
-        <div class="menu-link" onclick="navigateTo('about.html')" data-i18n="menuAbout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> About</div>
+        <div class="menu-link" onclick="navigateTo('index.html')" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><</div>
+        <div class="menu-link" onclick="navigateTo('home.html')" data-i18n="menuHome"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/><</div>
+        <div class="menu-link active" onclick="navigateTo('shop.html')" data-i18n="menuShop"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/><</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')" data-i18n="menuOffers"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/><</div>
+        <div class="menu-link" onclick="navigateTo('brands.html')" data-i18n="menuBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/><</div>
+        <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')" data-i18n="menuNewArrivals"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/><</div>
+        <div class="menu-link" onclick="navigateTo('about.html')" data-i18n="menuAbout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><</div>
         <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);" data-i18n="menuContact"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Contact</div>
         <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</a>
         <div class="border-t border-white/10 my-2"></div>
-        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')" data-i18n="menuSignIn"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v14"/><path d="m19 17-4-4"/><path d="M16 21v-4"/></svg> Sign in</div>
-        <div class="menu-link text-white/60" onclick="navigateTo('index.html')" data-i18n="menuCreateAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Create an account</div>
-        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium" data-i18n="langToggle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> EN</button>
-        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();" data-i18n="menuLogout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</div>
+        <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('index.html')" data-i18n="menuSignIn"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v14"/><path d="m19 17-4-4"/><path d="M16 21v-4"/><</div>
+        <div class="menu-link text-white/60" onclick="navigateTo('index.html')" data-i18n="menuCreateAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><</div>
+        <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium" data-i18n="langToggle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><</button>
+        <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();" data-i18n="menuLogout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/><</div>
     </div>
 
     <!-- Search Overlay -->
@@ -61,7 +61,7 @@
             
             <!-- Mobile: Left - Profile + Menu -->
             <div class="flex md:hidden items-center gap-2">
-                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavMobile"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="???? ????????" id="userNavMobile"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><</a>
                 <button onclick="openMobileMenu()" class="text-stone-700 text-xl"><svg class="w-5 h-5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             </div>
             
@@ -70,23 +70,23 @@
                 <a href="home.html" id="navLogo" class="text-center md:text-right">
                     <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
                 </a>
-                <span class="text-[11px] text-stone-500 md:hidden -mt-0.5" style="font-family:'Playfair Display',serif;font-style:italic;letter-spacing:0.5px;">the essence of radiance</span>
+                <span class="text-[11px] text-stone-500 md:hidden -mt-0.5" style="font-family:'Playfair Display',serif;font-style:italic;letter-spacing:0.5px;" data-i18n="navTagline"></span>
             </div>
             
             <!-- Desktop: Nav Links -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">????????</a>
-                <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop">??????</a>
-                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> العلامات التجارية</a>
-                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">?? ??????</a>
-                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> ???????</a>
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome"></a>
+                <a href="shop.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navShop"></a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg></a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout"></a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/><</a>
             </div>
             
             <!-- Right: Search, Lang (desktop), Profile (desktop), Cart -->
             <div class="flex items-center gap-3 md:gap-5">
                 <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle" data-i18n="langToggle">EN</button>
-                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavLink"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle" data-i18n="langToggle"></button>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="My Account" id="userNavLink"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><</a>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
                     <span class="text-xl"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
@@ -108,23 +108,22 @@
                 <div class="flex flex-col sm:flex-row gap-3 lg:w-auto">
                     <!-- Price Range -->
                     <div class="flex items-center gap-2">
-                        <input type="number" id="minPrice" data-i18n-placeholder="shopMinPrice" placeholder="??? ???" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <span class="text-stone-400">�</span>
-                        <input type="number" id="maxPrice" data-i18n-placeholder="shopMaxPrice" placeholder="???? ???" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                         <input type="number" id="minPrice" data-i18n-placeholder="shopMinPrice" placeholder="Min Price" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                         <span class="text-stone-400" data-i18n="shopTo"></span>
+                         <input type="number" id="maxPrice" data-i18n-placeholder="shopMaxPrice" placeholder="Max Price" min="0" class="w-28 px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
 
                     <!-- Sort -->
                     <select id="sortSelect" class="px-3 py-2 rounded-lg border border-stone-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <option value="default" data-i18n="shopDefault">???????: ??????</option>
-                        <option value="price-asc" data-i18n="shopPriceLow">?????: ?? ????? ??????</option>
-                        <option value="price-desc" data-i18n="shopPriceHigh">?????: ?? ?????? ?????</option>
-                        <option value="rating-desc">?????? ???????</option>
-                        <option value="name-asc" data-i18n="shopName">?????: ? - ?</option>
+                        <option value="default" data-i18n="shopDefault"></option>
+                        <option value="price-asc" data-i18n="shopPriceLow"></option>
+                        <option value="price-desc" data-i18n="shopPriceHigh"></option>
+                         <option value="rating-desc" data-i18n="shopRatingDesc"></option>
+                        <option value="name-asc" data-i18n="shopName"></option>
                     </select>
 
-                    <button onclick="window.resetFilters()" class="px-4 py-2 rounded-lg border-2 border-stone-200 text-stone-600 text-sm font-semibold hover:border-amber-400 hover:text-amber-600 transition whitespace-nowrap">
-                        ????? ?????
-                    </button>
+                     <button onclick="window.resetFilters()" class="px-4 py-2 rounded-lg border-2 border-stone-200 text-stone-600 text-sm font-semibold hover:border-amber-400 hover:text-amber-600 transition whitespace-nowrap" data-i18n="shopReset">
+                     </button>
                 </div>
             </div>
 
@@ -140,14 +139,14 @@
     <section class="pb-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="text-sm text-stone-400 mb-4" id="breadcrumbs">
-                <a href="home.html" class="hover:text-amber-600 transition">Home</a>
-                <span class="mx-1">�</span>
+                <a href="home.html" class="hover:text-amber-600 transition" data-i18n="navHome"></a>
+                <span class="mx-1" data-i18n="breadcrumbSeparator"></span>
                 <span class="text-stone-600 font-medium">Shop</span>
             </div>
             <div class="text-center space-y-3">
-            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z"/></svg> ?????? ?????</span>
-            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle">???? VORA</h1>
-            <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc">???? ???? ?????? ???????? ????? ??? ????? ?????? ???? ?????? ??????</p>
+            <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase" data-i18n="shopTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z"/><</span>
+            <h1 class="text-4xl lg:text-5xl font-bold text-stone-900" data-i18n="shopHeaderTitle"></h1>
+            <p class="text-stone-600 text-lg max-w-xl mx-auto" data-i18n="shopHeaderDesc"></p>
         </div>
     </section>
 
@@ -167,8 +166,8 @@
     <div id="cartDrawer" class="fixed right-0 top-0 h-screen w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-hidden flex flex-col">
         <div class="sticky top-0 bg-gradient-to-b from-white to-stone-50 p-6 border-b border-stone-200 flex justify-between items-center">
             <div>
-                <h3 class="text-2xl font-bold text-stone-900" data-i18n="cartDrawerTitle"><svg class="w-6 h-6 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> سلتي</h3>
-                <p class="text-sm text-stone-500" data-i18n="cartDrawerSelected">عطورك المختارة</p>
+                <h3 class="text-2xl font-bold text-stone-900" data-i18n="cartDrawerTitle"><svg class="w-6 h-6 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/><</h3>
+                <p class="text-sm text-stone-500" data-i18n="cartDrawerSelected"></p>
             </div>
             <button onclick="closeCartDrawer()" class="text-2xl text-stone-400 hover:text-stone-900 transition"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
@@ -177,25 +176,23 @@
 
         <div id="cartDrawerFooter" class="hidden sticky bottom-0 bg-gradient-to-t from-stone-50 via-white border-t border-stone-200 p-6 space-y-4">
             <div class="space-y-2 pb-4 border-b border-stone-200">
-                <div class="flex justify-between text-sm text-stone-600">
-                    <span data-i18n="cartDrawerSubtotal">إجمالي المنتجات:</span>
-                    <span id="cartSubtotal">0 ?.?</span>
+                 <div class="flex justify-between text-sm text-stone-600">
+                    <span data-i18n="cartDrawerSubtotal"></span>
+                    <span id="cartSubtotal">0 EGP</span>
                 </div>
                 <div class="flex justify-between text-sm text-stone-600" style="display:none">
-                    <span data-i18n="cartDrawerShipping">الشحن:</span>
-                    <span id="cartShipping">مجاني</span>
+                    <span data-i18n="cartDrawerShipping"></span>
+                    <span id="cartShipping" data-i18n="cartFree"></span>
                 </div>
             </div>
             <div class="flex justify-between text-lg font-bold text-stone-900 pb-4">
-                <span data-i18n="cartDrawerTotal">الإجمالي:</span>
-                <span id="cartDrawerTotal" class="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">0 ?.?</span>
+                <span data-i18n="cartDrawerTotal"></span>
+                <span id="cartDrawerTotal" class="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">0 EGP</span>
             </div>
             <button onclick="goToCheckout()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition transform hover:scale-105 flex items-center justify-center gap-2">
-                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> <span data-i18n="cartDrawerCheckout">إتمام الطلب</span>
+                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> <span data-i18n="cartDrawerCheckout"></span>
             </button>
-            <button onclick="closeCartDrawer()" class="w-full py-2 border-2 border-stone-200 text-stone-900 font-semibold rounded-lg hover:border-stone-300 transition" data-i18n="cartDrawerContinue">
-                مواصلة التسوق
-            </button>
+            <button onclick="closeCartDrawer()" class="w-full py-2 border-2 border-stone-200 text-stone-900 font-semibold rounded-lg hover:border-stone-300 transition" data-i18n="cartDrawerContinue"></button>
         </div>
     </div>
 
@@ -216,9 +213,7 @@
         <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl border border-stone-100 space-y-4 animate-scaleIn">
             <div id="messageIcon" class="mx-auto text-4xl"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
             <p id="messageText" class="text-base font-medium text-stone-800 leading-relaxed"></p>
-            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">
-                ?????
-            </button>
+             <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition" data-i18n="okBtn"></button>
         </div>
     </div>
 
@@ -296,7 +291,7 @@
     <!-- Brand Logo Slider -->
     <section class="brand-slider-section py-10 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-            <div class="section-divider mb-8"><span data-i18n="brandVora">???????? ????????</span></div>
+            <div class="section-divider mb-8"><span data-i18n="brandVora"></span></div>
             <div class="brand-track-wrap">
                 <div class="brand-track" id="brandTrack"></div>
             </div>
@@ -306,11 +301,11 @@
     <!-- Newsletter Section -->
     <section class="newsletter-section">
         <div>
-            <h3 data-i18n="footerSubscribe">????? ?? ?????? ????????</h3>
-            <p data-i18n="footerSubtitle">???? ??? ???? ????? ???????? ????? ?????? ?????</p>
+            <h3 data-i18n="footerSubscribe"></h3>
+            <p data-i18n="footerSubtitle"></p>
             <div class="newsletter-form">
-                <input type="email" data-i18n-placeholder="footerEmail" placeholder="????? ??????????" id="newsletterEmail">
-                <button onclick="subscribeNewsletter()" data-i18n="footerSubBtn">??????</button>
+                 <input type="email" data-i18n-placeholder="footerEmail" placeholder="Your Email" id="newsletterEmail">
+                <button onclick="subscribeNewsletter()" data-i18n="footerSubBtn"></button>
             </div>
         </div>
     </section>
@@ -323,39 +318,39 @@
                     <div class="flex items-center gap-2 mb-2" id="footerLogo">
                         <span class="text-base font-bold text-white tracking-wider" style="font-family: 'Playfair Display', serif;">VORA</span>
                     </div>
-                    <p class="text-xs leading-relaxed text-[#666]" data-i18n="footerDesc">???? ????? ???? ??? ??????? ????????.</p>
+                    <p class="text-xs leading-relaxed text-[#666]" data-i18n="footerDesc"></p>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerQuickLinks">????? ?????</h4>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerQuickLinks"></h4>
                     <ul class="space-y-1.5 text-xs">
-                        <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">????????</a></li>
-                        <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">??????</a></li>
-                        <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">???????</a></li>
-                        <li><a href="return-policy.html" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy">????? ???????</a></li>
-                        <li><a href="tracking.html" class="hover:text-[var(--primary)] transition" data-i18n="footerTrack"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> تتبع الطلب</a></li>
-                        <li><a href="account.html" class="hover:text-[var(--primary)] transition" data-i18n="footerAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> الحساب</a></li>
+                        <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome"></a></li>
+                        <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop"></a></li>
+                        <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin"></a></li>
+                        <li><a href="return-policy.html" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy"></a></li>
+                        <li><a href="tracking.html" class="hover:text-[var(--primary)] transition" data-i18n="footerTrack"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/><</a></li>
+                        <li><a href="account.html" class="hover:text-[var(--primary)] transition" data-i18n="footerAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerContact">????? ????</h4>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerContact"></h4>
                     <ul class="space-y-1.5 text-xs">
-                        <li id="footerWhatsapp">واتساب: 01000000000</li>
-                        <li id="footerEmail">بريد: info@vora.com</li>
-                        <li id="footerInstagram">انستجرام: v0ra.eg</li>
+                         <li id="footerWhatsapp"><span data-i18n="footerWhatsappLabel"></span> 01000000000</li>
+                         <li id="footerEmail"><span data-i18n="footerEmailLabel"></span> info@vora.com</li>
+                         <li id="footerInstagram"><span data-i18n="footerInstagramLabel"></span> v0ra.eg</li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerPaymentTitle">??? ?????</h4>
+                    <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerPaymentTitle"></h4>
                     <ul class="space-y-1.5 text-xs">
-                        <li data-i18n="footerVisa"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> ???? / ?????????</li>
-                        <li data-i18n="footerVodafoneCash"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> ??????? ???</li>
-                        <li data-i18n="footerInstaPay"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/></svg> ????? ???</li>
-                        <li data-i18n="footerCod"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> ????? ??? ????????</li>
+                        <li data-i18n="footerVisa"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><</li>
+                        <li data-i18n="footerVodafoneCash"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><</li>
+                        <li data-i18n="footerInstaPay"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><</li>
+                        <li data-i18n="footerCod"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/><</li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-[#2a0f1a] pt-4 text-center text-[10px] text-[#8c6c7c]">
-                � 2026 VORA. <span data-i18n="footerRights">???? ?????? ??????</span>.
+                 &copy; 2026 VORA. <span data-i18n="footerRights"></span>.
             </div>
         </div>
     </footer>

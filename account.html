@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORA - حسابي</title>
-    <meta name="description" content="حسابي في VORA - متابعة الطلبات والعناوين المحفوظة">
+    <title data-i18n="accountPageTitle"></title>
+    <meta name="description" content="My Account - VORA - Manage your profile and orders">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,14 +45,14 @@
                 </a>
             </div>
             <div class="hidden md:flex items-center gap-8">
-                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome">الرئيسية</a>
-                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop">المتجر</a>
-                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> الماركات</a>
-                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout">عن المتجر</a>
-                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> الإدارة</a>
+                <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome"></a>
+                <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop"></a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg></a>
+                <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout"></a>
+                <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
             </div>
             <div class="flex items-center gap-3 md:gap-5">
-                <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle">EN</button>
+                 <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle" data-i18n="langToggle"></button>
                 <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-lg"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
             </div>
         </div>
@@ -61,42 +61,42 @@
         <div class="max-w-5xl mx-auto">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-stone-900" style="font-family:'Playfair Display',serif;" id="accountTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> حسابي</h1>
-                    <p class="text-stone-500 text-sm" id="accountWelcome">مرحباً بك في حسابك</p>
+                     <h1 class="text-3xl font-bold text-stone-900" style="font-family:'Playfair Display',serif;" id="accountTitle" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></h1>
+                     <p class="text-stone-500 text-sm" id="accountWelcome" data-i18n="accountWelcome"></p>
                 </div>
-                <button onclick="logout()" class="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1.5 border border-red-200 rounded-lg"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> تسجيل الخروج</button>
+                 <button onclick="logout()" class="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1.5 border border-red-200 rounded-lg" data-i18n="menuLogout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
             </div>
 
             <div id="loginRequired" style="display:none;">
                 <div class="bg-white rounded-2xl p-12 text-center border border-stone-200">
                     <svg class="w-8 h-8 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v14"/><path d="m19 17-4-4"/><path d="M16 21v-4"/></svg>
-                    <h2 class="text-xl font-bold text-stone-900 mt-4" id="loginRequiredTitle">تسجيل الدخول مطلوب</h2>
-                    <p class="text-stone-500 text-sm mt-2" id="loginRequiredDesc">يجب تسجيل الدخول أولاً لعرض حسابك</p>
-                    <a href="index.html" class="inline-block mt-6 px-8 py-3 bg-amber-600 text-white rounded-lg font-bold">تسجيل الدخول</a>
+                     <h2 class="text-xl font-bold text-stone-900 mt-4" id="loginRequiredTitle" data-i18n="loginRequiredTitle"></h2>
+                     <p class="text-stone-500 text-sm mt-2" id="loginRequiredDesc" data-i18n="loginRequiredDesc"></p>
+                     <a href="index.html" class="inline-block mt-6 px-8 py-3 bg-amber-600 text-white rounded-lg font-bold" data-i18n="menuSignIn"></a>
                 </div>
             </div>
 
             <div id="accountContent" style="display:none;">
                 <!-- User Info -->
                 <div class="bg-white rounded-2xl p-6 border border-stone-200 mb-6">
-                    <h2 class="font-bold text-stone-900 mb-4" id="infoTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg> معلوماتي</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                        <div><span class="text-stone-400" id="infoUsername">اسم المستخدم:</span> <span class="font-semibold text-stone-900" id="displayUsername"></span></div>
-                        <div><span class="text-stone-400" id="infoEmail">البريد:</span> <span class="font-semibold text-stone-900" id="displayEmail"></span></div>
-                        <div><span class="text-stone-400" id="infoPhone">الهاتف:</span> <span class="font-semibold text-stone-900" id="displayPhone"></span></div>
-                    </div>
+                     <h2 class="font-bold text-stone-900 mb-4" id="infoTitle" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></h2>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                         <div><span class="text-stone-400" id="infoUsername" data-i18n="checkoutName"></span> <span class="font-semibold text-stone-900" id="displayUsername"></span></div>
+                         <div><span class="text-stone-400" id="infoEmail" data-i18n="checkoutEmail"></span> <span class="font-semibold text-stone-900" id="displayEmail"></span></div>
+                         <div><span class="text-stone-400" id="infoPhone" data-i18n="checkoutPhone"></span> <span class="font-semibold text-stone-900" id="displayPhone"></span></div>
+                     </div>
                 </div>
 
                 <!-- Addresses -->
                 <div class="bg-white rounded-2xl p-6 border border-stone-200 mb-6">
-                    <h2 class="font-bold text-stone-900 mb-4" id="addressTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> العناوين المحفوظة</h2>
-                    <div id="addressesList"><p class="text-stone-400 text-sm" id="noAddresses">لا توجد عناوين محفوظة</p></div>
+                     <h2 class="font-bold text-stone-900 mb-4" id="addressTitle" data-i18n="checkoutDeliveryInfo"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></h2>
+                     <div id="addressesList"><p class="text-stone-400 text-sm" id="noAddresses" data-i18n="noAddresses"></p></div>
                 </div>
 
                 <!-- Order History -->
                 <div class="bg-white rounded-2xl p-6 border border-stone-200">
-                    <h2 class="font-bold text-stone-900 mb-4" id="ordersTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> طلباتي السابقة</h2>
-                    <div id="ordersList"><p class="text-stone-400 text-sm" id="noOrders">لا توجد طلبات بعد</p></div>
+                     <h2 class="font-bold text-stone-900 mb-4" id="ordersTitle" data-i18n="adminOrders"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg></h2>
+                     <div id="ordersList"><p class="text-stone-400 text-sm" id="noOrders" data-i18n="noOrders"></p></div>
                 </div>
             </div>
         </div>
@@ -104,7 +104,7 @@
     <footer id="footer" class="bg-stone-900 text-stone-400 py-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <span class="text-2xl font-bold text-white tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
-            <p class="text-xs text-stone-500 mt-3">© 2026 VORA. All rights reserved.</p>
+            <p class="text-xs text-stone-500 mt-3">� 2026 VORA. All rights reserved.</p>
         </div>
     </footer>
     <script type="module" src="account-page.js"></script>

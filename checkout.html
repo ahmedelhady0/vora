@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="checkoutPageTitle">VORA - عملية الدفع الآمنة</title>
+    <title data-i18n="checkoutPageTitle"></title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +20,7 @@
                 <div class="w-8 h-8 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold">V</div>
                 <span class="font-bold text-stone-900">VORA</span>
             </div>
-            <button onclick="window.location.href='home.html'" class="text-stone-600 hover:text-stone-900" data-i18n="backBtn">← عودة</button>
+            <button onclick="window.location.href='home.html'" class="text-stone-600 hover:text-stone-900" data-i18n="backBtn"></button>
         </div>
     </div>
 
@@ -32,45 +32,45 @@
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8 space-y-6">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                        <h2 class="text-2xl font-bold text-stone-900" data-i18n="checkoutDeliveryInfo"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> معلومات التوصيل</h2>
+                        <h2 class="text-2xl font-bold text-stone-900" data-i18n="checkoutDeliveryInfo"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/><</h2>
                     </div>
                     
                     <div class="space-y-4">
-<input type="text" id="customerName" data-i18n-placeholder="checkoutName" placeholder="الاسم الكامل" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
-                        <input type="tel" id="customerPhone" data-i18n-placeholder="checkoutPhone" placeholder="رقم الهاتف (مثال: 201xxxxxxxxx)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
-                        <input type="email" id="customerEmail" data-i18n-placeholder="checkoutEmail" placeholder="البريد الإلكتروني (لتأكيد الطلب)" dir="ltr" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
-                        <textarea id="customerAddress" data-i18n-placeholder="checkoutAddress" placeholder="العنوان بالتفصيل (المحافظة / المدينة / الشارع / المبنى)" rows="3" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+<input type="text" id="customerName" data-i18n-placeholder="checkoutName" placeholder="????? ??????" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <input type="tel" id="customerPhone" data-i18n-placeholder="checkoutPhone" placeholder="Phone Number (e.g: 201xxxxxxxxx)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <input type="email" id="customerEmail" data-i18n-placeholder="checkoutEmail" placeholder="Email (e.g: example@domain.com)" dir="ltr" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        <textarea id="customerAddress" data-i18n-placeholder="checkoutAddress" placeholder="Full Address (Governorate / City / Street / Building)" rows="3" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <select id="governorate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500" onchange="updateShipping()">
-                                <option value="" data-i18n="checkoutSelectGov">اختر المحافظة</option>
-                                <option value="القاهرة" data-i18n="govCairo">القاهرة</option>
-                                <option value="الجيزة" data-i18n="govGiza">الجيزة</option>
-                                <option value="الإسكندرية" data-i18n="govAlex">الإسكندرية</option>
-                                <option value="الدقهلية" data-i18n="govDakahlia">الدقهلية</option>
-                                <option value="الشرقية" data-i18n="govSharqia">الشرقية</option>
-                                <option value="القليوبية" data-i18n="govQalyubia">القليوبية</option>
-                                <option value="كفر الشيخ" data-i18n="govKafr">كفر الشيخ</option>
-                                <option value="الغربية" data-i18n="govGharbia">الغربية</option>
-                                <option value="المنوفية" data-i18n="govMonufia">المنوفية</option>
-                                <option value="البحيرة" data-i18n="govBeheira">البحيرة</option>
-                                <option value="الإسماعيلية" data-i18n="govIsmailia">الإسماعيلية</option>
-                                <option value="السويس" data-i18n="govSuez">السويس</option>
-                                <option value="بني سويف" data-i18n="govBeniSuef">بني سويف</option>
-                                <option value="الفيوم" data-i18n="govFayoum">الفيوم</option>
-                                <option value="المنيا" data-i18n="govMinya">المنيا</option>
-                                <option value="أسيوط" data-i18n="govAsyut">أسيوط</option>
-                                <option value="سوهاج" data-i18n="govSohag">سوهاج</option>
-                                <option value="قنا" data-i18n="govQena">قنا</option>
-                                <option value="الأقصر" data-i18n="govLuxor">الأقصر</option>
-                                <option value="أسوان" data-i18n="govAswan">أسوان</option>
-                                <option value="البحر الأحمر" data-i18n="govRedSea">البحر الأحمر</option>
-                                <option value="الوادي الجديد" data-i18n="govNewValley">الوادي الجديد</option>
-                                <option value="مطروح" data-i18n="govMatrouh">مطروح</option>
-                                <option value="شمال سيناء" data-i18n="govNorthSinai">شمال سيناء</option>
-                                <option value="جنوب سيناء" data-i18n="govSouthSinai">جنوب سيناء</option>
-                                <option value="دمياط" data-i18n="govDamietta">دمياط</option>
-                                <option value="بورسعيد" data-i18n="govPortSaid">بورسعيد</option>
+                                <option value="" data-i18n="checkoutSelectGov"></option>
+                                <option value="cairo" data-i18n="govCairo"></option>
+                                <option value="giza" data-i18n="govGiza"></option>
+                                <option value="alexandria" data-i18n="govAlex"></option>
+                                <option value="dakahlia" data-i18n="govDakahlia"></option>
+                                <option value="sharqia" data-i18n="govSharqia"></option>
+                                <option value="qalyubia" data-i18n="govQalyubia"></option>
+                                <option value="kafr_elsheikh" data-i18n="govKafr"></option>
+                                <option value="gharbia" data-i18n="govGharbia"></option>
+                                <option value="monufia" data-i18n="govMonufia"></option>
+                                <option value="beheira" data-i18n="govBeheira"></option>
+                                <option value="ismailia" data-i18n="govIsmailia"></option>
+                                <option value="suez" data-i18n="govSuez"></option>
+                                <option value="beni_suef" data-i18n="govBeniSuef"></option>
+                                <option value="fayoum" data-i18n="govFayoum"></option>
+                                <option value="minya" data-i18n="govMinya"></option>
+                                <option value="asyut" data-i18n="govAsyut"></option>
+                                <option value="sohag" data-i18n="govSohag"></option>
+                                <option value="qena" data-i18n="govQena"></option>
+                                <option value="luxor" data-i18n="govLuxor"></option>
+                                <option value="aswan" data-i18n="govAswan"></option>
+                                <option value="red_sea" data-i18n="govRedSea"></option>
+                                <option value="new_valley" data-i18n="govNewValley"></option>
+                                <option value="matrouh" data-i18n="govMatrouh"></option>
+                                <option value="north_sinai" data-i18n="govNorthSinai"></option>
+                                <option value="south_sinai" data-i18n="govSouthSinai"></option>
+                                <option value="damietta" data-i18n="govDamietta"></option>
+                                <option value="port_said" data-i18n="govPortSaid"></option>
                             </select>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8 space-y-6">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
-                        <h2 class="text-2xl font-bold text-stone-900" data-i18n="checkoutPaymentMethod"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> طريقة الدفع</h2>
+                        <h2 class="text-2xl font-bold text-stone-900" data-i18n="checkoutPaymentMethod"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><</h2>
                     </div>
 
                     <div class="space-y-4">
@@ -88,19 +88,19 @@
                         <div class="space-y-3">
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="card" checked class="w-5 h-5 text-amber-600">
-<span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCard"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> بطاقة ائتمان / تحويل بنكي</span>
+<span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCard"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><</span>
                             </label>
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="vodafone" class="w-5 h-5 text-amber-600">
-                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutVodafone"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> فودافون كاش</span>
+                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutVodafone"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><</span>
                             </label>
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="instapay" class="w-5 h-5 text-amber-600">
-                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutInstapay"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/></svg> إنستا باي</span>
+                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutInstapay"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><</span>
                             </label>
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="cash" class="w-5 h-5 text-amber-600">
-                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCash"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> الدفع عند الاستلام</span>
+                                <span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCash"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/><</span>
                             </label>
                         </div>
 
@@ -112,76 +112,76 @@
 
                         <!-- Vodafone Input -->
                         <div id="vodafoneContainer" class="hidden">
-<input type="tel" id="vodafoneNumber" data-i18n-placeholder="checkoutVodafonePlaceholder" placeholder="رقم فودافون كاش (11 رقم)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
-                            <p class="text-xs text-stone-500 mt-2" data-i18n="checkoutVodafoneNote">ستتلقى رسالة لتأكيد الدفع على هاتفك</p>
+<input type="tel" id="vodafoneNumber" data-i18n-placeholder="checkoutVodafonePlaceholder" placeholder="Vodafone Cash number (11 digits)" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                            <p class="text-xs text-stone-500 mt-2" data-i18n="checkoutVodafoneNote"></p>
                         </div>
 
                         <!-- InstaPay Info -->
                         <div id="instapayContainer" class="hidden p-4 bg-blue-50 border border-blue-200 rounded-lg">
-<p class="font-semibold text-stone-900 mb-2" data-i18n="checkoutInstapayTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/></svg> بيانات إنستا باي:</p>
-                            <p id="instapayDisplay" class="text-stone-700 text-sm" data-i18n="checkoutInstapayLoading">جاري التحميل...</p>
-                            <p class="text-xs text-stone-500 mt-2" data-i18n="checkoutInstapayNote">بعد التحويل، أرسل صورة الإيصال على واتساب</p>
+<p class="font-semibold text-stone-900 mb-2" data-i18n="checkoutInstapayTitle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><</p>
+                            <p id="instapayDisplay" class="text-stone-700 text-sm" data-i18n="checkoutInstapayLoading"></p>
+                            <p class="text-xs text-stone-500 mt-2" data-i18n="checkoutInstapayNote"></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Order Summary -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-8">
-                    <h3 class="text-xl font-bold text-stone-900 mb-4" data-i18n="checkoutOrderSummary"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> ملخص الطلب</h3>
+                    <h3 class="text-xl font-bold text-stone-900 mb-4" data-i18n="checkoutOrderSummary"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/><</h3>
                     <div id="orderItems" class="space-y-3 border-b border-stone-200 pb-4 mb-4">
                         <!-- Items will be loaded here -->
                     </div>
                     <div class="space-y-4 border-b border-stone-200 pb-4 mb-4">
                         <div>
-<label class="block text-xs font-medium text-stone-600 mb-1.5" data-i18n="checkoutCouponLabel"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> كود الخصم</label>
+<label class="block text-xs font-medium text-stone-600 mb-1.5" data-i18n="checkoutCouponLabel"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/><</label>
                             <div class="flex gap-2">
-                                <input type="text" id="couponCode" data-i18n-placeholder="checkoutCouponPlaceholder" placeholder="أدخل الكود" class="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm">
-                                <button onclick="applyCoupon()" class="px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition text-sm" data-i18n="checkoutApplyCoupon">تطبيق</button>
+                                 <input type="text" id="couponCode" data-i18n-placeholder="checkoutCouponPlaceholder" placeholder="Enter code" class="flex-1 px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm">
+                                <button onclick="applyCoupon()" class="px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition text-sm" data-i18n="checkoutApplyCoupon"></button>
                             </div>
                             <p id="couponMessage" class="text-xs mt-1 hidden"></p>
                         </div>
                     </div>
                     <div class="space-y-2 text-stone-700">
-                        <div class="flex justify-between">
-                            <span data-i18n="checkoutSubtotal">المجموع الفرعي:</span>
-                            <span id="subtotal">0 ج.م</span>
+                         <div class="flex justify-between">
+                            <span data-i18n="checkoutSubtotal"></span>
+                            <span id="subtotal">0 EGP</span>
                         </div>
                         <div class="flex justify-between">
-                            <span data-i18n="checkoutShippingFee">مصاريف الشحن:</span>
-                            <span id="shippingCost">اختر المحافظة</span>
+                            <span data-i18n="checkoutShippingFee"></span>
+                            <span id="shippingCost" data-i18n="cartFree"></span>
                         </div>
                         <div class="flex justify-between text-green-600" id="discountRow" style="display:none;">
-                            <span data-i18n="checkoutDiscount">الخصم:</span>
-                            <span id="discountAmount">-0 ج.م</span>
+                            <span data-i18n="checkoutDiscount"></span>
+                            <span id="discountAmount">-0 EGP</span>
                         </div>
                         <div class="flex justify-between font-bold text-lg text-stone-900 pt-4 border-t border-stone-200">
-                            <span data-i18n="checkoutFinalTotal">المجموع النهائي:</span>
-                            <span id="total" class="text-amber-600">0 ج.م</span>
+                            <span data-i18n="checkoutFinalTotal"></span>
+                            <span id="total" class="text-amber-600">0 EGP</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <button onclick="submitOrder()" id="submitBtn" class="w-full py-4 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold text-lg rounded-lg hover:shadow-lg transform hover:scale-105 transition">
-                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="checkoutConfirmOrder">تأكيد الطلب</span>
+                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="checkoutConfirmOrder"></span>
                 </button>
             </div>
 
             <!-- Order Preview (Sticky) -->
             <div class="lg:col-span-1">
                 <div class="sticky top-24 bg-white rounded-xl shadow-sm border border-stone-200 p-6 space-y-4">
-                    <h3 class="text-lg font-bold text-stone-900" data-i18n="checkoutQuickDetails"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> تفاصيل سريعة</h3>
+                    <h3 class="text-lg font-bold text-stone-900" data-i18n="checkoutQuickDetails"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/><</h3>
                     <div id="sidebarItems" class="space-y-3 max-h-96 overflow-y-auto">
                         <!-- Items preview -->
                     </div>
                     <div class="pt-4 border-t border-stone-200 space-y-2">
                         <div class="flex justify-between text-stone-600">
-                            <span data-i18n="checkoutItemsCount">عدد الأصناف:</span>
+                            <span data-i18n="checkoutItemsCount"></span>
                             <span id="itemCount">0</span>
                         </div>
-                        <div class="flex justify-between font-bold text-amber-600 text-lg">
-                            <span data-i18n="checkoutSideTotal">المجموع:</span>
-                            <span id="sidebarTotal">0 ج.م</span>
+                         <div class="flex justify-between font-bold text-amber-600 text-lg">
+                            <span data-i18n="checkoutSideTotal"></span>
+                            <span id="sidebarTotal">0 EGP</span>
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
         <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl space-y-4">
             <div id="messageIcon" class="text-4xl"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
             <p id="messageText" class="text-lg font-medium text-stone-800"></p>
-            <button onclick="hideMessage()" class="w-full py-2 bg-amber-600 text-white rounded-lg font-semibold" data-i18n="okBtn">حسناً</button>
+            <button onclick="hideMessage()" class="w-full py-2 bg-amber-600 text-white rounded-lg font-semibold" data-i18n="okBtn"></button>
         </div>
     </div>
 
@@ -202,7 +202,7 @@
     <div id="loadingBox" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 text-center">
             <div class="animate-spin text-4xl mb-4"><svg class="w-8 h-8 inline-block animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <p id="loadingText" class="font-semibold text-stone-900">جاري معالجة طلبك...</p>
+             <p id="loadingText" class="font-semibold text-stone-900" data-i18n="loading"></p>
         </div>
     </div>
 

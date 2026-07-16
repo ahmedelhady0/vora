@@ -274,6 +274,53 @@
         orderBackHome: 'العودة للرئيسية',
         orderNotFound: 'لم يتم العثور على الطلب',
         orderNotFoundHint: 'تأكد من رقم الطلب وحاول مرة أخرى',
+         // Page Titles
+        homePageTitle: 'VORA - اكتشف توقيعك العطري | عطور فاخرة',
+        shopPageTitle: 'VORA - المتجر | تشكيلة عطور فاخرة',
+        checkoutPageTitle: 'VORA - إتمام الطلب | أكمل طلبك',
+         // Marquee
+        marqueeAuthentic: 'عطور أصلية ومضمونة 100%',
+        marqueeDelivery: 'توصيل سريع خلال 1-2 يوم',
+        marqueeShipping: 'شحن إلى جميع محافظات مصر',
+        // Bundles
+        bundlesTitle: 'عروض خاصة',
+         // Navigation
+        navTagline: 'جوهر الإشراق',
+        navBrands: 'تسوق حسب الماركة',
+         // Shop
+        shopTo: 'إلى',
+        shopRatingDesc: 'التقييم: من الأعلى',
+        breadcrumbSeparator: '>',
+         // Product
+        productTitle: 'المنتج',
+        relatedProducts: 'منتجات ذات صلة',
+        recentlyViewed: 'المنتجات التي تم مشاهدتها مؤخراً',
+        customerReviews: 'آراء العملاء',
+        prodReviewTitle: 'اكتب تقييمك',
+        prodReviewName: 'اسمك',
+        prodReviewText: 'اكتب رأيك في المنتج...',
+         // About
+        aboutTitle: 'عن VORA',
+        aboutHeader: 'قصتنا',
+        aboutQualityTitle: 'جودة فائقة',
+        aboutQualityDesc: 'نختار بعناية أفضل العطور من موردين موثوقين لضمان أعلى جودة.',
+        aboutAuthenticTitle: 'أصلية 100%',
+        aboutAuthenticDesc: 'جميع عطورنا أصلية ومضمونة.',
+        aboutShippingTitle: 'شحن سريع',
+        aboutShippingDesc: 'نقدم خدمة التوصيل في جميع أنحاء مصر بسرعة وموثوقية.',
+         // Login
+        loginPageTitle: 'VORA - تسجيل الدخول',
+         // Account
+        accountPageTitle: 'VORA - حسابي',
+        accountWelcome: 'مرحباً بك في حسابك',
+        loginRequiredTitle: 'يرجى تسجيل الدخول',
+        loginRequiredDesc: 'يجب عليك تسجيل الدخول للوصول إلى معلومات حسابك.',
+         // Confirmation
+        orderSuccessMsg: 'تم استلام طلبك بنجاح! شكراً لاختيارك VORA.',
+        confirmationProcessing: 'يتم الآن معالجة طلبك وسيتم شحنه خلال 24 ساعة.',
+        confirmationDelivery: 'عادة ما يستغرق التوصيل 2-5 أيام عمل حسب موقعك.',
+        // Return Policy
+        returnPolicyContent: 'سيتم عرض تفاصيل سياسة الإرجاع هنا. يرجى الاتصال بنا للحصول على المزيد من المعلومات.',
         // Categories
         catAll: 'الكل',
         catNew: 'جديد',
@@ -594,6 +641,53 @@
         orderBackHome: 'Back to Home',
         orderNotFound: 'Order not found',
         orderNotFoundHint: 'Check the order ID and try again',
+         // Page Titles
+        homePageTitle: 'VORA - Discover Your Scent Signature | Luxury Perfumes',
+        shopPageTitle: 'VORA - Shop | Luxury Perfumes Collection',
+        checkoutPageTitle: 'VORA - Checkout | Complete Your Order',
+         // Marquee
+        marqueeAuthentic: '100% Authentic & guaranteed fragrances',
+        marqueeDelivery: 'Fast delivery within 1-2 days',
+        marqueeShipping: 'Shipping all over Egypt',
+        // Bundles
+        bundlesTitle: 'Special Offers',
+         // Navigation
+        navTagline: 'the essence of radiance',
+        navBrands: 'Shop by Brand',
+         // Shop
+        shopTo: 'to',
+        shopRatingDesc: 'Rating: High to Low',
+        breadcrumbSeparator: '/',
+         // Product
+        productTitle: 'Product',
+        relatedProducts: 'Related Products',
+        recentlyViewed: 'Recently Viewed Products',
+        customerReviews: 'Customer Reviews',
+        prodReviewTitle: 'Write a Review',
+        prodReviewName: 'Your Name',
+        prodReviewText: 'Write your review...',
+         // About
+        aboutTitle: 'About VORA',
+        aboutHeader: 'Our Story',
+        aboutQualityTitle: 'Premium Quality',
+        aboutQualityDesc: 'We carefully select the finest perfumes from trusted suppliers to ensure the highest quality.',
+        aboutAuthenticTitle: '100% Authentic',
+        aboutAuthenticDesc: 'All our perfumes are original and guaranteed to be authentic.',
+        aboutShippingTitle: 'Fast Shipping',
+        aboutShippingDesc: 'We deliver across Egypt with fast and reliable shipping.',
+         // Login
+        loginPageTitle: 'VORA - Sign In',
+         // Account
+        accountPageTitle: 'VORA - My Account',
+        accountWelcome: 'Welcome to your account',
+        loginRequiredTitle: 'Please Sign In',
+        loginRequiredDesc: 'You need to sign in to access your account information.',
+         // Confirmation
+        orderSuccessMsg: 'Your order has been received! Thank you for choosing VORA.',
+        confirmationProcessing: 'Your order is being processed and will be shipped within 24 hours.',
+        confirmationDelivery: 'Delivery usually takes 2-5 business days depending on your location.',
+        // Return Policy
+        returnPolicyContent: 'Return policy details will be displayed here. Please contact us for more information.',
         // Categories
         catAll: 'All',
         catNew: 'New',
@@ -682,11 +776,13 @@ function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
-        const textNodes = Array.from(el.childNodes).filter(n => n.nodeType === 3 && n.textContent.trim());
-        if (textNodes.length) {
-            textNodes[0].textContent = textNodes[0].textContent.replace(/\S.*/, val);
+        const hasChildElements = Array.from(el.childNodes).some(n => n.nodeType === 1);
+        if (hasChildElements) {
+            const textNodes = Array.from(el.childNodes).filter(n => n.nodeType === 3);
+            textNodes.forEach(n => n.remove());
+            el.appendChild(document.createTextNode(val));
         } else {
-            el.appendChild(document.createTextNode(' ' + val));
+            el.textContent = val;
         }
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
