@@ -277,6 +277,9 @@
          // Page Titles
         homePageTitle: 'VORA - اكتشف توقيعك العطري | عطور فاخرة',
         shopPageTitle: 'VORA - المتجر | تشكيلة عطور فاخرة',
+        aboutPageTitle: 'VORA - عن المتجر | عطور فاخرة',
+        brandsPageTitle: 'VORA - العلامات التجارية',
+        productPageTitle: 'VORA - منتج',
         checkoutPageTitle: 'VORA - إتمام الطلب | أكمل طلبك',
          // Marquee
         marqueeAuthentic: 'عطور أصلية ومضمونة 100%',
@@ -644,6 +647,9 @@
          // Page Titles
         homePageTitle: 'VORA - Discover Your Scent Signature | Luxury Perfumes',
         shopPageTitle: 'VORA - Shop | Luxury Perfumes Collection',
+        aboutPageTitle: 'VORA - About Us | Luxury Perfumes',
+        brandsPageTitle: 'VORA - Brands',
+        productPageTitle: 'VORA - Product',
         checkoutPageTitle: 'VORA - Checkout | Complete Your Order',
          // Marquee
         marqueeAuthentic: '100% Authentic & guaranteed fragrances',

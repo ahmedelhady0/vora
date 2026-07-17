@@ -46,7 +46,7 @@
     <div id="searchOverlay">
         <button class="search-close" onclick="closeSearchOverlay()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         <div class="search-wrap">
-            <input type="text" id="searchOverlayInput" data-i18n-placeholder="searchPlaceholder" placeholder="???? ?? ???..." oninput="liveSearch(this.value)" autofocus>
+            <input type="text" id="searchOverlayInput" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن عطر..." oninput="liveSearch(this.value)" autofocus>
             <div id="searchOverlayResults" class="search-results"></div>
         </div>
     </div>
@@ -60,7 +60,7 @@
             
             <!-- Mobile: Left - Profile + Menu -->
             <div class="flex md:hidden items-center gap-2">
-                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="???? ????????" id="userNavMobile"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+                <a href="index.html" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="الحساب" id="userNavMobile"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
                 <button onclick="openMobileMenu()" class="text-stone-700 text-xl"><svg class="w-5 h-5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             </div>
             
@@ -76,7 +76,7 @@
             <div class="hidden md:flex items-center gap-8">
                 <a href="home.html" class="text-amber-600 font-bold transition text-sm" data-i18n="navHome"></a>
                 <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop"></a>
-                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> ???????? ????????</a>
+                <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg></a>
                 <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout"></a>
                 <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
             </div>
@@ -85,7 +85,7 @@
             <div class="flex items-center gap-3 md:gap-5">
                 <button onclick="openSearchOverlay()" class="text-stone-700 hover:text-amber-600 transition text-lg"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
                 <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle" data-i18n="langToggle"></button>
-                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="???? ????????" id="userNavLink"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+                <a href="index.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="الحساب" id="userNavLink"><svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
                 <button onclick="openCartDrawer()" class="relative text-stone-700 hover:text-amber-600 transition">
                     <span class="text-xl"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] rounded-full w-4.5 h-4.5 flex items-center justify-center font-bold shadow-lg" style="min-width:18px;height:18px;">0</span>
@@ -275,7 +275,7 @@
     </div>
 
     <style>
-        /* ??????? ?????? ??????? ????????? ?????? ??????? ?? ????????? ???????? */
+        /* حركة تمرير أفقي مستمر لشريط العلامات التجارية */
         @keyframes marquee-horizontal {
             0% { transform: translateX(0%); }
             100% { transform: translateX(-50%); }
@@ -366,7 +366,7 @@
             <h3 data-i18n="footerSubscribe"></h3>
             <p data-i18n="footerSubtitle"></p>
             <div class="newsletter-form">
-                <input type="email" data-i18n-placeholder="footerEmail" placeholder="????? ??????????" id="newsletterEmail">
+                <input type="email" data-i18n-placeholder="footerEmail" placeholder="بريدك الإلكتروني" id="newsletterEmail">
                 <button onclick="subscribeNewsletter()" data-i18n="footerSubBtn"></button>
             </div>
         </div>

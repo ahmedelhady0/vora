@@ -137,34 +137,34 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">???? ?????</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">صورة المنتج</label>
                             <div class="flex items-center gap-4">
                                 <label class="flex-1 cursor-pointer">
                                     <input type="file" id="prodImageInput" accept="image/*" class="hidden" onchange="previewImage(event)">
                                     <div id="uploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
-                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> ???? ???? ????
+                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> اضغط لرفع صورة
                                     </div>
                                 </label>
                                 <div id="imagePreview" class="hidden w-16 h-16 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50">
                                     <img id="previewImg" class="w-full h-full object-cover">
                                 </div>
                             </div>
-                            <p class="text-xs text-stone-400 mt-1">????? ???? ???? ???????? ??? ??????? ?????????</p>
+                            <p class="text-xs text-stone-400 mt-1">يُفضل استخدام صورة مربعة وبجودة عالية للحصول على أفضل شكل</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?????</label>
-                            <textarea id="prodDesc" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="?????? ????? ????????..." rows="3"></textarea>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">الوصف</label>
+                            <textarea id="prodDesc" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="اكتب وصفاً مختصراً للمنتج..." rows="3"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">??????? ?????? (Additional Information)</label>
-                            <textarea id="prodAdditionalInfo" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-20 resize-none" placeholder="??? ????? ??????? ?????????? ???????? ????????..." rows="4"></textarea>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">معلومات إضافية (Additional Information)</label>
+                            <textarea id="prodAdditionalInfo" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-20 resize-none" placeholder="أضف أي تفاصيل إضافية عن المنتج هنا..." rows="4"></textarea>
                         </div>
                         <div class="flex gap-2">
                             <button id="saveProductBtn" onclick="saveProduct()" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition text-sm uppercase tracking-wider">
-                                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> ??? ?????
+                                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> حفظ المنتج
                             </button>
                             <button id="cancelEditBtn" onclick="cancelEdit()" class="hidden px-4 py-3 border-2 border-stone-300 text-stone-600 font-bold rounded-lg hover:bg-stone-50 transition text-sm">
-                                ?????
+                                إلغاء
                             </button>
                         </div>
                     </div>
@@ -172,7 +172,7 @@
 
                 <!-- Product List -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg> ???????? ????????</h3>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg> قائمة المنتجات</h3>
                     <div id="productList" class="space-y-2 max-h-[600px] overflow-y-auto"></div>
                 </div>
             </div>
@@ -183,13 +183,13 @@
             <div class="space-y-6">
                 <!-- Logo Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> ???? ?????? (Logo)</h3>
-                    <p class="text-xs text-stone-400 mb-3">???? ???? ???? VORA ????? ?? ???? ??????</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> شعار المتجر (Logo)</h3>
+                    <p class="text-xs text-stone-400 mb-3">ارفع شعار متجر VORA ليظهر في أعلى الموقع</p>
                     <div class="flex items-center gap-4">
                         <label class="flex-1 cursor-pointer">
                             <input type="file" id="logoInput" accept="image/*" class="hidden" onchange="previewLogo(event)">
                             <div id="logoUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
-                                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> ???? ???? ??????
+                                <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> اضغط لرفع الشعار
                             </div>
                         </label>
                         <div id="logoPreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 flex items-center justify-center p-1">
@@ -200,71 +200,71 @@
 
                 <!-- Payment Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/></svg> ??????? ?????</h3>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/></svg> إعدادات الدفع</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">??? ???? InstaPay</label>
-                            <input type="text" id="set_instaName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="????: Vora Perfumes">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">اسم حساب InstaPay</label>
+                            <input type="text" id="set_instaName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="مثال: Vora Perfumes">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">??? InstaPay</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">رقم InstaPay</label>
                             <input type="text" id="set_instaNumber" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="01XXXXXXXXX">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?????? InstaPay</label>
-                            <input type="text" id="set_instaNote" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="??? ???????? ???? ???? ??????? ??? ????????">
+                            <label class="block text-sm font-medium text-stone-700 mb-1">ملاحظة InstaPay</label>
+                            <input type="text" id="set_instaNote" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="أي تعليمات إضافية تظهر للعميل عند الدفع">
                         </div>
                     </div>
                 </div>
 
                 <!-- Login Logo -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ???? ????? ??????</h3>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> شعار صفحة الدخول</h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?? ??????? (????? ?? VORA)</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">عنوان صفحة الدخول (افتراضي VORA)</label>
                             <input type="text" id="set_loginTitle" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="VORA">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">???? ???? ????? ??????</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">شعار صفحة تسجيل الدخول</label>
                             <div class="flex items-center gap-4">
                                 <label class="flex-1 cursor-pointer">
                                     <input type="file" id="loginLogoInput" accept="image/*" class="hidden" onchange="previewLoginLogo(event)">
                                     <div id="loginLogoUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
-                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> ???? ???? ??????
+                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> اضغط لرفع الشعار
                                     </div>
                                 </label>
                                 <div id="loginLogoPreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 flex items-center justify-center p-1">
                                     <img id="loginLogoPreviewImg" class="max-w-full max-h-full object-contain">
                                 </div>
                             </div>
-                            <p class="text-xs text-stone-400 mt-1">????? ?????? ???????? ???? ?????? ?????????</p>
+                            <p class="text-xs text-stone-400 mt-1">يُفضل استخدام صورة بخلفية شفافة أو داكنة</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Coupon Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> ????? ?????</h3>
-                    <p class="text-xs text-stone-400 mb-3">??? ??? ????? ????? ????? ????? (????: VORA10 = 10% ???)</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> أكواد الخصم</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف كود خصم مع نسبة الخصم (مثال: VORA10 = خصم 10%)</p>
                     <div id="couponsContainer" class="space-y-2"></div>
-                    <button onclick="addCouponField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ????? ??? ???</button>
+                    <button onclick="addCouponField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة كود جديد</button>
                 </div>
 
                 <!-- WhatsApp & Email -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ???????</h3>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> التواصل</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">??? ???????? (?????????)</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">رقم واتساب (بدون رمز الدولة)</label>
                             <input type="text" id="set_whatsapp" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="01XXXXXXXXX">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?????? ??????????</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">البريد الإلكتروني</label>
                             <input type="email" id="set_email" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="info@vora.com">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">????????</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">إنستجرام</label>
                             <input type="text" id="set_instagram" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" dir="ltr" placeholder="v0ra.eg">
                         </div>
                     </div>
@@ -272,35 +272,35 @@
 
                 <!-- Hero Section Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> ????? ??????? (Hero Section)</h3>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> قسم الواجهة الرئيسية (Hero Section)</h3>
                     <div class="space-y-3">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">???? ?????? (Badge)</label>
-                                <input type="text" id="hero_badge" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="?????? ?????????">
+                                <label class="block text-sm font-medium text-stone-700 mb-1">شارة صغيرة (Badge)</label>
+                                <input type="text" id="hero_badge" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="عطور فاخرة">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">??????? ???????</label>
-                                <input type="text" id="hero_title" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="????? ?????? ??????">
+                                <label class="block text-sm font-medium text-stone-700 mb-1">العنوان الرئيسي</label>
+                                <input type="text" id="hero_title" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="اكتشف توقيعك العطري">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">???? ?????? (????)</label>
-                                <textarea id="hero_subtitle_ar" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="???? ????? ???? ??? ??????? ????????..." rows="2"></textarea>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي (عربي)</label>
+                                <textarea id="hero_subtitle_ar" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="نص قصير يظهر تحت العنوان الرئيسي..." rows="2"></textarea>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1">???? ?????? (English)</label>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">النص الفرعي (English)</label>
                                 <textarea id="hero_subtitle_en" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-16 resize-none" placeholder="Luxury perfumes blending authenticity and modernity..." rows="2"></textarea>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">???? ??????? (???? ??????)</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">صورة الواجهة (خلفية الهيرو)</label>
                             <div class="flex items-center gap-4">
                                 <label class="flex-1 cursor-pointer">
                                     <input type="file" id="heroImageInput" accept="image/*" class="hidden" onchange="previewHeroImage(event)">
                                     <div id="heroUploadPlaceholder" class="w-full px-4 py-3 border-2 border-dashed border-stone-300 rounded-lg text-center text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
-                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> ???? ???? ???? ???????
+                                        <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> اضغط لرفع صورة الخلفية
                                     </div>
                                 </label>
                                 <div id="heroImagePreview" class="hidden w-20 h-20 rounded-lg overflow-hidden border border-stone-200 flex-shrink-0 bg-stone-50 relative">
@@ -308,19 +308,19 @@
                                     <button onclick="removeHeroImage()" class="absolute top-0 right-0 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center hover:bg-red-700 transition"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
                                 </div>
                             </div>
-                            <p class="text-xs text-stone-400 mt-1">????? ?????? ???????? ??? ??????? ?????????</p>
+                            <p class="text-xs text-stone-400 mt-1">يُفضل استخدام صورة عريضة بجودة عالية</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Slideshow Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ??? ?????? ???????? (Slideshow)</h3>
-                    <p class="text-xs text-stone-400 mb-3">??? ????? ?????? ?????? ?????? ?? ????? ???????. ???? ??? 5 ???.</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> صور العرض المتحرك (Slideshow)</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف عدة صور تتبدل تلقائياً في أعلى الصفحة الرئيسية. يُفضل حتى 5 صور.</p>
                     <div id="slideshowImagesContainer" class="flex flex-wrap gap-3 mb-3"></div>
                     <div>
                         <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">
-                            <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> ????? ????
+                            <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> إضافة صورة
                             <input type="file" id="slideshowImageInput" accept="image/*" class="hidden" onchange="addSlideshowImages(event)">
                         </label>
                     </div>
@@ -328,64 +328,64 @@
 
                 <!-- Banner Grid Settings -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><line x1="22" y1="8.5" x2="12" y2="15.5"/><line x1="2" y1="8.5" x2="12" y2="15.5"/></svg> ???????? ???????? (Banner Grid)</h3>
-                    <p class="text-xs text-stone-400 mb-3">???? ?? ???????? ???????? ?????? ???? ????? ???????</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><line x1="22" y1="8.5" x2="12" y2="15.5"/><line x1="2" y1="8.5" x2="12" y2="15.5"/></svg> شبكة اللافتات (Banner Grid)</h3>
+                    <p class="text-xs text-stone-400 mb-3">تحكم في اللافتات الترويجية التي تظهر في الصفحة الرئيسية</p>
                     <div id="bannersSettingsContainer"></div>
                 </div>
 
                 <!-- Shipping Rates -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> ????? ????? ??? ????????</h3>
-                    <p class="text-xs text-stone-400 mb-3">????? ?? (?.?). ???? 0 ????? ???????.</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> أسعار الشحن حسب المحافظة</h3>
+                    <p class="text-xs text-stone-400 mb-3">السعر بالجنيه المصري (ج.م). ضع 0 لشحن مجاني.</p>
                     <div id="shippingRatesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
                 </div>
 
                 <!-- COD Governorates -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> ??????? ????? ??? ???????? (COD)</h3>
-                    <p class="text-xs text-stone-400 mb-3">???? ????????? ?????? ???? ????? ??? ????????</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> الدفع عند الاستلام حسب المحافظة (COD)</h3>
+                    <p class="text-xs text-stone-400 mb-3">حدد المحافظات المتاح فيها الدفع عند الاستلام</p>
                     <div id="codGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"></div>
                 </div>
 
                 <!-- Brand Images -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> ??????? ???????? (Brand Images)</h3>
-                    <p class="text-xs text-stone-400 mb-3">??? ??? ??????? ????????? ???? ?????? ???? ????? ?? ?????? ????????.</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> صور الماركات (Brand Images)</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف شعارات الماركات التي تظهر في قسم "براندتنا" على الصفحة الرئيسية.</p>
                     <div id="brandsContainer" class="space-y-3"></div>
-                    <button onclick="addBrandField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ????? ?????</button>
+                    <button onclick="addBrandField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة ماركة</button>
                 </div>
 
                 <!-- Bundle Offers -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> ???? ????? (Bundle Offers)</h3>
-                    <p class="text-xs text-stone-400 mb-3">??? ???? ?????? ?????? ???? ????. ???? IDs ???????? ?????? ??????.</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> عروض الباقات (Bundle Offers)</h3>
+                    <p class="text-xs text-stone-400 mb-3">أضف عرض باقة يجمع أكثر من منتج بسعر مخفض. استخدم IDs المنتجات المطلوبة.</p>
                     <div id="bundlesContainer" class="space-y-3"></div>
-                    <button onclick="addBundleField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ????? ??? ????</button>
+                    <button onclick="addBundleField()" class="mt-2 px-4 py-2 border-2 border-dashed border-stone-300 rounded-lg text-sm text-stone-400 hover:border-amber-500 hover:text-amber-600 transition w-full"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة باقة جديدة</button>
                 </div>
 
                 <!-- Return Policy -->
                 <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> ????? ??????? ??????????</h3>
-                    <p class="text-xs text-stone-400 mb-3">????? ???? ????? ???????. ???? ??? ????? ????????.</p>
+                    <h3 class="font-bold text-stone-900 mb-4"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> سياسة الإرجاع والاستبدال</h3>
+                    <p class="text-xs text-stone-400 mb-3">اكتب سياسة الإرجاع الخاصة بالمتجر. تظهر في صفحة سياسة الإرجاع.</p>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?????? ???????</label>
-                            <textarea id="set_returnPolicyAr" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-24 resize-none" placeholder="???? ????? ??????? ????????..." rows="4"></textarea>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">بالعربية</label>
+                            <textarea id="set_returnPolicyAr" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-24 resize-none" placeholder="اكتب سياسة الإرجاع بالعربية..." rows="4"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1">?????? ??????????</label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">بالإنجليزية</label>
                             <textarea id="set_returnPolicyEn" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm h-24 resize-none" placeholder="Write the return policy in English..." rows="4"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <button onclick="saveSettings()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-lg hover:shadow-lg transition">
-                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> ??? ???? ?????????
+                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> حفظ كل الإعدادات
                 </button>
                 <button onclick="downloadBackup()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:shadow-lg transition mt-3">
-                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ????? ???? ???????? (?? GitHub)
+                    <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تحميل نسخة احتياطية (لرفعها على GitHub)
                 </button>
-                <p class="text-xs text-stone-400 mt-2">??? ???????? ?????? ??? <code class="bg-stone-100 px-1 rounded">fallback-data.js</code> ?? ??????? ?????? ?????? ???? ???? ???????? ??????.</p>
+                <p class="text-xs text-stone-400 mt-2">ارفع الملف الذي يتم تحميله باسم <code class="bg-stone-100 px-1 rounded">fallback-data.js</code> إلى مجلد الموقع على GitHub حتى تظهر البيانات لكل الزوار.</p>
             </div>
         </div>
 
@@ -395,7 +395,7 @@
     <div id="orderDetailsModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl max-w-lg w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
             <div class="sticky top-0 bg-white p-6 border-b border-stone-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-stone-900"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> ?????? ?????</h3>
+                <h3 class="text-lg font-bold text-stone-900"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> تفاصيل الطلب</h3>
                 <button onclick="closeOrderDetails()" class="text-2xl text-stone-400 hover:text-stone-900 transition"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div id="orderDetailsBody" class="p-6 space-y-4"></div>
@@ -405,7 +405,7 @@
         <div class="bg-white rounded-2xl p-8 max-w-xs w-full text-center shadow-2xl space-y-4">
             <div id="messageIcon" class="flex justify-center text-4xl mb-2"></div>
             <p id="messageText" class="text-lg font-medium text-stone-800"></p>
-            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">?????</button>
+            <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition">حسناً</button>
         </div>
     </div>
 

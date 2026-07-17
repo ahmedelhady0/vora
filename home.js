@@ -773,7 +773,7 @@ function renderBrandSlider() {
             <span class="text-xs font-semibold text-stone-700 mt-2 text-center">${b.name || ''}</span>
         </div>`;
     }).join('');
-    track.innerHTML = cardsHtml + cardsHtml;
+    track.innerHTML = cardsHtml;
 
     // Setup horizontal auto-scroll with drag support
     const slider = document.getElementById('brandSliderWrap');
@@ -782,16 +782,7 @@ function renderBrandSlider() {
     slider.style.cursor = 'grab';
     slider.scrollLeft = 0;
 
-    let brandAnimId = null, isDown = false, startX, scrollLeft;
-    const speed = 0.8; // pixels per frame
-
-    function autoScroll() {
-        if (isDown) { brandAnimId = requestAnimationFrame(autoScroll); return; }
-        slider.scrollLeft += speed;
-        const half = slider.scrollWidth / 2;
-        if (slider.scrollLeft >= half) slider.scrollLeft = 0;
-        brandAnimId = requestAnimationFrame(autoScroll);
-    }
+    let isDown = false, startX, scrollLeft;
 
     const onStart = (e) => {
         isDown = true;
@@ -824,8 +815,6 @@ function renderBrandSlider() {
         slider.addEventListener(ev, fn, opts);
     });
     slider._brandListeners = listeners.map(([ev, fn]) => ({ev, fn}));
-    cancelAnimationFrame(brandAnimId);
-    brandAnimId = requestAnimationFrame(autoScroll);
 }
 
 window.addBundleToCart = function(bundle) {

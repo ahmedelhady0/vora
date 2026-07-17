@@ -474,8 +474,10 @@ function renderProducts() {
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(prod);
     });
+    const sortedGroupNames = Array.from(groups.keys()).sort((a, b) => a.localeCompare(b, 'ar'));
 
-    groups.forEach((products, categoryName) => {
+    sortedGroupNames.forEach((categoryName) => {
+        const products = groups.get(categoryName);
         const section = document.createElement('div');
         section.className = "mb-12";
         section.innerHTML = `
@@ -503,7 +505,7 @@ function buildProductCard(prod) {
         ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0);
     const rating = parseFloat(prod.rating) || 0;
     const stars = "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating));
-    const isNew = parseInt(prod.id?.split('-')[1]) % 3 === 0;
+    const isNew = (prod.sections || []).includes('new-arrivals');
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
 

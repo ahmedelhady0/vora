@@ -83,9 +83,9 @@
         function loadPolicy() {
             const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
             const lang = localStorage.getItem('vora_lang') || 'ar';
-            const content = lang === 'ar' ? (settings.returnPolicyAr || '???? ????? ????? ??????? ??????...') : (settings.returnPolicyEn || 'Return policy will be added soon...');
+            const content = lang === 'ar' ? (settings.returnPolicyAr || 'سيتم إضافة سياسة الإرجاع قريباً...') : (settings.returnPolicyEn || 'Return policy will be added soon...');
             document.getElementById('policyContent').innerHTML = content.replace(/\n/g, '<br>');
-            document.getElementById('policyTitle').textContent = lang === 'ar' ? '????? ???????' : 'Return Policy';
+            document.getElementById('policyTitle').textContent = lang === 'ar' ? 'سياسة الإرجاع' : 'Return Policy';
         }
         document.addEventListener('DOMContentLoaded', () => {
             loadPolicy();
