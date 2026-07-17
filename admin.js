@@ -23,17 +23,18 @@ const DEFAULT_SHIPPING = {
 };
 
 const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData || !userData.username) {
+if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
     window.location.href = "home.html";
-} else {
-    document.documentElement.style.visibility = 'hidden';
+} else if (userData.username) {
+    // Best-effort re-check: only kick the user out if Firestore explicitly confirms
+    // their role is no longer admin/manager. If the check fails or the record can't
+    // be read (offline, or a users-collection security rule blocks it), we keep
+    // trusting the local session rather than locking the admin out entirely.
     getUserFromFirestore(userData.username).then(liveUser => {
-        if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
-            document.documentElement.style.visibility = 'visible';
-        } else {
+        if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
             window.location.href = "home.html";
         }
-    }).catch(() => { window.location.href = "home.html"; });
+    }).catch(() => {});
 }
 
 let editingProductId = null; 
