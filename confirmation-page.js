@@ -1,5 +1,4 @@
-﻿import Icon from './icons.js';
-import { escapeHTML } from './security-utils.js';
+﻿import { escapeHTML } from './security-utils.js';
 
 const order = JSON.parse(localStorage.getItem('vora_lastOrder'));
 const el = document.getElementById('orderDetails');
@@ -31,7 +30,7 @@ if (order) {
             <span>${t('orderTotalPaid')}:</span>
             <span>${order.total} ${t('currency')}</span>
         </div>
-        <a href="tracking.html?orderId=${order.orderId}" class="block mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-semibold">${Icon.pkg()} ${t('orderTrackOnMap')}</a>
+        <a href="tracking.html?orderId=${order.orderId}" class="flex items-center justify-center gap-1.5 mt-4 text-center text-sm text-blue-600 hover:text-blue-800 font-semibold"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> ${t('orderTrackOnMap')}</a>
     `;
 } else {
     el.innerHTML = `<p class="text-stone-500 text-sm">${t('orderNotFoundHint')}</p>`;
