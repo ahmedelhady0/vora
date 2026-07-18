@@ -94,11 +94,28 @@ export async function getProducts() {
     const local = STORE.products;
     if (local.length > 0) return local;
 
+    if (!window.__FALLBACK_PRODUCTS) {
+        try { await loadFallbackDataScript(); } catch (e) { /* ignore, we'll return [] below */ }
+    }
     if (window.__FALLBACK_PRODUCTS) {
         STORE.products = window.__FALLBACK_PRODUCTS;
         return window.__FALLBACK_PRODUCTS;
     }
     return [];
+}
+
+let _fallbackScriptPromise = null;
+function loadFallbackDataScript() {
+    if (window.__FALLBACK_PRODUCTS) return Promise.resolve();
+    if (_fallbackScriptPromise) return _fallbackScriptPromise;
+    _fallbackScriptPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'fallback-data.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Could not load fallback-data.js'));
+        document.head.appendChild(script);
+    });
+    return _fallbackScriptPromise;
 }
 
 export async function addProduct(product) {

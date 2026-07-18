@@ -102,7 +102,7 @@ window.updateShipping = function() {
 function updateTotals(subtotal, shipping) {
     const total = subtotal + shipping;
     document.getElementById('subtotal').textContent = `${subtotal} ${t('currency')}`;
-    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && document.getElementById('governorate').value ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
+    document.getElementById('shippingCost').innerHTML = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && document.getElementById('governorate').value ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
     document.getElementById('total').textContent = `${total} ${t('currency')}`;
     document.getElementById('sidebarTotal').textContent = `${total} ${t('currency')}`;
     localStorage.setItem('vora_checkout_total', total);
@@ -158,7 +158,7 @@ function updateTotalsWithDiscount() {
     const discount = subtotal * (appliedDiscount / 100);
     const total = subtotal + shipping - discount;
     document.getElementById('subtotal').textContent = `${subtotal} ${t('currency')}`;
-    document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && gov ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
+    document.getElementById('shippingCost').innerHTML = shipping > 0 ? `${shipping} ${t('currency')}` : shipping === 0 && gov ? `${t('cartFree')} ${Icon.check()}` : `${t('checkoutGovernorate')}`;
     document.getElementById('discountAmount').textContent = `-${Math.round(discount)} ${t('currency')}`;
     document.getElementById('total').textContent = `${Math.round(total)} ${t('currency')}`;
     document.getElementById('sidebarTotal').textContent = `${Math.round(total)} ${t('currency')}`;

@@ -47,46 +47,62 @@ let uploadedLoginLogo = "";
 let slideshowImages = [];
 let uploadedBannerImages = ["", "", ""];
 
-window.previewHeroImage = function(e) {
+window.previewHeroImage = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { showMessage("⚠️ الصورة كبيرة جداً"); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
-        uploadedHeroImage = ev.target.result;
-        document.getElementById('heroPreviewImg').src = uploadedHeroImage;
+        document.getElementById('heroPreviewImg').src = ev.target.result;
         document.getElementById('heroImagePreview').classList.remove('hidden');
+        document.getElementById('heroUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
+    };
+    reader.readAsDataURL(file);
+    try {
+        uploadedHeroImage = await uploadImageToStorage(file);
         document.getElementById('heroUploadPlaceholder').innerHTML = '📁 تغيير الصورة';
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+        showMessage("⚠️ فشل رفع الصورة، حاول مرة أخرى");
+        document.getElementById('heroUploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة الزجاجة';
+    }
 };
 
-window.previewLogo = function(e) {
+window.previewLogo = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) { showMessage("⚠️ الشعار كبير جداً (أقصى 2MB)"); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
-        uploadedLogo = ev.target.result;
-        document.getElementById('logoPreviewImg').src = uploadedLogo;
+        document.getElementById('logoPreviewImg').src = ev.target.result;
         document.getElementById('logoPreview').classList.remove('hidden');
-        document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+        document.getElementById('logoUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
+    try {
+        uploadedLogo = await uploadImageToStorage(file);
+        document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+    } catch (err) {
+        showMessage("⚠️ فشل رفع الشعار، حاول مرة أخرى");
+    }
 };
 
-window.previewLoginLogo = function(e) {
+window.previewLoginLogo = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) { showMessage("⚠️ الشعار كبير جداً (أقصى 2MB)"); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
-        uploadedLoginLogo = ev.target.result;
-        document.getElementById('loginLogoPreviewImg').src = uploadedLoginLogo;
+        document.getElementById('loginLogoPreviewImg').src = ev.target.result;
         document.getElementById('loginLogoPreview').classList.remove('hidden');
-        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
+    try {
+        uploadedLoginLogo = await uploadImageToStorage(file);
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
+    } catch (err) {
+        showMessage("⚠️ فشل رفع الشعار، حاول مرة أخرى");
+    }
 };
 
 window.removeHeroImage = function() {
@@ -101,12 +117,21 @@ window.addSlideshowImages = function(e) {
     for (const file of files) {
         if (slideshowImages.length >= 5) { showMessage("⚠️ أقصى عدد 5 صور"); break; }
         if (file.size > 5 * 1024 * 1024) continue;
+        const slotIndex = slideshowImages.length;
+        slideshowImages.push(null); // placeholder while uploading
+        renderSlideshowAdmin();
         const reader = new FileReader();
         reader.onload = function(ev) {
-            slideshowImages.push(ev.target.result);
+            if (slideshowImages[slotIndex] === null) slideshowImages[slotIndex] = ev.target.result;
             renderSlideshowAdmin();
         };
         reader.readAsDataURL(file);
+        uploadImageToStorage(file).then(url => {
+            slideshowImages[slotIndex] = url;
+            renderSlideshowAdmin();
+        }).catch(() => {
+            showMessage("⚠️ فشل رفع إحدى الصور");
+        });
     }
     e.target.value = '';
 };
@@ -115,8 +140,8 @@ function renderSlideshowAdmin() {
     const container = document.getElementById('slideshowImagesContainer');
     if (!container) return;
     container.innerHTML = slideshowImages.map((img, i) => `
-        <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-stone-200 group flex-shrink-0">
-            <img src="${img}" class="w-full h-full object-cover">
+        <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-stone-200 group flex-shrink-0 bg-stone-100 flex items-center justify-center">
+            ${img ? `<img src="${img}" class="w-full h-full object-cover">` : `<span class="text-xs text-stone-400">⏳</span>`}
             <button onclick="removeSlideshowImage(${i})" class="absolute top-1 left-1 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700">${Icon.close()}</button>
             <span class="absolute bottom-1 right-1 text-[10px] bg-black/60 text-white px-1.5 rounded-full">${i+1}</span>
         </div>
@@ -128,19 +153,25 @@ window.removeSlideshowImage = function(index) {
     renderSlideshowAdmin();
 };
 
-window.previewBannerImage = function(index, e) {
+window.previewBannerImage = async function(index, e) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { showMessage("⚠️ الصورة كبيرة جداً"); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
-        uploadedBannerImages[index] = ev.target.result;
         const preview = document.getElementById(`bannerPreview${index}`);
         if (preview) { preview.src = ev.target.result; preview.classList.remove('hidden'); }
         const label = document.getElementById(`bannerUploadLabel${index}`);
-        if (label) label.innerHTML = '📁 تغيير الصورة';
+        if (label) label.innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
+    try {
+        uploadedBannerImages[index] = await uploadImageToStorage(file);
+        const label = document.getElementById(`bannerUploadLabel${index}`);
+        if (label) label.innerHTML = '📁 تغيير الصورة';
+    } catch (err) {
+        showMessage("⚠️ فشل رفع الصورة، حاول مرة أخرى");
+    }
 };
 
 function renderBannersSettings() {
@@ -743,7 +774,6 @@ window.previewBrandImage = function(index, input) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const dataUrl = e.target.result;
-        document.getElementById('brand_image_' + index).value = dataUrl;
         const brands = window._brandData || [];
         while (brands.length <= index) brands.push({ name: '', image: '' });
         brands[index].image = dataUrl;
@@ -751,6 +781,15 @@ window.previewBrandImage = function(index, input) {
         renderBrands();
     };
     reader.readAsDataURL(file);
+    uploadImageToStorage(file).then(url => {
+        document.getElementById('brand_image_' + index).value = url;
+        const brands = window._brandData || [];
+        if (brands[index]) brands[index].image = url;
+        window._brandData = brands;
+        renderBrands();
+    }).catch(() => {
+        showMessage("⚠️ فشل رفع شعار الماركة، حاول مرة أخرى");
+    });
 };
 
 window.addBrandField = function() {
@@ -780,14 +819,14 @@ window.saveSettings = async function() {
         heroTitle: document.getElementById('hero_title').value.trim(),
         heroSubtitleAr: document.getElementById('hero_subtitle_ar').value.trim(),
         heroSubtitleEn: document.getElementById('hero_subtitle_en').value.trim(),
-        heroImage: uploadedHeroImage,
-        logo: uploadedLogo,
-        loginLogo: uploadedLoginLogo,
+        heroImage: (uploadedHeroImage && uploadedHeroImage.startsWith('data:')) ? '' : uploadedHeroImage,
+        logo: (uploadedLogo && uploadedLogo.startsWith('data:')) ? '' : uploadedLogo,
+        loginLogo: (uploadedLoginLogo && uploadedLoginLogo.startsWith('data:')) ? '' : uploadedLoginLogo,
         returnPolicyAr: document.getElementById('set_returnPolicyAr').value.trim(),
         returnPolicyEn: document.getElementById('set_returnPolicyEn').value.trim(),
-        slideshowImages: slideshowImages,
+        slideshowImages: slideshowImages.filter(img => img && img.startsWith && !img.startsWith('data:')),
         banners: [0,1,2].map(i => ({
-            image: uploadedBannerImages[i] || '',
+            image: (uploadedBannerImages[i] && uploadedBannerImages[i].startsWith('data:')) ? '' : (uploadedBannerImages[i] || ''),
             tag: document.getElementById(`bannerTag${i}`)?.value.trim() || '',
             title: document.getElementById(`bannerTitle${i}`)?.value.trim() || '',
             subtitle: document.getElementById(`bannerSubtitle${i}`)?.value.trim() || '',
@@ -831,7 +870,7 @@ window.saveSettings = async function() {
             brands.push({ name, image });
         }
     });
-    settings.brands = brands;
+    settings.brands = brands.map(b => ({ ...b, image: (b.image && b.image.startsWith('data:')) ? '' : b.image }));
 
     localStorage.setItem('vora_settings', JSON.stringify(settings));
     const shipping = {};
