@@ -773,48 +773,7 @@ function renderBrandSlider() {
             <span class="text-xs font-semibold text-stone-700 mt-2 text-center">${b.name || ''}</span>
         </div>`;
     }).join('');
-    track.innerHTML = cardsHtml;
-
-    // Setup horizontal auto-scroll with drag support
-    const slider = document.getElementById('brandSliderWrap');
-    if (!slider) return;
-    slider.style.scrollbarWidth = 'none';
-    slider.style.cursor = 'grab';
-    slider.scrollLeft = 0;
-
-    let isDown = false, startX, scrollLeft;
-
-    const onStart = (e) => {
-        isDown = true;
-        slider.style.cursor = 'grabbing';
-        startX = (e.pageX || e.touches?.[0]?.pageX) - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    };
-    const onMove = (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = (e.pageX || e.touches?.[0]?.pageX) - slider.offsetLeft;
-        slider.scrollLeft = scrollLeft - (x - startX) * 1.5;
-    };
-    const onEnd = () => {
-        isDown = false;
-        slider.style.cursor = 'grab';
-    };
-    // Remove old listeners to avoid duplicates on re-render
-    if (slider._brandListeners) {
-        slider._brandListeners.forEach(({ev, fn}) => slider.removeEventListener(ev, fn));
-    }
-    const listeners = [
-        ['mousedown', onStart], ['touchstart', onStart],
-        ['mousemove', onMove], ['touchmove', onMove],
-        ['mouseup', onEnd], ['mouseleave', onEnd],
-        ['touchend', onEnd], ['mouseenter', () => isDown = false]
-    ];
-    listeners.forEach(([ev, fn]) => {
-        const opts = ev === 'touchmove' ? { passive: false } : (ev === 'touchstart' ? { passive: true } : undefined);
-        slider.addEventListener(ev, fn, opts);
-    });
-    slider._brandListeners = listeners.map(([ev, fn]) => ({ev, fn}));
+    track.innerHTML = cardsHtml + cardsHtml;
 }
 
 window.addBundleToCart = function(bundle) {
