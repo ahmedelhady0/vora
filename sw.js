@@ -25,7 +25,6 @@ const STATIC_ASSETS = [
     '/translations.js',
     '/components.js',
     '/page-loader.js',
-    '/fallback-data.js',
     '/icons.js',
     '/shop.js',
     '/product.js',
