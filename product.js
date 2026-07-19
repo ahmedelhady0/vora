@@ -8,6 +8,7 @@ let product = null;
 let productQty = 1;
 let reviewRating = 0;
 let allProds = [];
+let selectedVariant = null;
 
 function formatPrice(price) {
     return `LE ${Number(price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
@@ -187,6 +188,24 @@ function renderProduct() {
             </div>`;
     }
 
+    const variantEl = document.getElementById('productVariants');
+    selectedVariant = null;
+    if (p.variants && p.variants.length > 0) {
+        const lang = getLang();
+        variantEl.style.display = 'block';
+        let optionsHtml = p.variants.map((v, i) => `
+            <button class="variant-option ${i === 0 ? 'active' : ''}" data-index="${i}" onclick="selectVariant(${i})">
+                ${lang === 'ar' && v.name ? v.name : v.nameEn || v.name}
+            </button>
+        `).join('');
+        variantEl.innerHTML = `<div class="variant-label">${t('chooseOption')}</div><div class="variant-options">${optionsHtml}</div>`;
+        selectedVariant = p.variants[0];
+    } else {
+        variantEl.style.display = 'none';
+        variantEl.innerHTML = '';
+    }
+    updatePriceDisplay();
+
     const details = document.getElementById('productDetails');
     let detailHtml = '';
     if (p.size) detailHtml += `<div><div class="detail-label">${t('size')}</div><div class="detail-value">${p.size}</div></div>`;
@@ -313,6 +332,58 @@ window.submitReview = function() {
     renderReviews();
 };
 
+window.selectVariant = function(index) {
+    if (!product.variants) return;
+    selectedVariant = product.variants[index];
+    document.querySelectorAll('.variant-option').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+    });
+    updatePriceDisplay();
+    updateSubtotal();
+};
+
+function getActivePrice() {
+    if (selectedVariant) return selectedVariant.price;
+    return product ? product.price : 0;
+}
+
+function updatePriceDisplay() {
+    if (!product) return;
+    const p = product;
+    const activePrice = getActivePrice();
+    const priceEl = document.getElementById('productPrice');
+    if (p.discount && p.originalPrice) {
+        priceEl.innerHTML = `
+            <div class="price price--medium price--on-sale">
+                <dl>
+                    <div class="price__regular">
+                        <dd class="price__last"><span class="price-item price-item--regular">${formatPrice(p.originalPrice)}</span></dd>
+                    </div>
+                    <div class="price__sale">
+                        <dd class="price__last"><span class="price-item price-item--sale">${formatPrice(activePrice)}</span></dd>
+                    </div>
+                    <small class="unit-price caption hidden">
+                        <dt class="visually-hidden">Unit price</dt>
+                        <dd class="price__last"><span></span><span aria-hidden="true">/</span><span class="visually-hidden">&nbsp;per&nbsp;</span><span></span></dd>
+                    </small>
+                </dl>
+            </div>`;
+    } else {
+        priceEl.innerHTML = `
+            <div class="price price--medium">
+                <dl>
+                    <div class="price__regular">
+                        <dd class="price__last"><span class="price-item price-item--regular">${formatPrice(activePrice)}</span></dd>
+                    </div>
+                    <small class="unit-price caption hidden">
+                        <dt class="visually-hidden">Unit price</dt>
+                        <dd class="price__last"><span></span><span aria-hidden="true">/</span><span class="visually-hidden">&nbsp;per&nbsp;</span><span></span></dd>
+                    </small>
+                </dl>
+            </div>`;
+    }
+}
+
 window.changeQty = function(delta) {
     productQty = Math.max(1, productQty + delta);
     document.getElementById('productQty').textContent = productQty;
@@ -321,23 +392,38 @@ window.changeQty = function(delta) {
 
 function updateSubtotal() {
     if (!product) return;
-    const subtotal = product.price * productQty;
+    const activePrice = getActivePrice();
+    const subtotal = activePrice * productQty;
     const el = document.getElementById('productSubtotal');
     if (el) el.textContent = `${t('subtotal')}: ${subtotal} ${t('currency')}`;
 }
 
 window.addToCartFromPage = function() {
     if (!product) return;
+    const activePrice = getActivePrice();
+    const variantLabel = selectedVariant ? (getLang() === 'ar' ? selectedVariant.name : selectedVariant.nameEn || selectedVariant.name) : '';
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    const existing = cart.findIndex(i => i.id === product.id);
+    const cartKey = product.id + (variantLabel ? '::' + variantLabel : '');
+    const existing = cart.findIndex(i => {
+        const key = i.id + (i.variantLabel ? '::' + i.variantLabel : '');
+        return key === cartKey;
+    });
     if (existing > -1) {
         cart[existing].qty += productQty;
     } else {
-        cart.push({ id: product.id, name: product.name, price: product.price, image: product.image || '', qty: productQty });
+        cart.push({
+            id: product.id,
+            name: product.name,
+            variantLabel: variantLabel,
+            price: activePrice,
+            image: product.image || '',
+            qty: productQty
+        });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
-    showMessage(`${Icon.check()} تمت إضافة "${product.name}" إلى السلة`);
+    const displayName = product.name + (variantLabel ? ` (${variantLabel})` : '');
+    showMessage(`${Icon.check()} تمت إضافة "${displayName}" إلى السلة`);
 };
 
 window.buyNow = function() {
@@ -363,7 +449,8 @@ window.shareOnWhatsApp = function() {
     if (!product) return;
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const wa = settings.whatsapp || '201000000000';
-    const msg = `${Icon.phone()} ${t('whatsappMsg').replace('{name}', product.name).replace('{price}', product.price).replace('{currency}', t('currency'))}`;
+    const activePrice = getActivePrice();
+    const msg = `${Icon.phone()} ${t('whatsappMsg').replace('{name}', product.name).replace('{price}', activePrice).replace('{currency}', t('currency'))}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
@@ -443,6 +530,7 @@ function renderCartDrawer() {
         const subtotal = item.price * item.qty;
         const itemSrc = item.image || (allProds.find(p => p.id === item.id)?.image) || '';
         const drawerImage = itemSrc ? `<img src="${itemSrc}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover rounded-lg">` : BOTTLE_SVG;
+        const displayName = item.variantLabel ? `${item.name} (${item.variantLabel})` : item.name;
         const row = document.createElement('div');
         row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
         row.innerHTML = `
@@ -452,7 +540,7 @@ function renderCartDrawer() {
             </div>
             <div class="flex-1 space-y-2">
                 <div>
-                    <p class="font-bold text-stone-900 text-sm">${item.name}</p>
+                    <p class="font-bold text-stone-900 text-sm">${displayName}</p>
                     <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">

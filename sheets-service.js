@@ -86,7 +86,15 @@ export async function getProducts() {
     const local = STORE.products;
     if (local.length > 0) {
         syncFromFirestore().then(fb => {
-            if (fb.length > 0) STORE.products = fb;
+            if (fb.length > 0) {
+                const merged = [...local];
+                fb.forEach(fbp => {
+                    const idx = merged.findIndex(m => m.id === fbp.id);
+                    if (idx === -1) merged.push(fbp);
+                    else merged[idx] = { ...merged[idx], ...fbp, id: fbp.id };
+                });
+                STORE.products = merged;
+            }
         }).catch(() => {});
         return local;
     }
@@ -103,6 +111,7 @@ export async function getProducts() {
 }
 
 export async function addProduct(product) {
+    const tempId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     try {
         const docRef = await addDoc(collection(db, "products"), product);
         console.log("🔥 تم حفظ المنتج بنجاح في الفايرستور بمعرف: ", docRef.id);
@@ -121,7 +130,11 @@ export async function addProduct(product) {
         return { success: true, id: docRef.id };
     } catch (error) {
         console.error("خطأ أثناء إضافة المنتج إلى الفايرستور:", error);
-        return { success: false, error };
+        const products = STORE.products;
+        const newProduct = { ...product, id: tempId };
+        products.push(newProduct);
+        STORE.products = products;
+        return { success: true, id: tempId };
     }
 }
 
@@ -130,25 +143,24 @@ export async function updateProduct(id, updated) {
         const productRef = doc(db, "products", id);
         await updateDoc(productRef, updated);
         console.log(`✏️ تم تحديث المنتج ${id} في الفايرستور بنجاح`);
-
-        const products = STORE.products;
-        const idx = products.findIndex(p => p.id === id);
-        if (idx !== -1) {
-            products[idx] = { ...products[idx], ...updated, id };
-            STORE.products = products;
-        }
-
-        tryFetch(() => fetch(WEB_APP_URL, { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-            body: JSON.stringify({ action: 'updateProduct', id, ...updated }) 
-        }));
-
-        return { success: true };
     } catch (error) {
         console.error("خطأ أثناء تحديث المنتج في الفايرستور:", error);
-        return { success: false, error };
     }
+
+    const products = STORE.products;
+    const idx = products.findIndex(p => p.id === id);
+    if (idx !== -1) {
+        products[idx] = { ...products[idx], ...updated, id };
+        STORE.products = products;
+    }
+
+    tryFetch(() => fetch(WEB_APP_URL, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify({ action: 'updateProduct', id, ...updated }) 
+    }));
+
+    return { success: true };
 }
 
 export async function deleteProduct(id) {
@@ -156,21 +168,20 @@ export async function deleteProduct(id) {
         const productRef = doc(db, "products", id);
         await deleteDoc(productRef);
         console.log(`❌ تم حذف المنتج ${id} من الفايرستور`);
-
-        const products = STORE.products.filter(p => p.id !== id);
-        STORE.products = products;
-
-        tryFetch(() => fetch(WEB_APP_URL, { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-            body: JSON.stringify({ action: 'deleteProduct', id }) 
-        }));
-
-        return { success: true };
     } catch (error) {
         console.error("خطأ أثناء حذف المنتج من الفايرستور:", error);
-        return { success: false, error };
     }
+
+    const products = STORE.products.filter(p => p.id !== id);
+    STORE.products = products;
+
+    tryFetch(() => fetch(WEB_APP_URL, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+        body: JSON.stringify({ action: 'deleteProduct', id }) 
+    }));
+
+    return { success: true };
 }
 
 // ==================== إدارة الطلبات والمستخدمين والإعدادات عبر FIRESTORE ====================
@@ -179,17 +190,18 @@ export async function getOrders() {
     const local = STORE.orders;
     if (local.length > 0) {
         syncOrdersFromFirestore().then(fb => {
-            if (fb.length > 0) {
-                const merged = fb.map(fbOrder => {
-                    const match = local.find(o => o.orderId === fbOrder.orderId);
-                    if (match) {
-                        if (match.status && match.status !== fbOrder.status) fbOrder.status = match.status;
-                        if (match.trackingId && match.trackingId !== fbOrder.trackingId) fbOrder.trackingId = match.trackingId;
-                    }
-                    return fbOrder;
-                });
-                STORE.orders = merged;
-            }
+            const merged = [...local];
+            fb.forEach(fbOrder => {
+                const idx = merged.findIndex(o => o.orderId === fbOrder.orderId);
+                if (idx === -1) {
+                    merged.push(fbOrder);
+                } else {
+                    if (merged[idx].status && merged[idx].status !== fbOrder.status) fbOrder.status = merged[idx].status;
+                    if (merged[idx].trackingId && merged[idx].trackingId !== fbOrder.trackingId) fbOrder.trackingId = merged[idx].trackingId;
+                    merged[idx] = fbOrder;
+                }
+            });
+            STORE.orders = merged;
         }).catch(() => {});
         return local;
     }

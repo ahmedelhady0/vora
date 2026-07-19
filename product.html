@@ -32,6 +32,11 @@
         .qty-selector button { width:42px; height:42px; background:#fce8f0; border:none; font-size:18px; font-weight:700; color:#3a1a2a; cursor:pointer; transition:background 0.2s; }
         .qty-selector button:hover { background:#f0d0d8; }
         .qty-selector span { width:48px; text-align:center; font-weight:700; font-size:16px; color:#3a1a2a; }
+        .variant-label { font-size:13px; font-weight:600; color:#3a1a2a; margin-bottom:8px; }
+        .variant-options { display:flex; flex-wrap:wrap; gap:8px; }
+        .variant-option { padding:8px 16px; border:1.5px solid #e0c0c8; border-radius:10px; background:white; font-size:13px; font-weight:500; color:#3a1a2a; cursor:pointer; transition:all 0.2s; }
+        .variant-option:hover { border-color:#c25a80; }
+        .variant-option.active { border-color:#c25a80; background:#fce8f0; color:#c25a80; font-weight:700; }
 
         @media (max-width:768px) { .product-page-image { max-width:100%; } }
     </style>
@@ -118,6 +123,7 @@
                         <div class="hotStock-progress"><span class="hotStock-progress-item" style="width:0%"></span></div>
                     </div>
                     <div id="productPrice"></div>
+                    <div id="productVariants" class="pt-2"></div>
                     <div class="grid grid-cols-2 gap-4 pt-2" id="productDetails"></div>
                     <div class="flex items-center gap-4 pt-2">
                         <div class="qty-selector">

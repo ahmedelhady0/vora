@@ -4,13 +4,13 @@ import { escapeHTML } from "./security-utils.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const DEFAULT_SHIPPING = {
-    [t('govCairo')]: 50, [t('govGiza')]: 50, [t('govAlex')]: 70, [t('govDakahlia')]: 80,
-    [t('govSharqia')]: 80, [t('govQalyubia')]: 60, [t('govKafr')]: 80, [t('govGharbia')]: 80,
-    [t('govMonufia')]: 80, [t('govBeheira')]: 80, [t('govIsmailia')]: 90, [t('govSuez')]: 90,
-    [t('govBeniSuef')]: 100, [t('govFayoum')]: 100, [t('govMinya')]: 120, [t('govAsyut')]: 130,
-    [t('govSohag')]: 130, [t('govQena')]: 140, [t('govLuxor')]: 150, [t('govAswan')]: 160,
-    [t('govRedSea')]: 150, [t('govNewValley')]: 200, [t('govMatrouh')]: 150,
-    [t('govNorthSinai')]: 180, [t('govSouthSinai')]: 180, [t('govDamietta')]: 80, [t('govPortSaid')]: 90
+    "القاهرة": 50, "الجيزة": 50, "الإسكندرية": 70, "الدقهلية": 80,
+    "الشرقية": 80, "القليوبية": 60, "كفر الشيخ": 80, "الغربية": 80,
+    "المنوفية": 80, "البحيرة": 80, "الإسماعيلية": 90, "السويس": 90,
+    "بني سويف": 100, "الفيوم": 100, "المنيا": 120, "أسيوط": 130,
+    "سوهاج": 130, "قنا": 140, "الأقصر": 150, "أسوان": 160,
+    "البحر الأحمر": 150, "الوادي الجديد": 200, "مطروح": 150,
+    "شمال سيناء": 180, "جنوب سيناء": 180, "دمياط": 80, "بورسعيد": 90
 };
 
 let stripe, elements, cardElement;
@@ -66,12 +66,12 @@ function loadCartItems() {
         itemsCount += item.qty;
         const itemDiv = document.createElement('div');
         itemDiv.className = 'flex justify-between items-center py-2 border-b border-stone-100 last:border-0';
-        const safeItemName = escapeHTML(item.name);
-        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${safeItemName}</p><p class="text-sm text-stone-500">${item.qty} × ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
+        const displayName = item.variantLabel ? `${escapeHTML(item.name)} (${escapeHTML(item.variantLabel)})` : escapeHTML(item.name);
+        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${displayName}</p><p class="text-sm text-stone-500">${item.qty} × ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
         orderItems.appendChild(itemDiv);
         const sidebarDiv = document.createElement('div');
         sidebarDiv.className = 'flex justify-between text-sm py-2 border-b border-stone-100 last:border-0';
-        sidebarDiv.innerHTML = `<span class="text-stone-600">${safeItemName} ×${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
+        sidebarDiv.innerHTML = `<span class="text-stone-600">${displayName} ×${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
         sidebarItems.appendChild(sidebarDiv);
     });
     itemCount.textContent = itemsCount;
@@ -194,7 +194,7 @@ window.submitOrder = async function() {
             customerAddress: document.getElementById('customerAddress').value,
             governorate: gov,
             paymentMethod: paymentMethod,
-            items: cart.map(i => `${i.name} (${i.qty})`).join(' + '),
+            items: cart.map(i => `${i.name}${i.variantLabel ? ` (${i.variantLabel})` : ''} (${i.qty})`).join(' + '),
             itemDetails: JSON.stringify(cart),
             total: Math.round(total),
             shippingCost: shippingCost,

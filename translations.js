@@ -73,6 +73,9 @@
         cartDrawerContinue: 'مواصلة التسوق',
         // Product Card
         addToCart: 'أضف للسلة',
+        viewOptions: 'عرض الخيارات',
+        chooseOption: 'اختر الخيار',
+        fromPrice: 'من',
         outOfStock: 'نفد من المخزون',
         inStock: 'متوفر',
         outOfStockBadge: 'نفد',
@@ -266,6 +269,7 @@
         orderDate: 'التاريخ',
         orderPayment: 'طريقة الدفع',
         orderGovernorate: 'محافظة التوصيل',
+        orderTotal: 'الإجمالي',
         orderTotalPaid: 'الإجمالي المدفوع',
         orderCustomer: 'العميل',
         orderPhone: 'الهاتف',
@@ -326,7 +330,7 @@
          // Confirmation
         orderSuccessMsg: 'تم استلام طلبك بنجاح! شكراً لاختيارك VORA.',
         confirmationProcessing: 'يتم الآن معالجة طلبك وسيتم شحنه خلال 24 ساعة.',
-        confirmationDelivery: 'عادة ما يستغرق التوصيل 2-5 أيام عمل حسب موقعك.',
+        confirmationDelivery: 'عادة ما يستغرق التوصيل 2-3 أيام عمل حسب موقعك.',
         // Return Policy
         returnPolicyContent: 'سيتم عرض تفاصيل سياسة الإرجاع هنا. يرجى الاتصال بنا للحصول على المزيد من المعلومات.',
         // Categories
@@ -445,6 +449,7 @@
         // WhatsApp
         whatsappMsg: 'مرحباً! أود الاستفسار عن: {name} ({price} {currency})',
         // Checkout extra
+        checkoutCardNotAvailableBadge: '(غير متاح)',
         checkoutCardNotAvailable: '⚠️ الدفع الإلكتروني بالكارت غير مفعّل حالياً. اختر طريقة دفع أخرى.',
         checkoutInvalidVodafone: '⚠️ رقم فودافون غير صحيح',
         checkoutLocalOnly: '⚠️ تم تسجيل طلبك محلياً. الرجاء التواصل معنا لتأكيد الطلب: {orderId}',
@@ -514,6 +519,9 @@
         cartDrawerCheckout: 'Checkout',
         cartDrawerContinue: 'Continue Shopping',
         addToCart: 'Add to Cart',
+        viewOptions: 'View Options',
+        chooseOption: 'Choose option',
+        fromPrice: 'From',
         outOfStock: 'Out of Stock',
         inStock: 'In Stock',
         outOfStockBadge: 'Sold Out',
@@ -698,6 +706,7 @@
         orderDate: 'Date',
         orderPayment: 'Payment Method',
         orderGovernorate: 'Governorate',
+        orderTotal: 'Total',
         orderTotalPaid: 'Total Paid',
         orderCustomer: 'Customer',
         orderPhone: 'Phone',
@@ -758,7 +767,7 @@
          // Confirmation
         orderSuccessMsg: 'Your order has been received! Thank you for choosing VORA.',
         confirmationProcessing: 'Your order is being processed and will be shipped within 24 hours.',
-        confirmationDelivery: 'Delivery usually takes 2-5 business days depending on your location.',
+        confirmationDelivery: 'Delivery usually takes 2-3 business days depending on your location.',
         // Return Policy
         returnPolicyContent: 'Return policy details will be displayed here. Please contact us for more information.',
         // Categories
@@ -877,6 +886,7 @@
         // WhatsApp
         whatsappMsg: 'Hello! I would like to ask about: {name} ({price} {currency})',
         // Checkout extra
+        checkoutCardNotAvailableBadge: '(Not available)',
         checkoutCardNotAvailable: '⚠️ Card payment is not available yet. Please choose another payment method.',
         checkoutInvalidVodafone: '⚠️ Invalid Vodafone number',
         checkoutLocalOnly: '⚠️ Your order has been saved locally. Please contact us to confirm: {orderId}',

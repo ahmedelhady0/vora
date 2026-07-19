@@ -1,6 +1,6 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
-import { showMessage, hideMessage, db, auth, onAuthStateChanged } from "./firebase-config.js";
+import { showMessage, hideMessage, db } from "./firebase-config.js";
 import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
@@ -22,18 +22,12 @@ const DEFAULT_SHIPPING = {
     "شمال سيناء": 180, "جنوب سيناء": 180, "دمياط": 80, "بورسعيد": 90
 };
 
-const userData = JSON.parse(localStorage.getItem('vora_user'));
-if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
-    window.location.href = "home.html";
-} else if (userData.uid) {
-    getUserFromFirestore(userData.uid).then(liveUser => {
-        if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
-            localStorage.removeItem('vora_user');
-            window.location.href = "home.html";
-        }
-    }).catch(() => {});
-} else if (userData.username) {
-    getUserFromFirestore(userData.username).then(liveUser => {
+let userData;
+try { userData = JSON.parse(localStorage.getItem('vora_user')); } catch (e) { userData = null; }
+
+if (userData && (userData.uid || userData.username)) {
+    const lookup = userData.uid || userData.username;
+    getUserFromFirestore(lookup).then(liveUser => {
         if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
             localStorage.removeItem('vora_user');
             window.location.href = "home.html";
@@ -376,6 +370,42 @@ window.previewImage = function(e) {
     document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
 };
 
+window.addVariantRow = function(name, nameEn, price) {
+    const container = document.getElementById('variantsContainer');
+    const row = document.createElement('div');
+    row.className = 'variant-row flex items-center gap-2';
+    row.innerHTML = `
+        <input type="text" class="variant-name w-full px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="الاسم (عربي)" value="${name || ''}">
+        <input type="text" class="variant-name-en w-full px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="Name (English)" value="${nameEn || ''}">
+        <input type="number" class="variant-price w-24 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="السعر" value="${price || ''}">
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 flex-shrink-0 text-lg leading-none">&times;</button>
+    `;
+    container.appendChild(row);
+};
+
+window.saveVariantData = function() {
+    const rows = document.querySelectorAll('#variantsContainer .variant-row');
+    const variants = [];
+    rows.forEach(row => {
+        const name = row.querySelector('.variant-name').value.trim();
+        const nameEn = row.querySelector('.variant-name-en').value.trim();
+        const price = parseFloat(row.querySelector('.variant-price').value);
+        if (name && price) variants.push({ name, nameEn, price });
+    });
+    return variants.length > 0 ? variants : null;
+};
+
+window.loadVariantData = function(variants) {
+    const container = document.getElementById('variantsContainer');
+    container.innerHTML = '';
+    if (!variants || variants.length === 0) return;
+    variants.forEach(v => addVariantRow(v.name, v.nameEn, v.price));
+};
+
+window.clearVariants = function() {
+    document.getElementById('variantsContainer').innerHTML = '';
+};
+
 window.saveProduct = async function() {
     const name = document.getElementById('prodName').value.trim();
     const size = document.getElementById('prodSize').value;
@@ -386,6 +416,7 @@ window.saveProduct = async function() {
     const vendor = document.getElementById('prodVendor').value.trim();
     const gender = document.getElementById('prodGender').value;
     const additionalInfo = document.getElementById('prodAdditionalInfo').value.trim();
+    const variants = saveVariantData();
     
     const sections = [];
     if (document.getElementById('sct_bestSellers').checked) sections.push('best-sellers');
@@ -422,7 +453,8 @@ window.saveProduct = async function() {
             discountPercent: discountPercent,
             sections: sections,
             rating: 5, ratingCount: 1,
-            vendor, gender, additionalInfo
+            vendor, gender, additionalInfo,
+            variants
         };
 
         let response;
@@ -471,6 +503,7 @@ window.editProduct = async function(id) {
     document.getElementById('sct_unisex').checked = prodSections.includes('unisex');
     document.getElementById('sct_newArrivals').checked = prodSections.includes('new-arrivals');
     
+    loadVariantData(prod.variants || null);
     document.getElementById('formTitle').textContent = t('adminEditProduct');
 
     window.selectedProductFile = null;
@@ -547,6 +580,7 @@ function clearForm() {
     document.getElementById('sct_forHer').checked = false;
     document.getElementById('sct_unisex').checked = false;
     document.getElementById('sct_newArrivals').checked = false;
+    clearVariants();
 }
 
 async function loadProductList() {

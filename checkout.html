@@ -45,33 +45,33 @@
                         <div class="grid grid-cols-2 gap-4">
                             <select id="governorate" class="px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500" onchange="updateShipping()">
                                 <option value="" data-i18n="checkoutSelectGov"></option>
-                                <option value="???????" data-i18n="govCairo"></option>
-                                <option value="??????" data-i18n="govGiza"></option>
-                                <option value="??????????" data-i18n="govAlex"></option>
-                                <option value="????????" data-i18n="govDakahlia"></option>
-                                <option value="???????" data-i18n="govSharqia"></option>
-                                <option value="?????????" data-i18n="govQalyubia"></option>
-                                <option value="??? ?????" data-i18n="govKafr"></option>
-                                <option value="???????" data-i18n="govGharbia"></option>
-                                <option value="????????" data-i18n="govMonufia"></option>
-                                <option value="???????" data-i18n="govBeheira"></option>
-                                <option value="???????????" data-i18n="govIsmailia"></option>
-                                <option value="??????" data-i18n="govSuez"></option>
-                                <option value="??? ????" data-i18n="govBeniSuef"></option>
-                                <option value="??????" data-i18n="govFayoum"></option>
-                                <option value="??????" data-i18n="govMinya"></option>
-                                <option value="?????" data-i18n="govAsyut"></option>
-                                <option value="?????" data-i18n="govSohag"></option>
-                                <option value="???" data-i18n="govQena"></option>
-                                <option value="??????" data-i18n="govLuxor"></option>
-                                <option value="?????" data-i18n="govAswan"></option>
-                                <option value="????? ??????" data-i18n="govRedSea"></option>
-                                <option value="?????? ??????" data-i18n="govNewValley"></option>
-                                <option value="?????" data-i18n="govMatrouh"></option>
-                                <option value="???? ?????" data-i18n="govNorthSinai"></option>
-                                <option value="???? ?????" data-i18n="govSouthSinai"></option>
-                                <option value="?????" data-i18n="govDamietta"></option>
-                                <option value="???????" data-i18n="govPortSaid"></option>
+                                <option value="القاهرة" data-i18n="govCairo"></option>
+                                <option value="الجيزة" data-i18n="govGiza"></option>
+                                <option value="الإسكندرية" data-i18n="govAlex"></option>
+                                <option value="الدقهلية" data-i18n="govDakahlia"></option>
+                                <option value="الشرقية" data-i18n="govSharqia"></option>
+                                <option value="القليوبية" data-i18n="govQalyubia"></option>
+                                <option value="كفر الشيخ" data-i18n="govKafr"></option>
+                                <option value="الغربية" data-i18n="govGharbia"></option>
+                                <option value="المنوفية" data-i18n="govMonufia"></option>
+                                <option value="البحيرة" data-i18n="govBeheira"></option>
+                                <option value="الإسماعيلية" data-i18n="govIsmailia"></option>
+                                <option value="السويس" data-i18n="govSuez"></option>
+                                <option value="بني سويف" data-i18n="govBeniSuef"></option>
+                                <option value="الفيوم" data-i18n="govFayoum"></option>
+                                <option value="المنيا" data-i18n="govMinya"></option>
+                                <option value="أسيوط" data-i18n="govAsyut"></option>
+                                <option value="سوهاج" data-i18n="govSohag"></option>
+                                <option value="قنا" data-i18n="govQena"></option>
+                                <option value="الأقصر" data-i18n="govLuxor"></option>
+                                <option value="أسوان" data-i18n="govAswan"></option>
+                                <option value="البحر الأحمر" data-i18n="govRedSea"></option>
+                                <option value="الوادي الجديد" data-i18n="govNewValley"></option>
+                                <option value="مطروح" data-i18n="govMatrouh"></option>
+                                <option value="شمال سيناء" data-i18n="govNorthSinai"></option>
+                                <option value="جنوب سيناء" data-i18n="govSouthSinai"></option>
+                                <option value="دمياط" data-i18n="govDamietta"></option>
+                                <option value="بورسعيد" data-i18n="govPortSaid"></option>
                             </select>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                         <div class="space-y-3">
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="card" disabled class="w-5 h-5 text-amber-600">
-<span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCard"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> <span class="text-xs text-stone-400">(??????)</span>
+<span class="mr-3 font-semibold text-stone-900" data-i18n="checkoutCard"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> <span class="text-xs text-stone-400" data-i18n="checkoutCardNotAvailableBadge"></span>
                             </label>
                             <label class="flex items-center p-4 border-2 border-stone-300 rounded-lg cursor-pointer hover:border-amber-500 transition">
                                 <input type="radio" name="paymentMethod" value="vodafone" class="w-5 h-5 text-amber-600">

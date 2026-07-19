@@ -11,7 +11,8 @@ const BOTTLE_SVG = `
     <line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
 </svg>`;
 
-const userData = JSON.parse(localStorage.getItem('vora_user'));
+let userData;
+try { userData = JSON.parse(localStorage.getItem('vora_user')); } catch (e) { userData = null; }
 if (userData && (userData.role === 'admin' || userData.role === 'manager')) {
     document.addEventListener("DOMContentLoaded", () => {
         const el = document.getElementById('adminNavLink');
@@ -544,7 +545,9 @@ function buildProductCard(prod) {
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
-                    ? `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">${Icon.cart()} ${t('addToCart')}</button>`
+                    ? (prod.variants && prod.variants.length > 0
+                        ? `<a href="product.html?id=${safeId}" class="add-cart-btn" style="display:flex;align-items:center;justify-content:center;gap:4px;">${Icon.cart()} ${t('viewOptions')}</a>`
+                        : `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">${Icon.cart()} ${t('addToCart')}</button>`)
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
@@ -555,7 +558,7 @@ function buildProductCard(prod) {
                 ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
                 <div class="card-desc">${stockLabel}</div>
                 <div class="card-price">
-                    <span class="price-current">${prod.price} ${t('currency')}</span>
+                    <span class="price-current">${prod.variants && prod.variants.length > 0 ? `${t('fromPrice')} ${Math.min(...prod.variants.map(v => v.price))} ${t('currency')}` : `${prod.price} ${t('currency')}`}</span>
                     ${prod.discount && prod.originalPrice ? `<span class="price-original">${prod.originalPrice} ${t('currency')}</span>` : ''}
                 </div>
             </div>
@@ -754,6 +757,7 @@ function renderCartDrawer() {
             ? `<img src="${itemSrc}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover rounded-lg">` 
             : BOTTLE_SVG;
 
+        const displayName = item.variantLabel ? `${item.name} (${item.variantLabel})` : item.name;
         const row = document.createElement('div');
         row.className = "flex gap-4 pb-4 border-b border-stone-200 last:border-0 group hover:bg-stone-50/50 rounded-lg p-3 transition";
         row.innerHTML = `
@@ -763,7 +767,7 @@ function renderCartDrawer() {
             </div>
             <div class="flex-1 space-y-2">
                 <div>
-                    <p class="font-bold text-stone-900 text-sm">${item.name}</p>
+                    <p class="font-bold text-stone-900 text-sm">${displayName}</p>
                     <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
