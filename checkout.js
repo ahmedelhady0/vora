@@ -135,14 +135,14 @@ window.applyCoupon = function() {
     if (coupons[code]) {
         appliedDiscount = parseFloat(coupons[code]) || 0;
         msg.className = 'text-xs mt-1 text-green-600';
-        msg.textContent = `${Icon.check()} تم تطبيق الخصم! خصم ${appliedDiscount}%`;
+        msg.textContent = `${Icon.check()} ${t('checkoutCouponApplied').replace('{discount}', appliedDiscount)}`;
         msg.classList.remove('hidden');
         document.getElementById('discountRow').style.display = 'flex';
         updateTotalsWithDiscount();
     } else {
         appliedDiscount = 0;
         msg.className = 'text-xs mt-1 text-red-600';
-        msg.textContent = '❌ كود الخصم غير صالح';
+        msg.textContent = `❌ ${t('checkoutCouponInvalid')}`;
         msg.classList.remove('hidden');
         document.getElementById('discountRow').style.display = 'none';
         updateTotalsWithDiscount();
@@ -201,17 +201,17 @@ window.submitOrder = async function() {
             subtotal: subtotal,
             discount: appliedDiscount > 0 ? `${appliedDiscount}%` : '',
             orderDate: new Date().toISOString(),
-            date: new Date().toLocaleString('ar-EG'),
+            date: new Date().toLocaleString(getLang() === 'ar' ? 'ar-EG' : 'en-US'),
             status: t('statusPending'),
             userEmail: document.getElementById('customerEmail').value.trim()
         };
         if (paymentMethod === 'card') {
-            showMessage('⚠️ الدفع الإلكتروني بالكارت غير مفعّل حالياً على الموقع. برجاء اختيار فودافون كاش أو إنستاباي أو الدفع عند الاستلام.');
+            showMessage(t('checkoutCardNotAvailable'));
             showLoading(false);
             return;
         } else if (paymentMethod === 'vodafone') {
             const vf = document.getElementById('vodafoneNumber').value;
-            if (!vf || vf.length < 11) { showMessage('⚠️ رقم فودافون غير صحيح'); showLoading(false); return; }
+            if (!vf || vf.length < 11) { showMessage(t('checkoutInvalidVodafone')); showLoading(false); return; }
             orderData.vodafoneNumber = vf;
         }
         orderData.orderId = 'VORA-' + Date.now();
@@ -225,16 +225,16 @@ window.submitOrder = async function() {
         localStorage.setItem('vora_addresses', JSON.stringify(addresses));
         const saved = await submitOrderToSheet(orderData);
         if (!saved) {
-            showMessage('⚠️ تم تسجيل طلبك محلياً، لكن حدث خطأ في إرساله لقاعدة البيانات. برجاء إبلاغنا برقم الطلب ' + orderData.orderId + ' عبر واتساب للتأكيد.');
+            showMessage(t('checkoutLocalOnly').replace('{orderId}', orderData.orderId));
             showLoading(false);
             return;
         }
         localStorage.removeItem('vora_cart');
-        showMessage('✓ تم استلام طلبك بنجاح! جاري تحويلك لصفحة التأكيد...');
+        showMessage(`✅ ${t('checkoutSuccess')}`);
         setTimeout(() => { window.location.href = 'confirmation.html'; }, 1500);
     } catch (error) {
         console.error('Error:', error);
-        showMessage('❌ حدث خطأ في معالجة الطلب. يرجى المحاولة مجدداً');
+        showMessage(`❌ ${t('checkoutError')}`);
     } finally { showLoading(false); }
 };
 

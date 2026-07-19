@@ -73,16 +73,25 @@ export async function uploadImageToStorage(fileObject) {
 
 // ==================== إدارة المنتجات عبر FIRESTORE ====================
 
-export async function getProducts() {
-    try {
-        console.log("جاري جلب المنتجات من Firestore...");
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const fbProducts = [];
-        
-        querySnapshot.forEach((doc) => {
-            fbProducts.push({ id: doc.id, ...doc.data() });
-        });
+async function syncFromFirestore() {
+    const querySnapshot = await getDocs(collection(db, "products"));
+    const fbProducts = [];
+    querySnapshot.forEach((doc) => {
+        fbProducts.push({ id: doc.id, ...doc.data() });
+    });
+    return fbProducts;
+}
 
+export async function getProducts() {
+    const local = STORE.products;
+    if (local.length > 0) {
+        syncFromFirestore().then(fb => {
+            if (fb.length > 0) STORE.products = fb;
+        }).catch(() => {});
+        return local;
+    }
+    try {
+        const fbProducts = await syncFromFirestore();
         if (fbProducts.length > 0) {
             STORE.products = fbProducts;
             return fbProducts;
@@ -90,10 +99,6 @@ export async function getProducts() {
     } catch (error) {
         console.error("خطأ أثناء جلب البيانات من Firestore، جاري الاعتماد على المخزن المحلي:", error);
     }
-
-    const local = STORE.products;
-    if (local.length > 0) return local;
-
     return [];
 }
 
@@ -171,34 +176,34 @@ export async function deleteProduct(id) {
 // ==================== إدارة الطلبات والمستخدمين والإعدادات عبر FIRESTORE ====================
 
 export async function getOrders() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "orders"));
-        const fbOrders = [];
-        querySnapshot.forEach((doc) => {
-            fbOrders.push({ id: doc.id, ...doc.data() });
-        });
-        if (fbOrders.length > 0) {
-            // Merge with local changes (status, trackingId) made via updateOrderField
-            const local = STORE.orders;
-            if (local.length > 0) {
-                fbOrders.forEach(fb => {
-                    const localMatch = local.find(o => o.orderId === fb.orderId);
-                    if (localMatch) {
-                        if (localMatch.status && localMatch.status !== fb.status) fb.status = localMatch.status;
-                        if (localMatch.trackingId && localMatch.trackingId !== fb.trackingId) fb.trackingId = localMatch.trackingId;
+    const local = STORE.orders;
+    if (local.length > 0) {
+        syncOrdersFromFirestore().then(fb => {
+            if (fb.length > 0) {
+                const merged = fb.map(fbOrder => {
+                    const match = local.find(o => o.orderId === fbOrder.orderId);
+                    if (match) {
+                        if (match.status && match.status !== fbOrder.status) fbOrder.status = match.status;
+                        if (match.trackingId && match.trackingId !== fbOrder.trackingId) fbOrder.trackingId = match.trackingId;
                     }
+                    return fbOrder;
                 });
+                STORE.orders = merged;
             }
+        }).catch(() => {});
+        return local;
+    }
+    try {
+        const fbOrders = await syncOrdersFromFirestore();
+        if (fbOrders.length > 0) {
             STORE.orders = fbOrders;
             return fbOrders;
         }
     } catch (error) {
         console.warn("Firestore orders unavailable, using local:", error);
     }
-
-    const local = STORE.orders;
-    if (local.length > 0) return local;
-    
+    const local2 = STORE.orders;
+    if (local2.length > 0) return local2;
     const res = await tryFetch(() => fetch(`${WEB_APP_URL}?action=getOrders`));
     if (res) {
         const data = await res.json();
@@ -206,6 +211,15 @@ export async function getOrders() {
         return data;
     }
     return [];
+}
+
+async function syncOrdersFromFirestore() {
+    const querySnapshot = await getDocs(collection(db, "orders"));
+    const fbOrders = [];
+    querySnapshot.forEach((doc) => {
+        fbOrders.push({ id: doc.id, ...doc.data() });
+    });
+    return fbOrders;
 }
 
 export async function placeOrder(orderData) {
@@ -236,13 +250,16 @@ export async function registerUser(userData) {
     STORE.users = users;
     
     try {
-        await setDoc(doc(db, "users", userData.username.toLowerCase()), {
+        const docId = userData.uid || userData.username.toLowerCase();
+        await setDoc(doc(db, "users", docId), {
+            uid: userData.uid || '',
+            username: userData.username?.toLowerCase() || '',
             password: userData.password,
             role: userData.role || 'customer',
             email: userData.email || '',
             createdAt: new Date().toISOString()
         });
-        console.log("🔥 تم حفظ المستخدم في Firestore");
+        console.log("User saved to Firestore:", docId);
     } catch (error) {
         console.warn("Could not save user to Firestore:", error);
     }
@@ -255,12 +272,14 @@ export async function registerUser(userData) {
     return { success: true };
 }
 
-export async function getUserFromFirestore(username) {
+export async function getUserFromFirestore(uidOrUsername) {
+    if (!uidOrUsername) return null;
+    const id = uidOrUsername.toLowerCase();
     try {
-        const docRef = doc(db, "users", username.toLowerCase());
+        const docRef = doc(db, "users", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            return { username: docSnap.id, ...docSnap.data() };
+            return { id: docSnap.id, ...docSnap.data() };
         }
     } catch (error) {
         console.warn("Could not fetch user from Firestore:", error);
@@ -280,14 +299,24 @@ export async function saveSettingsToFirestore(settings) {
 }
 
 export async function getSettingsFromFirestore() {
+    const local = JSON.parse(localStorage.getItem('vora_settings'));
+    if (local) {
+        syncSettingsFromFirestore().then(cloud => {
+            if (cloud) localStorage.setItem('vora_settings', JSON.stringify(cloud));
+        }).catch(() => {});
+        return local;
+    }
     try {
-        const docRef = doc(db, "config", "settings");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            return docSnap.data();
-        }
+        return await syncSettingsFromFirestore();
     } catch (error) {
         console.warn("Could not fetch settings from Firestore:", error);
     }
+    return null;
+}
+
+async function syncSettingsFromFirestore() {
+    const docRef = doc(db, "config", "settings");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) return docSnap.data();
     return null;
 }

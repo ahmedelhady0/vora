@@ -516,7 +516,7 @@ async function loadProducts() {
 
             const more = document.createElement('div');
             more.className = 'text-center mt-4';
-            more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${lang === 'ar' ? 'اكتشف المزيد ←' : '← Discover More'}</a>`;
+            more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
             wrap.appendChild(more);
 
             container.appendChild(wrap);
@@ -527,7 +527,7 @@ async function loadProducts() {
             wrap.className = 'w-full';
             const title = document.createElement('div');
             title.className = 'section-divider mb-5';
-            title.innerHTML = `<span>${Icon.trophy()} ${lang === 'ar' ? 'الأكثر مبيعاً' : 'Best Sellers'}</span>`;
+            title.innerHTML = `<span>${Icon.trophy()} ${t('catBestsellers')}</span>`;
             wrap.appendChild(title);
             const row = document.createElement('div');
             row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
@@ -538,13 +538,13 @@ async function loadProducts() {
             wrap.appendChild(row);
             const more = document.createElement('div');
             more.className = 'text-center mt-4';
-            more.innerHTML = `<a href="shop.html?section=best-sellers" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${lang === 'ar' ? 'اكتشف المزيد ←' : '← Discover More'}</a>`;
+            more.innerHTML = `<a href="shop.html?section=best-sellers" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
             wrap.appendChild(more);
             container.appendChild(wrap);
         }
     } catch (err) {
         console.error('Error loading products:', err);
-        container.innerHTML = `<p class="text-red-500 text-center w-full py-12">${Icon.warning()} حدث خطأ أثناء تحميل المنتجات</p>`;
+        container.innerHTML = `<p class="text-red-500 text-center w-full py-12">${Icon.warning()} ${t('homeLoadError')}</p>`;
     }
     renderBundles();
     renderBrandSlider();
@@ -729,8 +729,7 @@ function renderBundles() {
     if (bundles.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
     const lang = getLang();
-    const title = lang === 'ar' ? '🎁 عروض الحزم' : '🎁 Bundle Offers';
-    document.getElementById('bundlesSectionTitle').textContent = title;
+    document.getElementById('bundlesSectionTitle').textContent = t('bundlesTitle');
     grid.innerHTML = bundles.map(bundle => {
         const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
         const img = bundleProds.find(p => p.image)?.image || '';
@@ -744,7 +743,7 @@ function renderBundles() {
             <div class="p-4 space-y-2">
                 <h3 class="font-bold text-stone-900 text-lg" style="font-family:'Playfair Display',serif;">${bundle.name}</h3>
                 ${bundle.description ? `<p class="text-sm text-stone-500">${bundle.description}</p>` : ''}
-                ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${lang === 'ar' ? `وفر ${savings} ${t('currency')}` : `Save ${savings} ${t('currency')}`}</p>` : ''}
+                ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
                 <div class="flex items-center justify-between pt-2">
                     <span class="text-xl font-bold text-amber-600">${bundle.price} ${t('currency')}</span>
                     <button onclick='addBundleToCart(${JSON.stringify(bundle).replace(/'/g, "\\'")})' class="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold hover:bg-amber-700 transition">${t('addToCart')}</button>
@@ -762,8 +761,7 @@ function renderBrandSlider() {
     const brands = settings.brands || [];
     if (brands.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
-    const lang = getLang();
-    document.getElementById('brandSliderTitle').textContent = lang === 'ar' ? '🏪 برانداتنا' : '🏪 Our Brands';
+    document.getElementById('brandSliderTitle').textContent = t('brandsTitle');
     const cardsHtml = brands.map(b => {
         return `
         <div class="flex flex-col items-center justify-center flex-shrink-0 w-28 sm:w-32 cursor-pointer brand-card" onclick="navigateTo('shop.html?vendor=${encodeURIComponent(b.name)}')">
@@ -779,13 +777,13 @@ function renderBrandSlider() {
 window.addBundleToCart = function(bundle) {
     const products = JSON.parse(localStorage.getItem('vora_products')) || [];
     const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
-    if (bundleProds.length === 0) { showMessage('⚠️ المنتجات غير متوفرة'); return; }
+    if (bundleProds.length === 0) { showMessage(t('notifProductUnavailable')); return; }
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const bundleItem = { id: 'bundle_' + Date.now(), name: bundle.name, price: bundle.price, qty: 1, isBundle: true, productIds: bundle.products };
     cart.push(bundleItem);
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
-    showMessage(`${Icon.check()} تمت إضافة "${bundle.name}" إلى السلة`);
+    showMessage(`${Icon.check()} ${t('notifAddedToCart').replace('{name}', bundle.name)}`);
 };
 
 function trackRecentlyViewed(id) {
@@ -799,10 +797,7 @@ function trackRecentlyViewed(id) {
 window.shareOnWhatsApp = function(name, price, image) {
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const wa = settings.whatsapp || '201000000000';
-    const lang = getLang();
-    const msg = lang === 'ar'
-        ? `${Icon.phone()} مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
-        : `${Icon.phone()} Hello! I'd like to ask about: ${name} (${price} EGP)`;
+    const msg = `${Icon.phone()} ${t('whatsappMsg').replace('{name}', name).replace('{price}', price).replace('{currency}', t('currency'))}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 

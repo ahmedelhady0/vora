@@ -285,7 +285,7 @@ async function loadProducts() {
         renderProducts();
     } catch (err) {
         console.error('Error loading products:', err);
-        container.innerHTML = `<p class="text-red-500 text-center py-12">${Icon.warning()} حدث خطأ أثناء تحميل المنتجات</p>`;
+        container.innerHTML = `<p class="text-red-500 text-center py-12">${Icon.warning()} ${t('shopLoadError')}</p>`;
     }
 }
 
@@ -428,7 +428,7 @@ function renderProducts() {
                     <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
                 </div>
             </div>
-            <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} إزالة الفلتر</button>
+            <button onclick="window.clearSectionFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} ${t('shopClearFilter')}</button>
         </div>`;
     } else if (activeVendor) {
         const label = getLang() === 'ar' ? activeVendor : activeVendor;
@@ -441,7 +441,7 @@ function renderProducts() {
                     <p class="text-sm text-stone-500">${t('shopResults')} ${filtered.length} ${t('shopProducts')}</p>
                 </div>
             </div>
-            <button onclick="window.clearVendorFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} إزالة الفلتر</button>
+            <button onclick="window.clearVendorFilter()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold px-3 py-1.5 rounded-lg border border-amber-600/30 hover:bg-amber-50 transition">${Icon.close()} ${t('shopClearFilter')}</button>
         </div>`;
     }
 
@@ -818,10 +818,7 @@ function trackRecentlyViewed(id) {
 window.shareOnWhatsApp = function(name, price, image) {
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const wa = settings.whatsapp || '201000000000';
-    const lang = getLang();
-    const msg = lang === 'ar'
-        ? `${Icon.phone()} مرحباً! أود الاستفسار عن: ${name} (${price} ج.م)`
-        : `${Icon.phone()} Hello! I'd like to ask about: ${name} (${price} EGP)`;
+    const msg = `${Icon.phone()} ${t('whatsappMsg').replace('{name}', name).replace('{price}', price).replace('{currency}', t('currency'))}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 

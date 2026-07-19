@@ -1,38 +1,45 @@
-﻿import { showMessage, hideMessage, usernameToEmail } from "./firebase-config.js";
+﻿import { showMessage, hideMessage, usernameToEmail, auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase-config.js";
 import { getUserFromFirestore, registerUser } from "./sheets-service.js";
 
-function getUsers() {
-    return JSON.parse(localStorage.getItem('vora_users')) || {};
-}
-
-function saveUsers(users) {
-    localStorage.setItem('vora_users', JSON.stringify(users));
-}
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const stored = JSON.parse(localStorage.getItem('vora_user')) || {};
+        if (!stored.uid) {
+            getUserFromFirestore(user.uid).then(doc => {
+                localStorage.setItem('vora_user', JSON.stringify({
+                    uid: user.uid, email: user.email,
+                    username: doc?.username || user.email.split('@')[0],
+                    role: doc?.role || 'customer'
+                }));
+            }).catch(() => {});
+        }
+    }
+});
 
 window.signIn = async function() {
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
     if (!user || !pass) return showMessage(t('authFillFields'));
 
+    const email = usernameToEmail(user);
     try {
-        const fbUser = await getUserFromFirestore(user);
-        if (fbUser && fbUser.password === pass) {
-            localStorage.setItem('vora_user', JSON.stringify({ username: user, role: fbUser.role || 'customer', email: fbUser.email || usernameToEmail(user) }));
-            hideMessage();
-            window.location.href = "home.html";
-            return;
-        }
-    } catch (e) {
-        console.warn("Firestore auth unavailable, checking local:", e);
-    }
-
-    const users = getUsers();
-    if (users[user] && users[user].password === pass) {
-        localStorage.setItem('vora_user', JSON.stringify({ username: user, role: users[user].role || 'customer', email: users[user].email || usernameToEmail(user) }));
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        const uid = cred.user.uid;
+        const fbUser = await getUserFromFirestore(uid);
+        localStorage.setItem('vora_user', JSON.stringify({
+            uid, email,
+            username: user,
+            role: fbUser?.role || 'customer'
+        }));
         hideMessage();
         window.location.href = "home.html";
-    } else {
-        showMessage(t('authInvalid'));
+    } catch (e) {
+        console.error("Auth error:", e);
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+            showMessage(t('authInvalid'));
+        } else {
+            showMessage(t('authError') || 'Login failed. Check console.');
+        }
     }
 };
 
@@ -41,22 +48,30 @@ window.signUp = async function() {
     const pass = document.getElementById('password').value;
     if (!user || pass.length < 6) return showMessage(t('authWeakPassword'));
 
+    const email = usernameToEmail(user);
     try {
-        const existing = await getUserFromFirestore(user);
-        if (existing) return showMessage(t('authExists'));
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await registerUser({ uid: cred.user.uid, username: user, email, password: pass, role: 'customer' });
+        localStorage.setItem('vora_user', JSON.stringify({
+            uid: cred.user.uid, email,
+            username: user, role: 'customer'
+        }));
+        showMessage(t('authCreated'));
+        setTimeout(() => { hideMessage(); window.location.href = "home.html"; }, 1500);
     } catch (e) {
-        console.warn("Firestore check unavailable:", e);
+        console.error("Signup error:", e);
+        if (e.code === 'auth/email-already-in-use') {
+            showMessage(t('authExists'));
+        } else {
+            showMessage(t('authError') || 'Signup failed.');
+        }
     }
+};
 
-    const users = getUsers();
-    if (users[user]) return showMessage(t('authExists'));
-
-    const userData = { username: user, password: pass, role: 'customer', email: usernameToEmail(user) };
-    await registerUser(userData);
-
-    users[user] = { password: pass, role: 'customer', email: usernameToEmail(user) };
-    saveUsers(users);
-    showMessage(t('authCreated'));
+window.signOutUser = async function() {
+    await signOut(auth);
+    localStorage.removeItem('vora_user');
+    window.location.href = "index.html";
 };
 
 window.hideMessage = hideMessage;

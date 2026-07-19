@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="loginPageTitle"></title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="translations.js" charset="utf-8"></script>
     <script type="module" src="icons.js"></script>
@@ -62,6 +63,6 @@
         </div>
     </div>
     <script type="module" src="auth.js"></script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r=>r.forEach(reg=>reg.unregister()));</script></body>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script></body>
 </html>
 

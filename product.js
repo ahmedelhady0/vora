@@ -261,7 +261,7 @@ function renderReviews() {
     const allReviews = JSON.parse(localStorage.getItem('vora_reviews')) || {};
     const reviews = allReviews[product.id] || [];
     if (reviews.length === 0) {
-        container.innerHTML = '<p class="text-stone-400 text-sm text-center py-8">لا توجد تقييمات بعد. كن أول من يقيم!</p>';
+        container.innerHTML = `<p class="text-stone-400 text-sm text-center py-8">${t('prodNoReviews')}</p>`;
         return;
     }
     container.innerHTML = reviews.map(r => `
@@ -290,13 +290,13 @@ window.setReviewStar = function(n) {
 };
 
 window.submitReview = function() {
-    if (!reviewRating) { showMessage('⚠️ اختر تقييماً بالنجوم'); return; }
+    if (!reviewRating) { showMessage(t('prodSelectRating')); return; }
     const name = document.getElementById('reviewName').value.trim() || t('navLogin');
     const text = document.getElementById('reviewText').value.trim();
-    if (!text) { showMessage('⚠️ اكتب رأيك في المنتج'); return; }
+    if (!text) { showMessage(t('prodWriteReview')); return; }
     const allReviews = JSON.parse(localStorage.getItem('vora_reviews')) || {};
     if (!allReviews[product.id]) allReviews[product.id] = [];
-    allReviews[product.id].unshift({ name, text, rating: reviewRating, date: new Date().toLocaleDateString('ar-EG') });
+    allReviews[product.id].unshift({ name, text, rating: reviewRating, date: new Date().toLocaleDateString(getLang() === 'ar' ? 'ar-EG' : 'en-US') });
     localStorage.setItem('vora_reviews', JSON.stringify(allReviews));
     document.getElementById('reviewName').value = '';
     document.getElementById('reviewText').value = '';
@@ -309,7 +309,7 @@ window.submitReview = function() {
         s.onclick = () => setReviewStar(i);
         document.getElementById('reviewStarRating').appendChild(s);
     }
-    showMessage('✅ تم إرسال تقييمك بنجاح!');
+    showMessage(t('prodReviewSubmitted'));
     renderReviews();
 };
 
@@ -363,10 +363,7 @@ window.shareOnWhatsApp = function() {
     if (!product) return;
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const wa = settings.whatsapp || '201000000000';
-    const lang = getLang();
-    const msg = lang === 'ar'
-        ? `${Icon.phone()} مرحباً! أود الاستفسار عن: ${product.name} (${product.price} ج.م)`
-        : `${Icon.phone()} Hello! I'd like to ask about: ${product.name} (${product.price} EGP)`;
+    const msg = `${Icon.phone()} ${t('whatsappMsg').replace('{name}', product.name).replace('{price}', product.price).replace('{currency}', t('currency'))}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
@@ -427,7 +424,7 @@ window.closeCartDrawer = function() {
 };
 window.goToCheckout = function() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    if (cart.length === 0) { showMessage('⚠️ السلة فارغة. أضف منتجات أولاً'); return; }
+    if (cart.length === 0) { showMessage(`⚠️ ${t('prodCartEmpty')}`); return; }
     window.location.href = 'checkout.html';
 };
 function renderCartDrawer() {

@@ -1,6 +1,6 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
-import { showMessage, hideMessage, db } from "./firebase-config.js";
+import { showMessage, hideMessage, db, auth, onAuthStateChanged } from "./firebase-config.js";
 import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
@@ -25,13 +25,17 @@ const DEFAULT_SHIPPING = {
 const userData = JSON.parse(localStorage.getItem('vora_user'));
 if (!userData || (userData.role !== 'admin' && userData.role !== 'manager')) {
     window.location.href = "home.html";
+} else if (userData.uid) {
+    getUserFromFirestore(userData.uid).then(liveUser => {
+        if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
+            localStorage.removeItem('vora_user');
+            window.location.href = "home.html";
+        }
+    }).catch(() => {});
 } else if (userData.username) {
-    // Best-effort re-check: only kick the user out if Firestore explicitly confirms
-    // their role is no longer admin/manager. If the check fails or the record can't
-    // be read (offline, or a users-collection security rule blocks it), we keep
-    // trusting the local session rather than locking the admin out entirely.
     getUserFromFirestore(userData.username).then(liveUser => {
         if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
+            localStorage.removeItem('vora_user');
             window.location.href = "home.html";
         }
     }).catch(() => {});
@@ -50,7 +54,7 @@ let uploadedBannerImages = ["", "", ""];
 window.previewHeroImage = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { showMessage("⚠️ الصورة كبيرة جداً"); return; }
+    if (file.size > 5 * 1024 * 1024) { showMessage(t('adminImgTooLarge')); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
         document.getElementById('heroPreviewImg').src = ev.target.result;
@@ -62,7 +66,7 @@ window.previewHeroImage = async function(e) {
         uploadedHeroImage = await uploadImageToStorage(file);
         document.getElementById('heroUploadPlaceholder').innerHTML = '📁 تغيير الصورة';
     } catch (err) {
-        showMessage("⚠️ فشل رفع الصورة، حاول مرة أخرى");
+        showMessage(t('adminUploadFailed'));
         document.getElementById('heroUploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة الزجاجة';
     }
 };
@@ -70,7 +74,7 @@ window.previewHeroImage = async function(e) {
 window.previewLogo = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { showMessage("⚠️ الشعار كبير جداً (أقصى 2MB)"); return; }
+    if (file.size > 2 * 1024 * 1024) { showMessage(t('adminLogoTooLarge')); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
         document.getElementById('logoPreviewImg').src = ev.target.result;
@@ -82,14 +86,14 @@ window.previewLogo = async function(e) {
         uploadedLogo = await uploadImageToStorage(file);
         document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     } catch (err) {
-        showMessage("⚠️ فشل رفع الشعار، حاول مرة أخرى");
+        showMessage(t('adminLogoUploadFailed'));
     }
 };
 
 window.previewLoginLogo = async function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { showMessage("⚠️ الشعار كبير جداً (أقصى 2MB)"); return; }
+    if (file.size > 2 * 1024 * 1024) { showMessage(t('adminLogoTooLarge')); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
         document.getElementById('loginLogoPreviewImg').src = ev.target.result;
@@ -101,7 +105,7 @@ window.previewLoginLogo = async function(e) {
         uploadedLoginLogo = await uploadImageToStorage(file);
         document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     } catch (err) {
-        showMessage("⚠️ فشل رفع الشعار، حاول مرة أخرى");
+        showMessage(t('adminLogoUploadFailed'));
     }
 };
 
@@ -115,7 +119,7 @@ window.removeHeroImage = function() {
 window.addSlideshowImages = function(e) {
     const files = e.target.files;
     for (const file of files) {
-        if (slideshowImages.length >= 5) { showMessage("⚠️ أقصى عدد 5 صور"); break; }
+        if (slideshowImages.length >= 5) { showMessage(t('adminMax5Images')); break; }
         if (file.size > 5 * 1024 * 1024) continue;
         const slotIndex = slideshowImages.length;
         slideshowImages.push(null); // placeholder while uploading
@@ -130,7 +134,7 @@ window.addSlideshowImages = function(e) {
             slideshowImages[slotIndex] = url;
             renderSlideshowAdmin();
         }).catch(() => {
-            showMessage("⚠️ فشل رفع إحدى الصور");
+            showMessage(t('adminImgUploadFailed'));
         });
     }
     e.target.value = '';
@@ -156,7 +160,7 @@ window.removeSlideshowImage = function(index) {
 window.previewBannerImage = async function(index, e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { showMessage("⚠️ الصورة كبيرة جداً"); return; }
+    if (file.size > 5 * 1024 * 1024) { showMessage(t('adminImgTooLarge')); return; }
     const reader = new FileReader();
     reader.onload = function(ev) {
         const preview = document.getElementById(`bannerPreview${index}`);
@@ -170,7 +174,7 @@ window.previewBannerImage = async function(index, e) {
         const label = document.getElementById(`bannerUploadLabel${index}`);
         if (label) label.innerHTML = '📁 تغيير الصورة';
     } catch (err) {
-        showMessage("⚠️ فشل رفع الصورة، حاول مرة أخرى");
+        showMessage(t('adminUploadFailed'));
     }
 };
 
@@ -254,7 +258,7 @@ async function loadAdminOrders() {
         const orders = await getOrders();
         tbody.innerHTML = "";
         if (orders.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-stone-400">لا توجد طلبات حتى الآن.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-stone-400">${t('noOrders')}</td></tr>`;
             return;
         }
         orders.forEach(order => {
@@ -268,28 +272,28 @@ async function loadAdminOrders() {
                 <td class="p-3 text-stone-600 text-xs max-w-[120px] truncate" title="${escapeHTML(order.items)}">${escapeHTML(order.items)}</td>
                 <td class="p-3 font-bold text-amber-600 text-xs">${order.total} EGP</td>
                 <td class="p-3">
-                    <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">${Icon.pkg()} تفاصيل</button>
+                    <button onclick="showOrderDetails('${order.orderId}')" class="text-[10px] text-amber-600 hover:text-amber-800 font-semibold">${Icon.pkg()} ${t('orderViewDetails')}</button>
                 </td>
                 <td class="p-3">
                     <select onchange="updateOrderField('${order.orderId}','status',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 bg-white">
-                        <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>قيد المراجعة</option>
-                        <option value="قيد التجهيز" ${order.status === 'قيد التجهيز' ? 'selected' : ''}>قيد التجهيز</option>
-                        <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>تم الشحن</option>
-                        <option value="تم التسليم" ${order.status === 'تم التسليم' ? 'selected' : ''}>تم التسليم</option>
-                        <option value="ملغي" ${order.status === 'ملغي' ? 'selected' : ''}>ملغي</option>
+                        <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>${t('statusPending')}</option>
+                        <option value="قيد التجهيز" ${order.status === 'قيد التجهيز' ? 'selected' : ''}>${t('statusProcessing')}</option>
+                        <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>${t('statusShipped')}</option>
+                        <option value="تم التسليم" ${order.status === 'تم التسليم' ? 'selected' : ''}>${t('statusDelivered')}</option>
+                        <option value="ملغي" ${order.status === 'ملغي' ? 'selected' : ''}>${t('statusCancelled')}</option>
                     </select>
                 </td>
                 <td class="p-3">
-                    <input type="text" value="${escapeHTML(order.trackingId || '')}" placeholder="رقم التتبع" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
+                    <input type="text" value="${escapeHTML(order.trackingId || '')}" placeholder="${t('orderTracking')}" onchange="updateOrderField('${order.orderId}','trackingId',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 w-20 bg-white">
                 </td>
                 <td class="p-3">
-                    <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">${Icon.clip()} نسخ</button>
+                    <button onclick="copyTrackingLink('${order.orderId}')" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">${Icon.clip()} ${t('orderCopyLink')}</button>
                 </td>
             `;
             tbody.appendChild(row);
         });
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-red-500">حدث خطأ أثناء تحميل الطلبات.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-red-500">${t('adminOrdersLoadError')}</td></tr>`;
     }
 }
 
@@ -307,18 +311,18 @@ window.updateOrderField = function(orderId, field, value) {
             updateDoc(orderRef, { [field]: value });
         }
     } catch (e) { console.warn('Firestore sync failed (offline):', e); }
-    showMessage('✅ تم التحديث');
+    showMessage(t('adminUpdated'));
 };
 
 window.copyTrackingLink = function(orderId) {
     const link = window.location.origin + '/tracking.html?orderId=' + orderId;
-    navigator.clipboard.writeText(link).then(() => showMessage('✅ تم نسخ رابط التتبع'));
+    navigator.clipboard.writeText(link).then(() => showMessage(t('adminTrackingCopied')));
 };
 
 window.showOrderDetails = function(orderId) {
     const orders = JSON.parse(localStorage.getItem('vora_orders')) || [];
     const order = orders.find(o => o.orderId === orderId);
-    if (!order) { showMessage('⚠️ الطلب غير موجود'); return; }
+    if (!order) { showMessage(t('adminOrderNotFound')); return; }
     let itemsHtml = '';
     let items = [];
     try { items = order.itemDetails ? JSON.parse(order.itemDetails) : []; } catch(e) {}
@@ -334,21 +338,23 @@ window.showOrderDetails = function(orderId) {
     }
     document.getElementById('orderDetailsBody').innerHTML = `
         <div class="space-y-2 text-sm">
-            <div class="flex justify-between"><span class="text-stone-500">رقم الطلب:</span><span class="font-mono text-stone-900">${escapeHTML(order.orderId)}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">العميل:</span><span class="text-stone-900">${escapeHTML(order.customerName)}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">الهاتف:</span><span class="text-stone-900">${escapeHTML(order.customerPhone)}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">العنوان:</span><span class="text-stone-900">${escapeHTML(order.customerAddress)}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">المحافظة:</span><span class="text-stone-900">${escapeHTML(order.governorate || '—')}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">تاريخ الطلب:</span><span class="text-stone-900">${escapeHTML(order.date || '—')}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">الحالة:</span><span class="text-stone-900">${escapeHTML(order.status)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderId')}:</span><span class="font-mono text-stone-900">${escapeHTML(order.orderId)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderCustomer')}:</span><span class="text-stone-900">${escapeHTML(order.customerName)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderPhone')}:</span><span class="text-stone-900">${escapeHTML(order.customerPhone)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderAddress')}:</span><span class="text-stone-900">${escapeHTML(order.customerAddress)}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderGovernorate')}:</span><span class="text-stone-900">${escapeHTML(order.governorate || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderDate')}:</span><span class="text-stone-900">${escapeHTML(order.date || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderPayment')}:</span><span class="text-stone-900">${escapeHTML(order.paymentMethod || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderTracking')}:</span><span class="text-stone-900">${escapeHTML(order.trackingId || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderStatus')}:</span><span class="text-stone-900">${escapeHTML(order.status)}</span></div>
         </div>
         <div class="border-t border-stone-200 pt-4">
-            <h4 class="font-bold text-stone-900 mb-2">المنتجات</h4>
+            <h4 class="font-bold text-stone-900 mb-2">${t('orderProducts')}</h4>
             ${itemsHtml}
         </div>
         <div class="border-t border-stone-200 pt-4 flex justify-between font-bold text-lg">
-            <span>الإجمالي:</span>
-            <span class="text-amber-600">${order.total} ج.م</span>
+            <span>${t('adminTotal')}:</span>
+            <span class="text-amber-600">${order.total} ${t('currency')}</span>
         </div>`;
     document.getElementById('orderDetailsModal').classList.remove('hidden');
 };
@@ -361,7 +367,7 @@ window.previewImage = function(e) {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-        showMessage("⚠️ الصورة كبيرة جداً. أقصى حجم 10 ميجابايت.");
+        showMessage(t('adminImgTooLarge10MB'));
         return;
     }
     window.selectedProductFile = file; // تخزين الملف مؤقتاً لرفعه عند الحفظ
@@ -388,7 +394,7 @@ window.saveProduct = async function() {
     if (document.getElementById('sct_unisex').checked) sections.push('unisex');
     if (document.getElementById('sct_newArrivals').checked) sections.push('new-arrivals');
     
-    if (!name || !price) return showMessage("يرجى ملء الاسم والسعر");
+    if (!name || !price) return showMessage(t('adminFillNamePrice'));
 
     let originalPrice = null;
     if (discountPercent > 0) {
@@ -398,7 +404,7 @@ window.saveProduct = async function() {
         if (raw) originalPrice = parseFloat(raw);
     }
 
-    showMessage("جاري رفع الصورة للمخزن السحابي وحفظ البيانات...");
+    showMessage(t('adminUploadingSaving'));
     
     try {
         let finalImageUrl = uploadedImageData;
@@ -427,19 +433,23 @@ window.saveProduct = async function() {
         }
         
         if (response.success) {
-            showMessage(editingProductId ? `${Icon.check()} تم تحديث "${name}" بنجاح!` : `${Icon.check()} تم إضافة "${name}" بنجاح!`);
+            if (editingProductId) {
+                showMessage(`${Icon.check()} ${t('adminUpdatedProduct').replace('{name}', name)}`);
+            } else {
+                showMessage(`${Icon.check()} ${t('adminAddedProduct').replace('{name}', name)}`);
+            }
             clearForm();
             loadProductList();
-        } else showMessage(`خطأ: ${response.error}`);
+        } else showMessage(`${t('error')}: ${response.error}`);
     } catch (err) { 
-        showMessage("❌ فشل رفع وحفظ المنتج السحابي."); 
+        showMessage(t('adminSaveFailed')); 
     }
 };
 
 window.editProduct = async function(id) {
     const products = await getProducts();
     const prod = products.find(p => p.id === id);
-    if (!prod) return showMessage("المنتج غير موجود");
+    if (!prod) return showMessage(t('adminProductNotFound'));
 
     editingProductId = id; 
     document.getElementById('prodName').value = prod.name || '';
@@ -461,17 +471,17 @@ window.editProduct = async function(id) {
     document.getElementById('sct_unisex').checked = prodSections.includes('unisex');
     document.getElementById('sct_newArrivals').checked = prodSections.includes('new-arrivals');
     
-    document.getElementById('formTitle').textContent = '✏️ تعديل العطر';
+    document.getElementById('formTitle').textContent = t('adminEditProduct');
 
     window.selectedProductFile = null;
     if (prod.image) {
         uploadedImageData = prod.image;
         document.getElementById('previewImg').src = prod.image;
         document.getElementById('imagePreview').classList.remove('hidden');
-        document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
+        document.getElementById('uploadPlaceholder').innerHTML = t('adminClickUpload');
     }
 
-    document.getElementById('saveProductBtn').innerHTML = '💾 تحديث العطر';
+    document.getElementById('saveProductBtn').innerHTML = t('adminUpdateProductBtn');
     document.getElementById('cancelEditBtn').classList.remove('hidden');
     document.getElementById('prodName').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
@@ -483,36 +493,36 @@ window.cancelEdit = function() {
 window.duplicateProduct = async function(id) {
     const products = await getProducts();
     const prod = products.find(p => p.id === id);
-    if (!prod) return showMessage("المنتج غير موجود");
+    if (!prod) return showMessage(t('adminProductNotFound'));
     
     const copy = { 
         ...prod, 
-        name: prod.name + " (نسخة)" 
+        name: prod.name + ` ${t('adminCopySuffix')}` 
     };
     delete copy.id; 
 
     try {
         const response = await addProduct(copy);
         if (response.success) {
-            showMessage(`${Icon.check()} تم نسخ "${prod.name}" بنجاح`);
+            showMessage(`${Icon.check()} ${t('adminProductCopied').replace('{name}', prod.name)}`);
             loadProductList();
-        } else showMessage(`خطأ: ${response.error}`);
-    } catch (err) { showMessage("فشل الاتصال."); }
+        } else showMessage(`${t('error')}: ${response.error}`);
+    } catch (err) { showMessage(t('adminConnectionFailed')); }
 };
 
 window.deleteProduct = async function(id) {
-    if (!confirm("هل أنت متأكد من حذف هذا العطر؟")) return;
+    if (!confirm(t('adminConfirmDeleteProduct'))) return;
     const products = await getProducts();
     const prod = products.find(p => p.id === id);
-    showMessage("جاري الحذف...");
+    showMessage(t('adminDeleting'));
     try {
         const response = await deleteProductFromService(id);
         if (response.success) {
-            showMessage(`${Icon.check()} تم حذف "${prod?.name || id}" بنجاح`);
+            showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
             loadProductList();
             if (editingProductId === id) clearForm();
-        } else showMessage(`خطأ: ${response.error}`);
-    } catch (err) { showMessage("فشل الاتصال."); }
+        } else showMessage(`${t('error')}: ${response.error}`);
+    } catch (err) { showMessage(t('adminConnectionFailed')); }
 };
 
 function clearForm() {
@@ -526,11 +536,11 @@ function clearForm() {
     document.getElementById('prodStock').value = "50";
     document.getElementById('prodSize').value = "50ml";
     document.getElementById('prodGender').value = "";
-    document.getElementById('formTitle').textContent = '➕ إضافة عطر جديد';
-    document.getElementById('saveProductBtn').innerHTML = '💾 حفظ العطر';
+    document.getElementById('formTitle').textContent = t('adminAddProduct');
+    document.getElementById('saveProductBtn').innerHTML = t('adminSaveProductBtn');
     document.getElementById('cancelEditBtn').classList.add('hidden');
     document.getElementById('imagePreview').classList.add('hidden');
-    document.getElementById('uploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة';
+    document.getElementById('uploadPlaceholder').innerHTML = t('adminClickUpload');
     document.getElementById('prodImageInput').value = "";
     document.getElementById('sct_bestSellers').checked = true;
     document.getElementById('sct_forHim').checked = false;
@@ -544,7 +554,7 @@ async function loadProductList() {
     const products = await getProducts();
     
     if (products.length === 0) {
-        container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">لا توجد منتجات بعد. أضف أول عطر!</p>`;
+        container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">${t('noProducts')}</p>`;
         return;
     }
     container.innerHTML = products.map(prod => {
@@ -558,7 +568,7 @@ async function loadProductList() {
             ${img}
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-stone-900 truncate">${escapeHTML(prod.name)} ${discountBadge}</p>
-                <p class="text-xs text-stone-400">${escapeHTML(prod.category || prod.vendor || '—')} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? 'نفد' : stock + ' قطع'}</span></p>
+                <p class="text-xs text-stone-400">${escapeHTML(prod.category || prod.vendor || '—')} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? t('adminOutOfStockLabel') : stock + ' ' + t('adminPiecesLabel')}</span></p>
             </div>
             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
                 <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">${Icon.edit()}</button>
@@ -661,7 +671,7 @@ function renderCoupons() {
     const coupons = window._couponData || {};
     const entries = Object.entries(coupons);
     if (entries.length === 0) {
-        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد أكواد خصم مضافة</p>';
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">' + t('noCoupons') + '</p>';
         return;
     }
     container.innerHTML = entries.map(([code, discount], i) => `
@@ -701,14 +711,14 @@ function renderBundles() {
     if (!container) return;
     const bundles = window._bundleData || [];
     if (bundles.length === 0) {
-        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد عروض حزم مضافة</p>';
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">' + t('noBundles') + '</p>';
         return;
     }
     container.innerHTML = bundles.map((b, i) => `
         <div class="border border-stone-200 rounded-lg p-3 space-y-2">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-stone-700">عرض ${i + 1}</span>
-                <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} حذف</button>
+                <span class="text-xs font-bold text-stone-700">${t('adminOfferLabel')} ${i + 1}</span>
+                <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} ${t('adminDeleteLabel')}</button>
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض">
@@ -746,14 +756,14 @@ function renderBrands() {
     if (!container) return;
     const brands = window._brandData || [];
     if (brands.length === 0) {
-        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">لا توجد براندات مضافة</p>';
+        container.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">' + t('noBrands') + '</p>';
         return;
     }
     container.innerHTML = brands.map((b, i) => `
         <div class="border border-stone-200 rounded-lg p-3 space-y-2">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-stone-700">براند ${i + 1}</span>
-                <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} حذف</button>
+                <span class="text-xs font-bold text-stone-700">${t('adminBrandLabel')} ${i + 1}</span>
+                <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} ${t('adminDeleteLabel')}</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <input type="text" value="${b.name || ''}" id="brand_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم البراند (مثال: Dior)">
@@ -788,7 +798,7 @@ window.previewBrandImage = function(index, input) {
         window._brandData = brands;
         renderBrands();
     }).catch(() => {
-        showMessage("⚠️ فشل رفع شعار الماركة، حاول مرة أخرى");
+        showMessage(t('adminBrandUploadFailed'));
     });
 };
 
@@ -897,7 +907,7 @@ window.saveSettings = async function() {
         console.warn("Could not save settings to Firestore:", e);
     }
 
-    showMessage("✅ تم حفظ جميع الإعدادات بنجاح!");
+    showMessage(t('adminSettingsSaved'));
 };
 
 window.downloadBackup = function() {
@@ -907,7 +917,7 @@ window.downloadBackup = function() {
         products: products,
         settings: settings
     };
-    const jsContent = `// VORA Fallback Data - تم التصدير في ${new Date().toLocaleDateString('ar-EG')}
+    const jsContent = `// VORA Fallback Data - Exported on ${new Date().toLocaleDateString('en-US')}
 window.__FALLBACK_PRODUCTS = ${JSON.stringify(products, null, 2)};
 
 window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
@@ -921,7 +931,7 @@ window.__FALLBACK_SETTINGS = ${JSON.stringify(settings, null, 2)};
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showMessage('✅ تم تحميل ملف النسخة الاحتياطية! ارفعه على GitHub مع الموقع.');
+    showMessage(t('adminBackupDownloaded'));
 };
 
 window.hideMessage = hideMessage;
