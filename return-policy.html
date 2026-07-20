@@ -84,13 +84,30 @@
         function loadPolicy() {
             const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
             const lang = localStorage.getItem('vora_lang') || 'ar';
-            const content = lang === 'ar' ? (settings.returnPolicyAr || '???? ????? ????? ??????? ??????...') : (settings.returnPolicyEn || 'Return policy will be added soon...');
+            const content = lang === 'ar' ? (settings.returnPolicyAr || 'سيتم إضافة سياسة الإرجاع قريباً...') : (settings.returnPolicyEn || 'Return policy will be added soon...');
             document.getElementById('policyContent').innerHTML = content.replace(/\n/g, '<br>');
-            document.getElementById('policyTitle').textContent = lang === 'ar' ? '????? ???????' : 'Return Policy';
+            document.getElementById('policyTitle').textContent = lang === 'ar' ? 'سياسة الإرجاع' : 'Return Policy';
         }
+    </script>
+    <script type="module">
+        import { getUserFromFirestore } from "./sheets-service.js";
         document.addEventListener('DOMContentLoaded', () => {
             loadPolicy();
             if (window.applyTranslations) applyTranslations();
+            const user = JSON.parse(localStorage.getItem('vora_user'));
+            if (user && (user.role === 'admin' || user.role === 'manager')) {
+                document.getElementById('adminNavLink')?.classList.remove('hidden');
+                document.getElementById('adminNavMobile')?.classList.remove('hidden');
+            } else if (user && user.uid) {
+                getUserFromFirestore(user.uid).then(liveUser => {
+                    if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
+                        document.getElementById('adminNavLink')?.classList.remove('hidden');
+                        document.getElementById('adminNavMobile')?.classList.remove('hidden');
+                        user.role = liveUser.role;
+                        localStorage.setItem('vora_user', JSON.stringify(user));
+                    }
+                }).catch(() => {});
+            }
         });
         document.addEventListener('langchange', loadPolicy);
     </script>

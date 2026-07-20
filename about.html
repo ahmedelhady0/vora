@@ -114,9 +114,25 @@
         function openMobileMenu() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
         function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; }
         window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
-        
+    </script>
+    <script type="module">
+        import { getUserFromFirestore } from "./sheets-service.js";
         document.addEventListener('DOMContentLoaded', () => {
             if (window.applyTranslations) applyTranslations();
+            const user = JSON.parse(localStorage.getItem('vora_user'));
+            if (user && (user.role === 'admin' || user.role === 'manager')) {
+                document.getElementById('adminNavLink')?.classList.remove('hidden');
+                document.getElementById('adminNavMobile')?.classList.remove('hidden');
+            } else if (user && user.uid) {
+                getUserFromFirestore(user.uid).then(liveUser => {
+                    if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
+                        document.getElementById('adminNavLink')?.classList.remove('hidden');
+                        document.getElementById('adminNavMobile')?.classList.remove('hidden');
+                        user.role = liveUser.role;
+                        localStorage.setItem('vora_user', JSON.stringify(user));
+                    }
+                }).catch(() => {});
+            }
         });
         document.addEventListener('langchange', () => {
             if (window.applyTranslations) applyTranslations();

@@ -1,5 +1,5 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 
 const BOTTLE_SVG = `
@@ -25,6 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (el) el.classList.remove('hidden');
             const mob = document.getElementById('adminNavMobile');
             if (mob) mob.classList.remove('hidden');
+        } else if (user.uid) {
+            getUserFromFirestore(user.uid).then(liveUser => {
+                if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
+                    document.getElementById('adminNavLink')?.classList.remove('hidden');
+                    document.getElementById('adminNavMobile')?.classList.remove('hidden');
+                    user.role = liveUser.role;
+                    localStorage.setItem('vora_user', JSON.stringify(user));
+                }
+            }).catch(() => {});
         }
     }
 });

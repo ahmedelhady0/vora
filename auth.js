@@ -13,6 +13,10 @@ onAuthStateChanged(auth, (user) => {
         const stored = JSON.parse(localStorage.getItem('vora_user')) || {};
         if (!stored.uid) {
             getUserFromFirestore(user.uid).then(doc => {
+                if (!doc) {
+                    const old = JSON.parse(localStorage.getItem('vora_user')) || {};
+                    registerUser({ uid: user.uid, username: old.username || user.email.split('@')[0], email: user.email, password: 'firebase-managed', role: old.role || 'customer' }).catch(() => {});
+                }
                 localStorage.setItem('vora_user', JSON.stringify({
                     uid: user.uid, email: user.email,
                     username: doc?.username || user.email.split('@')[0],
@@ -32,7 +36,12 @@ window.signIn = async function() {
     try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
         const uid = cred.user.uid;
-        const fbUser = await getUserFromFirestore(uid);
+        let fbUser = await getUserFromFirestore(uid);
+        if (!fbUser) {
+            const old = JSON.parse(localStorage.getItem('vora_user')) || {};
+            await registerUser({ uid, username: user, email, password: 'firebase-managed', role: old.role || 'customer' }).catch(() => {});
+            fbUser = { role: old.role || 'customer' };
+        }
         localStorage.setItem('vora_user', JSON.stringify({
             uid, email, username: user,
             role: fbUser?.role || 'customer'

@@ -1,7 +1,7 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
-import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
 const ALL_GOVERNORATES = [
@@ -31,6 +31,18 @@ if (userData && (userData.uid || userData.username)) {
         if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
             localStorage.removeItem('vora_user');
             window.location.href = "home.html";
+        } else if (!liveUser && userData.uid) {
+            // Auto-create Firestore user doc with admin role for the current user
+            setDoc(doc(db, "users", userData.uid), {
+                uid: userData.uid,
+                username: (userData.username || '').toLowerCase(),
+                role: 'admin',
+                email: userData.email || '',
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                userData.role = 'admin';
+                localStorage.setItem('vora_user', JSON.stringify(userData));
+            }).catch(() => {});
         }
     }).catch(() => {});
 }
@@ -410,7 +422,7 @@ window.addVariantRow = function(name, nameEn, price, stock, image) {
             <div class="flex-1 flex items-center gap-1.5">
                 <input type="file" accept="image/*" class="hidden variant-image-input" onchange="previewVariantImage(this)">
                 <input type="hidden" class="variant-image-data" value="${image || ''}">
-                <button type="button" onclick="this.previousElementSibling.click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? 'تغيير' : 'صورة'}</button>
+                <button type="button" onclick="this.closest('.variant-row').querySelector('.variant-image-input').click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? 'تغيير' : 'صورة'}</button>
                 <img class="variant-image-preview ${image ? '' : 'hidden'} w-8 h-8 rounded object-cover border border-stone-200 flex-shrink-0" src="${image || ''}">
             </div>
         </div>

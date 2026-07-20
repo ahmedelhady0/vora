@@ -1,5 +1,6 @@
 ﻿import Icon from './icons.js';
 import { escapeHTML } from './security-utils.js';
+import { getUserFromFirestore } from "./sheets-service.js";
 
 window.openMobileMenu = function() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
 window.closeMobileMenu = function() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; };
@@ -56,5 +57,21 @@ function loadAccount() {
     `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', loadAccount);
+document.addEventListener('DOMContentLoaded', () => {
+    loadAccount();
+    const user = JSON.parse(localStorage.getItem('vora_user'));
+    if (user && (user.role === 'admin' || user.role === 'manager')) {
+        document.getElementById('adminNavLink')?.classList.remove('hidden');
+        document.getElementById('adminNavMobile')?.classList.remove('hidden');
+    } else if (user && user.uid) {
+        getUserFromFirestore(user.uid).then(liveUser => {
+            if (liveUser && (liveUser.role === 'admin' || liveUser.role === 'manager')) {
+                document.getElementById('adminNavLink')?.classList.remove('hidden');
+                document.getElementById('adminNavMobile')?.classList.remove('hidden');
+                user.role = liveUser.role;
+                localStorage.setItem('vora_user', JSON.stringify(user));
+            }
+        }).catch(() => {});
+    }
+});
 document.addEventListener('langchange', loadAccount);
