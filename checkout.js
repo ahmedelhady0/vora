@@ -216,7 +216,6 @@ window.submitOrder = async function() {
         }
         orderData.orderId = 'VORA-' + Date.now();
         localStorage.setItem('vora_lastOrder', JSON.stringify(orderData));
-        localStorage.setItem('vora_orders', JSON.stringify([...(JSON.parse(localStorage.getItem('vora_orders')) || []), { ...orderData, timestamp: Date.now() }]));
         // Save address for account page
         const addrEntry = { name: document.getElementById('customerName').value, phone: document.getElementById('customerPhone').value, address: document.getElementById('customerAddress').value, governorate: document.getElementById('governorate').value };
         let addresses = JSON.parse(localStorage.getItem('vora_addresses')) || [];
@@ -261,6 +260,7 @@ function validateForm() {
     if (!name) errors.push(t('checkoutName'));
     if (!phone) errors.push(t('checkoutPhone'));
     if (!email) errors.push(t('checkoutEmail'));
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMessage(t('checkoutEmailInvalid')); return false; }
     if (!address) errors.push(t('checkoutAddress'));
     if (!governorate) errors.push(t('checkoutGovernorate'));
     if (errors.length > 0) { showMessage(t('checkoutRequiredFields')); return false; }

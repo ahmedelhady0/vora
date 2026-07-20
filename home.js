@@ -296,8 +296,14 @@ window.liveSearch = function(q) {
     const results = document.getElementById('searchOverlayResults');
     const trimmed = q.trim().toLowerCase();
     if (!trimmed) { results.innerHTML = ''; return; }
-    const all = JSON.parse(localStorage.getItem('vora_products')) || [];
-    const matches = all.filter(p => (p.name||'').toLowerCase().includes(trimmed) || (p.category||'').toLowerCase().includes(trimmed));
+    const src = allProducts.length > 0 ? allProducts : (JSON.parse(localStorage.getItem('vora_products')) || []);
+    const matches = src.filter(p => {
+        const qq = trimmed;
+        return (p.name||'').toLowerCase().includes(qq)
+            || (p.category||'').toLowerCase().includes(qq)
+            || (p.vendor||'').toLowerCase().includes(qq)
+            || (p.variants||[]).some(v => (v.name||'').toLowerCase().includes(qq) || (v.nameEn||'').toLowerCase().includes(qq));
+    });
     if (matches.length === 0) {
         results.innerHTML = `<div class="search-empty">${t('searchNoResults')}</div>`;
         return;
@@ -364,8 +370,8 @@ window.goToSlide = function(index) {
 function initBrandSlider() {
     const track = document.getElementById('brandTrack');
     if (!track) return;
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
-    const brands = [...new Set(products.map(p => (p.brand || 'THE ESSENCE OF RADIANCE').trim()).filter(Boolean))];
+    const src = allProducts.length > 0 ? allProducts : (JSON.parse(localStorage.getItem('vora_products')) || []);
+    const brands = [...new Set(src.map(p => (p.brand || 'THE ESSENCE OF RADIANCE').trim()).filter(Boolean))];
     if (!brands.includes('THE ESSENCE OF RADIANCE')) brands.unshift('THE ESSENCE OF RADIANCE');
     const items = brands.map(b => `<div class="brand-track-item">${b}</div>`).join('');
     track.innerHTML = items + items;
@@ -725,13 +731,13 @@ function renderBundles() {
     if (!section || !grid) return;
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const bundles = settings.bundles || [];
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const src = allProducts.length > 0 ? allProducts : (JSON.parse(localStorage.getItem('vora_products')) || []);
     if (bundles.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
     const lang = getLang();
     document.getElementById('bundlesSectionTitle').textContent = t('bundlesTitle');
     grid.innerHTML = bundles.map(bundle => {
-        const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
+        const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
         const img = bundleProds.find(p => p.image)?.image || '';
         const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
         const savings = total - bundle.price;
@@ -775,8 +781,8 @@ function renderBrandSlider() {
 }
 
 window.addBundleToCart = function(bundle) {
-    const products = JSON.parse(localStorage.getItem('vora_products')) || [];
-    const bundleProds = bundle.products.map(id => products.find(p => p.id === id)).filter(Boolean);
+    const src = allProducts.length > 0 ? allProducts : (JSON.parse(localStorage.getItem('vora_products')) || []);
+    const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
     if (bundleProds.length === 0) { showMessage(t('notifProductUnavailable')); return; }
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const bundleItem = { id: 'bundle_' + Date.now(), name: bundle.name, price: bundle.price, qty: 1, isBundle: true, productIds: bundle.products };

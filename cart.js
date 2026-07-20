@@ -106,13 +106,21 @@ window.submitOrder = async function() {
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     const orderData = {
+        orderId: 'VORA-' + Date.now(),
         userEmail: email,
         customerName: name,
         customerPhone: phone,
         customerAddress: address,
+        governorate: '',
+        paymentMethod: 'cod',
         items: itemsSummary,
-        total: totalAmount,
+        itemDetails: JSON.stringify(cart),
+        total: Math.round(totalAmount),
+        subtotal: Math.round(totalAmount),
+        shippingCost: 0,
+        discount: '',
         status: t('statusPending'),
+        orderDate: new Date().toISOString(),
         date: new Date().toLocaleString('ar-EG')
     };
 

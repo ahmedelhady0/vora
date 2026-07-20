@@ -129,12 +129,31 @@ export async function getOrders() {
 
 export async function placeOrder(orderData) {
     STORE.orders = [...STORE.orders, orderData];
-    try { await addDoc(collection(db, "orders"), orderData); } catch (e) { console.warn("Firestore order:", e); }
+    try {
+        const docRef = await addDoc(collection(db, "orders"), orderData);
+        // Save the Firestore doc ID back to localStorage
+        const orders = STORE.orders;
+        const lastIdx = orders.length - 1;
+        orders[lastIdx] = { ...orders[lastIdx], id: docRef.id };
+        STORE.orders = orders;
+    } catch (e) { console.warn("Firestore order:", e); }
     tryFetch(() => fetch(WEB_APP_URL, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'placeOrder', ...orderData })
     }));
     return { success: true };
+}
+
+export async function findAndUpdateOrder(orderId, field, value) {
+    try {
+        const qs = await getDocs(collection(db, "orders"));
+        qs.forEach(async (d) => {
+            const data = d.data();
+            if (data.orderId === orderId || data.id === orderId) {
+                await updateDoc(doc(db, "orders", d.id), { [field]: value });
+            }
+        });
+    } catch (e) { console.warn("Firestore findAndUpdateOrder:", e); }
 }
 
 export async function registerUser(userData) {

@@ -7,7 +7,7 @@ if (order) {
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
     document.getElementById('whatsappDisplay').textContent = settings.whatsapp || '01000000000';
 
-    const payMethod = order.paymentMethod === 'instapay' ? t('checkoutInstapay') : order.paymentMethod === 'cash' ? t('checkoutCod') : order.paymentMethod === 'vodafone' ? t('footerVodafoneCash') : t('footerVisa');
+    const payMethod = order.paymentMethod === 'instapay' ? t('checkoutInstapay') : order.paymentMethod === 'cod' ? t('checkoutCod') : order.paymentMethod === 'vodafone' ? t('footerVodafoneCash') : t('footerVisa');
 
     el.innerHTML = `
         <div class="flex justify-between text-stone-600 text-sm">

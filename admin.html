@@ -19,6 +19,7 @@
 <h1 class="text-2xl font-bold text-stone-900" data-i18n="adminDashboard"><svg class="w-5 h-5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></h1>
                 <p class="text-stone-500 text-sm" data-i18n="adminDesc"></p>
             </div>
+            <a href="home.html" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-sm font-semibold transition flex items-center gap-1.5"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span data-i18n="adminBackStore"></span></a>
         </div>
 
         <!-- Tabs -->
@@ -67,7 +68,7 @@
                     <h3 class="font-bold text-stone-900 mb-4" id="formTitle" data-i18n="adminAddProduct"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="navHome"></label>
+                            <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="productName"></label>
                             <input type="text" id="prodName" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="Vora Luxury Oud">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
@@ -89,15 +90,18 @@
                             <div>
                                 <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="size"></label>
                                 <select id="prodSize" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm bg-white">
+                                    <option value="10ml">10 ml</option>
+                                    <option value="20ml">20 ml</option>
                                     <option value="30ml">30 ml</option>
                                     <option value="50ml" selected>50 ml</option>
                                     <option value="75ml">75 ml</option>
                                     <option value="100ml">100 ml</option>
                                     <option value="150ml">150 ml</option>
+                                    <option value="200ml">200 ml</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="subtotal"></label>
+                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="price"></label>
                                 <input type="number" id="prodPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="1250">
                             </div>
                         </div>
@@ -109,11 +113,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="additionalInfo"></label>
+                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="originalPrice"></label>
                                 <input type="number" id="prodOriginalPrice" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="Original Price">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="category"></label>
+                                <label class="block text-sm font-medium text-stone-700 mb-1" data-i18n="stock"></label>
                                 <input type="number" id="prodStock" class="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 text-sm" placeholder="50" value="50" min="0">
                             </div>
                         </div>
@@ -125,7 +129,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-stone-700 mb-2" data-i18n="prodNotFound"></label>
+                            <label class="block text-sm font-medium text-stone-700 mb-2" data-i18n="sections"></label>
                             <div class="flex flex-wrap gap-4">
                                 <label class="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer hover:text-amber-700">
                                     <input type="checkbox" id="sct_bestSellers" checked class="w-4 h-4 text-amber-600 rounded"> <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> <span data-i18n="catBestsellers"></span>

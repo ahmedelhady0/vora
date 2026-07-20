@@ -94,6 +94,49 @@ function renderProduct() {
     document.title = `VORA - ${p.name}`;
     document.getElementById('breadcrumbProduct').textContent = p.name;
 
+    // JSON-LD schema.org/Product for SEO
+    const schemaPrice = p.variants && p.variants.length > 0
+        ? Math.min(...p.variants.map(v => v.price))
+        : p.price;
+    const schema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": p.name,
+        "description": p.description || "",
+        "image": p.image || "",
+        "brand": { "@type": "Brand", "name": p.vendor || "VORA" },
+        "offers": {
+            "@type": "Offer",
+            "price": schemaPrice,
+            "priceCurrency": "EGP",
+            "availability": (p.stock ?? 50) > 0
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock"
+        }
+    };
+    if (parseFloat(p.rating) > 0) {
+        schema.aggregateRating = {
+            "@type": "AggregateRating",
+            "ratingValue": parseFloat(p.rating),
+            "reviewCount": p.ratingCount || 0
+        };
+    }
+    if (p.originalPrice && p.originalPrice > schemaPrice) {
+        schema.offers.priceSpecification = {
+            "@type": "UnitPriceSpecification",
+            "price": schemaPrice,
+            "priceCurrency": "EGP",
+            "referenceQuantity": { "@type": "QuantitativeValue", "value": 1 }
+        };
+    }
+    let oldSchema = document.getElementById('productSchema');
+    if (oldSchema) oldSchema.remove();
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'productSchema';
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+
     if (p.image) {
         const container = document.getElementById('productImageContainer');
         const img = document.createElement('img');

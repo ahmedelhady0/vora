@@ -1,5 +1,6 @@
 ﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore } from "./sheets-service.js";
+import { escapeHTML } from "./security-utils.js";
 // استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
 
 
@@ -253,7 +254,13 @@ window.liveSearch = function(q) {
     const results = document.getElementById('searchOverlayResults');
     const trimmed = q.trim().toLowerCase();
     if (!trimmed) { results.innerHTML = ''; return; }
-    const matches = allProducts.filter(p => (p.name||'').toLowerCase().includes(trimmed) || (p.category||'').toLowerCase().includes(trimmed));
+    const matches = allProducts.filter(p => {
+        const inName = (p.name||'').toLowerCase().includes(trimmed);
+        const inCat = (p.category||'').toLowerCase().includes(trimmed);
+        const inVendor = (p.vendor||'').toLowerCase().includes(trimmed);
+        const inVariants = (p.variants||[]).some(v => (v.name||'').toLowerCase().includes(trimmed) || (v.nameEn||'').toLowerCase().includes(trimmed));
+        return inName || inCat || inVendor || inVariants;
+    });
     if (matches.length === 0) {
         results.innerHTML = `<div class="search-empty">${t('searchNoResults')}</div>`;
         return;
@@ -366,11 +373,18 @@ function getFilteredProducts() {
     }
 
     if (searchQuery) {
-        list = list.filter(p =>
-            (p.name || "").toLowerCase().includes(searchQuery) ||
-            (p.description || "").toLowerCase().includes(searchQuery) ||
-            (p.category || "").toLowerCase().includes(searchQuery)
-        );
+        const q = searchQuery;
+        list = list.filter(p => {
+            const inName = (p.name || "").toLowerCase().includes(q);
+            const inDesc = (p.description || "").toLowerCase().includes(q);
+            const inCat = (p.category || "").toLowerCase().includes(q);
+            const inVendor = (p.vendor || "").toLowerCase().includes(q);
+            const inVariants = (p.variants || []).some(v =>
+                (v.name || "").toLowerCase().includes(q) ||
+                (v.nameEn || "").toLowerCase().includes(q)
+            );
+            return inName || inDesc || inCat || inVendor || inVariants;
+        });
     }
 
     if (minPrice !== null && !isNaN(minPrice)) {
@@ -554,7 +568,7 @@ function buildProductCard(prod) {
         <div class="card-information">
             <div class="card-information__wrapper text-center">
                 <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${prod.name}</span></a>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${escapeHTML(prod.name)}</span></a>
                 ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
                 <div class="card-desc">${stockLabel}</div>
                 <div class="card-price">

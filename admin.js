@@ -303,6 +303,9 @@ window.updateOrderField = function(orderId, field, value) {
         if (id) {
             const orderRef = doc(db, "orders", id);
             updateDoc(orderRef, { [field]: value });
+        } else {
+            // If no Firestore ID, try to find the order by orderId field
+            import("./sheets-service.js").then(s => s.findAndUpdateOrder(orderId, field, value)).catch(() => {});
         }
     } catch (e) { console.warn('Firestore sync failed (offline):', e); }
     showMessage(t('adminUpdated'));
@@ -428,7 +431,7 @@ window.saveProduct = async function() {
     if (!name || !price) return showMessage(t('adminFillNamePrice'));
 
     let originalPrice = null;
-    if (discountPercent > 0) {
+    if (discountPercent > 0 && discountPercent < 100) {
         originalPrice = Math.round(price / (1 - discountPercent / 100));
     } else {
         const raw = document.getElementById('prodOriginalPrice').value;
@@ -448,7 +451,7 @@ window.saveProduct = async function() {
         const prodData = {
             name, size, price, stock, description,
             image: finalImageUrl,
-            originalPrice: originalPrice || "",
+            originalPrice: originalPrice ?? "",
             discount: !!(originalPrice || discountPercent > 0),
             discountPercent: discountPercent,
             sections: sections,
