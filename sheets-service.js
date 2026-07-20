@@ -9,44 +9,24 @@ const API_BASE = window.location.origin + "/api";
 
 const STORE = {
     get products() { return JSON.parse(localStorage.getItem('vora_products')) || []; },
-    set products(v) {
-        try { localStorage.setItem('vora_products', JSON.stringify(v)); } catch (e) { console.warn("localStorage full"); }
-    },
+    set products(v) { try { localStorage.setItem('vora_products', JSON.stringify(v)); } catch (e) {} },
     get orders() { return JSON.parse(localStorage.getItem('vora_orders')) || []; },
-    set orders(v) {
-        try { localStorage.setItem('vora_orders', JSON.stringify(v)); } catch (e) { console.warn("localStorage full"); }
-    },
+    set orders(v) { try { localStorage.setItem('vora_orders', JSON.stringify(v)); } catch (e) {} },
     get users() { return JSON.parse(localStorage.getItem('vora_users')) || {}; },
-    set users(v) {
-        try { localStorage.setItem('vora_users', JSON.stringify(v)); } catch (e) { console.warn("localStorage full"); }
-    }
+    set users(v) { try { localStorage.setItem('vora_users', JSON.stringify(v)); } catch (e) {} }
 };
 
 async function tryFetch(fn) {
     try { return await fn(); } catch (e) { return null; }
 }
 
-async function apiGet(collection) {
-    const res = await fetch(`${API_BASE}/${collection}`);
-    if (!res.ok) throw new Error('API error');
-    return await res.json();
-}
-
 async function apiSave(collection, data) {
-    const res = await fetch(`${API_BASE}/data`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collection, action: 'save', data })
-    });
-    if (!res.ok) throw new Error('API save error');
-    return await res.json();
-}
-
-function syncProductsToAPI() {
-    apiSave('products', STORE.products).catch(() => {});
-}
-function syncOrdersToAPI() {
-    apiSave('orders', STORE.orders).catch(() => {});
+    try {
+        await fetch(`${API_BASE}/data`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ collection, action: 'save', data })
+        });
+    } catch (e) {}
 }
 
 export async function uploadImageToStorage(fileObject) {
@@ -61,7 +41,7 @@ export async function uploadImageToStorage(fileObject) {
     } catch (error) { console.error("ImgBB:", error); throw error; }
 }
 
-async function syncFromFirestore() {
+async function fbGetProducts() {
     const qs = await getDocs(collection(db, "products"));
     const r = [];
     qs.forEach(d => r.push({ id: d.id, ...d.data() }));
@@ -69,65 +49,40 @@ async function syncFromFirestore() {
 }
 
 export async function getProducts() {
-    // Always return localStorage first (fastest, most up-to-date)
+    // 1) Try Firestore first (works on GitHub Pages, shares across devices)
+    try {
+        const fb = await fbGetProducts();
+        if (fb.length > 0) { STORE.products = fb; apiSave('products', fb); return fb; }
+    } catch (e) { console.warn("Firestore read failed:", e); }
+    // 2) Fall back to localStorage
     const local = STORE.products;
     if (local.length > 0) {
-        // Background sync from API to pull any remote changes
-        apiGet('products').then(api => {
-            if (api.length > 0) {
-                const merged = [...local];
-                api.forEach(ap => {
-                    const idx = merged.findIndex(m => m.id === ap.id);
-                    if (idx === -1) merged.push(ap);
-                });
-                STORE.products = merged;
-                syncProductsToAPI();
-            }
-        }).catch(() => {});
-        // Background sync from Firestore
-        syncFromFirestore().then(fb => {
-            if (fb.length > 0) {
-                const merged = [...STORE.products];
-                fb.forEach(fbp => {
-                    const idx = merged.findIndex(m => m.id === fbp.id);
-                    if (idx === -1) merged.push(fbp);
-                });
-                STORE.products = merged;
-                syncProductsToAPI();
-            }
-        }).catch(() => {});
+        // Background sync to Firestore if possible
+        local.forEach(p => { try { setDoc(doc(db, "products", p.id), p); } catch (e) {} });
+        apiSave('products', local);
         return local;
     }
-    // Nothing local, try API
-    try {
-        const api = await apiGet('products');
-        if (api.length > 0) { STORE.products = api; return api; }
-    } catch (e) { /* API unavailable */ }
-    // Try Firestore
-    try {
-        const fb = await syncFromFirestore();
-        if (fb.length > 0) { STORE.products = fb; syncProductsToAPI(); return fb; }
-    } catch (e) { console.error("Firestore:", e); }
     return [];
 }
 
 export async function addProduct(product) {
-    const products = STORE.products;
     const id = 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
     const newProduct = { ...product, id };
+    // 1) Save to Firestore first
+    try {
+        const docRef = await addDoc(collection(db, "products"), product);
+        newProduct.id = docRef.id;
+    } catch (e) { console.error("Firestore write failed:", e); }
+    // 2) Save to localStorage
+    const products = STORE.products;
     products.push(newProduct);
     STORE.products = products;
-    syncProductsToAPI();
+    apiSave('products', products);
     tryFetch(() => fetch(WEB_APP_URL, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'addProduct', ...newProduct })
     }));
-    try {
-        const docRef = await addDoc(collection(db, "products"), product);
-        const idx = STORE.products.findIndex(p => p.id === id);
-        if (idx !== -1) { STORE.products[idx].id = docRef.id; STORE.products = STORE.products; syncProductsToAPI(); }
-    } catch (e) { console.error("Firestore add:", e); }
-    return { success: true, id };
+    return { success: true, id: newProduct.id };
 }
 
 export async function updateProduct(id, updated) {
@@ -136,74 +91,44 @@ export async function updateProduct(id, updated) {
     if (idx !== -1) {
         products[idx] = { ...products[idx], ...updated, id };
         STORE.products = products;
-        syncProductsToAPI();
     }
+    try { await setDoc(doc(db, "products", id), updated); } catch (e) { console.error("Firestore update:", e); }
+    apiSave('products', products);
     tryFetch(() => fetch(WEB_APP_URL, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'updateProduct', id, ...updated })
     }));
-    try {
-        await updateDoc(doc(db, "products", id), updated);
-    } catch (e) { console.error("Firestore update:", e); }
     return { success: true };
 }
 
 export async function deleteProduct(id) {
-    const products = STORE.products.filter(p => p.id !== id);
-    STORE.products = products;
-    syncProductsToAPI();
+    STORE.products = STORE.products.filter(p => p.id !== id);
+    try { await deleteDoc(doc(db, "products", id)); } catch (e) { console.error("Firestore delete:", e); }
+    apiSave('products', STORE.products);
     tryFetch(() => fetch(WEB_APP_URL, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'deleteProduct', id })
     }));
-    try {
-        await deleteDoc(doc(db, "products", id));
-    } catch (e) { console.error("Firestore delete:", e); }
     return { success: true };
 }
 
 export async function getOrders() {
+    try {
+        const qs = await getDocs(collection(db, "orders"));
+        const fb = [];
+        qs.forEach(d => fb.push({ id: d.id, ...d.data() }));
+        if (fb.length > 0) { STORE.orders = fb; return fb; }
+    } catch (e) {}
     const local = STORE.orders;
     if (local.length > 0) {
-        syncOrdersFromFirestore().then(fb => {
-            if (fb.length > 0) {
-                const merged = [...local];
-                fb.forEach(fbOrder => {
-                    const idx = merged.findIndex(o => o.orderId === fbOrder.orderId);
-                    if (idx === -1) merged.push(fbOrder);
-                    else {
-                        if (merged[idx].status && merged[idx].status !== fbOrder.status) fbOrder.status = merged[idx].status;
-                        if (merged[idx].trackingId && merged[idx].trackingId !== fbOrder.trackingId) fbOrder.trackingId = merged[idx].trackingId;
-                        merged[idx] = fbOrder;
-                    }
-                });
-                STORE.orders = merged;
-                syncOrdersToAPI();
-            }
-        }).catch(() => {});
+        local.forEach(o => { try { setDoc(doc(db, "orders", o.orderId || o.id || ''), o); } catch (e) {} });
         return local;
     }
-    try {
-        const api = await apiGet('orders');
-        if (api.length > 0) { STORE.orders = api; return api; }
-    } catch (e) { /* API unavailable */ }
-    try { const fb = await syncOrdersFromFirestore(); if (fb.length > 0) { STORE.orders = fb; syncOrdersToAPI(); return fb; } }
-    catch (e) { /* Firestore unavailable */ }
-    return STORE.orders;
-}
-
-async function syncOrdersFromFirestore() {
-    const qs = await getDocs(collection(db, "orders"));
-    const r = [];
-    qs.forEach(d => r.push({ id: d.id, ...d.data() }));
-    return r;
+    return [];
 }
 
 export async function placeOrder(orderData) {
-    const orders = STORE.orders;
-    orders.push(orderData);
-    STORE.orders = orders;
-    syncOrdersToAPI();
+    STORE.orders = [...STORE.orders, orderData];
     try { await addDoc(collection(db, "orders"), orderData); } catch (e) { console.warn("Firestore order:", e); }
     tryFetch(() => fetch(WEB_APP_URL, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -217,17 +142,12 @@ export async function registerUser(userData) {
     users[userData.username.toLowerCase()] = { ...userData, password: 'firebase-managed' };
     STORE.users = users;
     try {
-        const docId = userData.uid || userData.username.toLowerCase();
-        await setDoc(doc(db, "users", docId), {
+        await setDoc(doc(db, "users", userData.uid || userData.username.toLowerCase()), {
             uid: userData.uid || '', username: userData.username?.toLowerCase() || '',
             password: userData.password, role: userData.role || 'customer',
             email: userData.email || '', createdAt: new Date().toISOString()
         });
     } catch (e) { console.warn("Firestore user:", e); }
-    tryFetch(() => fetch(WEB_APP_URL, {
-        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'registerUser', ...userData })
-    }));
     return { success: true };
 }
 
@@ -236,37 +156,22 @@ export async function getUserFromFirestore(uidOrUsername) {
     try {
         const snap = await getDoc(doc(db, "users", uidOrUsername.toLowerCase()));
         if (snap.exists()) return { id: snap.id, ...snap.data() };
-    } catch (e) { console.warn("Firestore user:", e); }
+    } catch (e) {}
+    return null;
+}
+
+export async function getSettingsFromFirestore() {
+    try {
+        const snap = await getDoc(doc(db, "config", "settings"));
+        if (snap.exists()) { localStorage.setItem('vora_settings', JSON.stringify(snap.data())); return snap.data(); }
+    } catch (e) {}
+    const local = JSON.parse(localStorage.getItem('vora_settings'));
+    if (local) return local;
     return null;
 }
 
 export async function saveSettingsToFirestore(settings) {
     localStorage.setItem('vora_settings', JSON.stringify(settings));
-    apiSave('settings', settings).catch(() => {});
-    try { await setDoc(doc(db, "config", "settings"), settings); } catch (e) { console.error("Firestore settings:", e); }
+    try { await setDoc(doc(db, "config", "settings"), settings); } catch (e) {}
     return { success: true };
-}
-
-export async function getSettingsFromFirestore() {
-    const local = JSON.parse(localStorage.getItem('vora_settings'));
-    if (local) {
-        apiGet('settings').then(api => {
-            if (api && typeof api === 'object' && !Array.isArray(api) && Object.keys(api).length > 0) {
-                localStorage.setItem('vora_settings', JSON.stringify(api));
-            }
-        }).catch(() => {});
-        syncSettingsFromFirestore().then(cloud => {
-            if (cloud) { localStorage.setItem('vora_settings', JSON.stringify(cloud)); apiSave('settings', cloud).catch(() => {}); }
-        }).catch(() => {});
-        return local;
-    }
-    try { const api = await apiGet('settings'); if (api && typeof api === 'object' && !Array.isArray(api) && Object.keys(api).length > 0) { localStorage.setItem('vora_settings', JSON.stringify(api)); return api; } } catch (e) {}
-    try { const cloud = await syncSettingsFromFirestore(); if (cloud) { localStorage.setItem('vora_settings', JSON.stringify(cloud)); apiSave('settings', cloud).catch(() => {}); return cloud; } } catch (e) {}
-    return null;
-}
-
-async function syncSettingsFromFirestore() {
-    const snap = await getDoc(doc(db, "config", "settings"));
-    if (snap.exists()) return snap.data();
-    return null;
 }

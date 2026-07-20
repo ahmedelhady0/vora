@@ -478,11 +478,13 @@ window.saveProduct = async function() {
     }
 };
 
-window.editProduct = async function(id) {
-    const products = await getProducts();
-    const prod = products.find(p => p.id === id);
-    if (!prod) return showMessage(t('adminProductNotFound'));
-
+window.editProduct = function(id) {
+    const allProducts = window.__productsCache || [];
+    const prod = allProducts.find(p => p.id === id);
+    if (!prod) {
+        showMessage(t('adminProductNotFound'));
+        return;
+    }
     editingProductId = id; 
     document.getElementById('prodName').value = prod.name || '';
     if (prod.size) document.getElementById('prodSize').value = prod.size;
@@ -586,6 +588,7 @@ function clearForm() {
 async function loadProductList() {
     const container = document.getElementById('productList');
     const products = await getProducts();
+    window.__productsCache = products;
     
     if (products.length === 0) {
         container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">${t('noProducts')}</p>`;
