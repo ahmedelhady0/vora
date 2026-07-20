@@ -373,15 +373,47 @@ window.previewImage = function(e) {
     document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
 };
 
-window.addVariantRow = function(name, nameEn, price) {
+window.previewVariantImage = function(input) {
+    const row = input.closest('.variant-row');
+    const preview = row.querySelector('.variant-image-preview');
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+            row.querySelector('.variant-image-data').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+window.addVariantRow = function(name, nameEn, price, stock, image) {
     const container = document.getElementById('variantsContainer');
     const row = document.createElement('div');
-    row.className = 'variant-row flex items-center gap-2';
+    row.className = 'variant-row border border-stone-200 rounded-lg p-3 space-y-2';
     row.innerHTML = `
-        <input type="text" class="variant-name w-full px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="الاسم (عربي)" value="${name || ''}">
-        <input type="text" class="variant-name-en w-full px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="Name (English)" value="${nameEn || ''}">
-        <input type="number" class="variant-price w-24 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="السعر" value="${price || ''}">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 flex-shrink-0 text-lg leading-none">&times;</button>
+        <div class="flex gap-2 items-start">
+            <input type="text" class="variant-name flex-1 min-w-0 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="الاسم (عربي)" value="${name || ''}">
+            <input type="text" class="variant-name-en flex-1 min-w-0 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="Name (English)" value="${nameEn || ''}">
+            <button type="button" onclick="this.closest('.variant-row').remove()" class="text-red-500 hover:text-red-700 flex-shrink-0 text-lg leading-none px-1">&times;</button>
+        </div>
+        <div class="flex gap-2 items-center">
+            <div class="w-20">
+                <label class="text-[10px] text-stone-400 block leading-tight">السعر</label>
+                <input type="number" class="variant-price w-full px-2 py-1 border border-stone-300 rounded text-xs" placeholder="0" value="${price || ''}">
+            </div>
+            <div class="w-20">
+                <label class="text-[10px] text-stone-400 block leading-tight">المخزون</label>
+                <input type="number" class="variant-stock w-full px-2 py-1 border border-stone-300 rounded text-xs" value="${stock ?? 50}">
+            </div>
+            <div class="flex-1 flex items-center gap-1.5">
+                <input type="file" accept="image/*" class="hidden variant-image-input" onchange="previewVariantImage(this)">
+                <input type="hidden" class="variant-image-data" value="${image || ''}">
+                <button type="button" onclick="this.previousElementSibling.click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? 'تغيير' : 'صورة'}</button>
+                <img class="variant-image-preview ${image ? '' : 'hidden'} w-8 h-8 rounded object-cover border border-stone-200 flex-shrink-0" src="${image || ''}">
+            </div>
+        </div>
     `;
     container.appendChild(row);
 };
@@ -393,7 +425,9 @@ window.saveVariantData = function() {
         const name = row.querySelector('.variant-name').value.trim();
         const nameEn = row.querySelector('.variant-name-en').value.trim();
         const price = parseFloat(row.querySelector('.variant-price').value);
-        if (name && price) variants.push({ name, nameEn, price });
+        const stock = parseInt(row.querySelector('.variant-stock').value) || 0;
+        const image = row.querySelector('.variant-image-data').value || '';
+        if (name && price) variants.push({ name, nameEn, price, stock, image });
     });
     return variants.length > 0 ? variants : null;
 };
@@ -402,7 +436,7 @@ window.loadVariantData = function(variants) {
     const container = document.getElementById('variantsContainer');
     container.innerHTML = '';
     if (!variants || variants.length === 0) return;
-    variants.forEach(v => addVariantRow(v.name, v.nameEn, v.price));
+    variants.forEach(v => addVariantRow(v.name, v.nameEn, v.price, v.stock, v.image));
 };
 
 window.clearVariants = function() {

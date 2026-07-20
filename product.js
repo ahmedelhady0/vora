@@ -143,6 +143,7 @@ function renderProduct() {
         img.src = p.image;
         img.alt = p.name;
         img.className = 'product-page-image';
+        img.id = 'productMainImage';
         img.onerror = function() { this.style.display = 'none'; const fb = document.getElementById('productImageFallback'); if (fb) fb.style.display = 'flex'; };
         container.prepend(img);
         const fb = document.getElementById('productImageFallback');
@@ -243,6 +244,11 @@ function renderProduct() {
         `).join('');
         variantEl.innerHTML = `<div class="variant-label">${t('chooseOption')}</div><div class="variant-options">${optionsHtml}</div>`;
         selectedVariant = p.variants[0];
+        // Set initial variant image if available
+        if (selectedVariant.image) {
+            const mainImg = document.getElementById('productMainImage');
+            if (mainImg) mainImg.src = selectedVariant.image;
+        }
     } else {
         variantEl.style.display = 'none';
         variantEl.innerHTML = '';
@@ -381,6 +387,37 @@ window.selectVariant = function(index) {
     document.querySelectorAll('.variant-option').forEach((el, i) => {
         el.classList.toggle('active', i === index);
     });
+    // Change main image to variant image
+    if (selectedVariant.image) {
+        const mainImg = document.getElementById('productMainImage');
+        if (mainImg) mainImg.src = selectedVariant.image;
+    }
+    // Update stock display
+    const stockEl = document.getElementById('productStock');
+    const hotStock = document.getElementById('productHotStock');
+    const stock = selectedVariant.stock ?? 50;
+    const outOfStock = stock <= 0;
+    if (stockEl) {
+        stockEl.innerHTML = outOfStock
+            ? `<span style="color:#dc2626;font-weight:700;font-size:14px;">${t('outOfStock')}</span>`
+            : `<span style="color:#16a34a;font-size:14px;">${Icon.check()} ${t('inStock')}</span>`;
+    }
+    document.getElementById('addToCartBtn').disabled = outOfStock;
+    document.getElementById('buyNowBtn').disabled = outOfStock;
+    if (outOfStock) document.getElementById('addToCartBtn').textContent = t('outOfStock');
+    else document.getElementById('addToCartBtn').textContent = t('addToCart');
+    if (hotStock) {
+        if (!outOfStock && stock <= 5) {
+            hotStock.style.display = 'block';
+            const ht = hotStock.querySelector('.hotStock-text');
+            if (ht) ht.textContent = t('hurryText').replace('{n}', stock);
+            const pct = Math.min(stock / 10 * 100, 100);
+            const bar = hotStock.querySelector('.hotStock-progress-item');
+            if (bar) bar.style.width = pct + '%';
+        } else {
+            hotStock.style.display = 'none';
+        }
+    }
     updatePriceDisplay();
     updateSubtotal();
 };
@@ -454,12 +491,13 @@ window.addToCartFromPage = function() {
     if (existing > -1) {
         cart[existing].qty += productQty;
     } else {
+        const variantImage = selectedVariant?.image || '';
         cart.push({
             id: product.id,
             name: product.name,
             variantLabel: variantLabel,
             price: activePrice,
-            image: product.image || '',
+            image: variantImage || product.image || '',
             qty: productQty
         });
     }
