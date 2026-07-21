@@ -34,7 +34,7 @@ setInterval(() => {
         swiper.imgs.forEach((img, i) => img.classList.toggle('active', i === next));
         swiper.current = next;
     });
-}, 3500);
+}, 2000);
 
 const userData = JSON.parse(localStorage.getItem('vora_user'));
 document.addEventListener("DOMContentLoaded", () => {

@@ -137,10 +137,12 @@ function renderProduct() {
     script.textContent = JSON.stringify(schema);
     document.head.appendChild(script);
 
-    if (p.image) {
+    const allProdImages = [p.image, ...(p.variants || []).map(v => v.image).filter(Boolean)];
+    const uniqueProdImages = [...new Set(allProdImages)].filter(Boolean);
+    if (uniqueProdImages.length > 0) {
         const container = document.getElementById('productImageContainer');
         const img = document.createElement('img');
-        img.src = p.image;
+        img.src = uniqueProdImages[0];
         img.alt = p.name;
         img.className = 'product-page-image';
         img.id = 'productMainImage';
@@ -148,6 +150,30 @@ function renderProduct() {
         container.prepend(img);
         const fb = document.getElementById('productImageFallback');
         if (fb) fb.style.display = 'none';
+
+        if (uniqueProdImages.length > 1) {
+            let _currentIdx = 0;
+            let _paused = false;
+            const mainImg = img;
+            container.addEventListener('mouseenter', () => { _paused = true; });
+            container.addEventListener('mouseleave', () => { _paused = false; });
+            window._productSwiper = setInterval(() => {
+                if (_paused) return;
+                _currentIdx = (_currentIdx + 1) % uniqueProdImages.length;
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = uniqueProdImages[_currentIdx];
+                    mainImg.style.opacity = '1';
+                }, 150);
+            }, 2000);
+            window._productSwiperImages = uniqueProdImages;
+            window._productSwiperGoTo = function(idx) {
+                _currentIdx = idx % uniqueProdImages.length;
+                mainImg.src = uniqueProdImages[_currentIdx];
+                _paused = true;
+                setTimeout(() => { _paused = false; }, 4000);
+            };
+        }
     }
 
     document.getElementById('productBrand').textContent = p.vendor || 'VORA';
@@ -389,8 +415,18 @@ window.selectVariant = function(index) {
     });
     // Change main image to variant image
     if (selectedVariant.image) {
-        const mainImg = document.getElementById('productMainImage');
-        if (mainImg) mainImg.src = selectedVariant.image;
+        const allImgs = window._productSwiperImages;
+        if (allImgs && allImgs.length > 1) {
+            const idx = allImgs.indexOf(selectedVariant.image);
+            if (idx >= 0 && window._productSwiperGoTo) window._productSwiperGoTo(idx);
+            else {
+                const mainImg = document.getElementById('productMainImage');
+                if (mainImg) mainImg.src = selectedVariant.image;
+            }
+        } else {
+            const mainImg = document.getElementById('productMainImage');
+            if (mainImg) mainImg.src = selectedVariant.image;
+        }
     }
     // Update stock display
     const stockEl = document.getElementById('productStock');
@@ -677,4 +713,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadProduct();
     updateCartCount();
     if (window.applyTranslations) setTimeout(applyTranslations, 100);
+});
+window.addEventListener('beforeunload', () => {
+    if (window._productSwiper) clearInterval(window._productSwiper);
 });

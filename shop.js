@@ -453,7 +453,7 @@ setInterval(() => {
         swiper.imgs.forEach((img, i) => img.classList.toggle('active', i === next));
         swiper.current = next;
     });
-}, 3500);
+}, 2000);
 
 function renderProducts() {
     const container = document.getElementById('productsContainer');

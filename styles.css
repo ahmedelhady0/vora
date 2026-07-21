@@ -1323,6 +1323,11 @@ input[type="number"] {
     }
 }
 
+/* Product page image transition */
+.product-page-image {
+    transition: opacity 0.3s ease;
+}
+
 /* Card Swiper - auto-rotating variant images */
 .product-card .card-swiper {
     position: relative;
