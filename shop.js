@@ -432,6 +432,29 @@ function getFilteredProducts() {
     return list;
 }
 
+// Card swiper manager
+const _swipers = new Map();
+let _swiperId = 0;
+function _initCardSwiper(el, imgs) {
+    if (imgs.length < 2) return;
+    const id = _swiperId++;
+    el.dataset.swiperId = id;
+    if (imgs.length) imgs[0].classList.add('active');
+    const data = { current: 0, total: imgs.length, el, imgs, paused: false };
+    _swipers.set(id, data);
+    el.addEventListener('mouseenter', () => { data.paused = true; });
+    el.addEventListener('mouseleave', () => { data.paused = false; });
+}
+setInterval(() => {
+    _swipers.forEach((swiper, id) => {
+        if (!swiper.el.isConnected) { _swipers.delete(id); return; }
+        if (swiper.paused || swiper.total < 2) return;
+        const next = (swiper.current + 1) % swiper.total;
+        swiper.imgs.forEach((img, i) => img.classList.toggle('active', i === next));
+        swiper.current = next;
+    });
+}, 3500);
+
 function renderProducts() {
     const container = document.getElementById('productsContainer');
     const countEl = document.getElementById('resultsCount');
@@ -520,6 +543,8 @@ function renderProducts() {
             const card = buildProductCard(prod);
             card.style.animation = `fadeInUp 0.4s ease-out ${delayBase + i * 0.05}s both`;
             grid.appendChild(card);
+            const swiperEl = card.querySelector('.card-swiper');
+            if (swiperEl) _initCardSwiper(swiperEl, swiperEl.querySelectorAll('.card-swiper-img'));
         });
 
         container.appendChild(section);
@@ -546,9 +571,20 @@ function buildProductCard(prod) {
     if (discountPct > 0) badgeHtml += `<span class="badge badge-sale">-${discountPct}%</span>`;
     if (outOfStock) badgeHtml += `<span class="badge badge-out">${t('outOfStockBadge')}</span>`;
 
-    const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
-        : '';
+    const allCardImages = [prod.image, ...(prod.variants || []).map(v => v.image).filter(Boolean)];
+    const uniqueCardImages = [...new Set(allCardImages)].filter(Boolean);
+    const hasSwiper = uniqueCardImages.length > 1;
+
+    let imageContent;
+    if (hasSwiper) {
+        imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
+            `<img src="${img}" alt="${prod.name}" class="card-swiper-img" loading="lazy" onerror="this.style.display='none'">`
+        ).join('')}</div>`;
+    } else if (prod.image) {
+        imageContent = `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
+    } else {
+        imageContent = '';
+    }
 
     const stockLabel = outOfStock ? '' : `<span style="color:#16a34a;font-size:10px;font-weight:600;">${Icon.check()} ${t('inStock')}</span>`;
 
@@ -563,7 +599,7 @@ function buildProductCard(prod) {
         <div class="card-media">
             ${badgeHtml}
             ${imageContent}
-            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image || hasSwiper ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
             <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>

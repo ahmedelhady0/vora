@@ -12,6 +12,30 @@ const BOTTLE_SVG = `
 
 let allProducts = [];
 
+// Card swiper manager
+const _swipers = new Map();
+let _swiperId = 0;
+function _initCardSwiper(el, images) {
+    if (images.length < 2) return;
+    const id = _swiperId++;
+    el.dataset.swiperId = id;
+    const imgs = el.querySelectorAll('.card-swiper-img');
+    if (imgs.length) imgs[0].classList.add('active');
+    const data = { current: 0, total: images.length, el, imgs, paused: false };
+    _swipers.set(id, data);
+    el.addEventListener('mouseenter', () => { data.paused = true; });
+    el.addEventListener('mouseleave', () => { data.paused = false; });
+}
+setInterval(() => {
+    _swipers.forEach((swiper, id) => {
+        if (!swiper.el.isConnected) { _swipers.delete(id); return; }
+        if (swiper.paused || swiper.total < 2) return;
+        const next = (swiper.current + 1) % swiper.total;
+        swiper.imgs.forEach((img, i) => img.classList.toggle('active', i === next));
+        swiper.current = next;
+    });
+}, 3500);
+
 const userData = JSON.parse(localStorage.getItem('vora_user'));
 document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem('vora_user'));
@@ -403,9 +427,21 @@ function buildHomeCard(prod, index) {
 
     const safeNameHtml = escapeHTML(prod.name);
     const safeImageHtml = escapeHTML(prod.image);
-    const imageContent = prod.image
-        ? `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`
-        : '';
+
+    const allCardImages = [prod.image, ...(prod.variants || []).map(v => v.image).filter(Boolean)];
+    const uniqueCardImages = [...new Set(allCardImages)].filter(Boolean);
+    const hasSwiper = uniqueCardImages.length > 1;
+
+    let imageContent;
+    if (hasSwiper) {
+        imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
+            `<img src="${img}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" onerror="this.style.display='none'">`
+        ).join('')}</div>`;
+    } else if (prod.image) {
+        imageContent = `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
+    } else {
+        imageContent = '';
+    }
 
     let badgeHtml = "";
     if (index === 0) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
@@ -427,7 +463,7 @@ function buildHomeCard(prod, index) {
         <div class="card-media">
             ${badgeHtml}
             ${imageContent}
-            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image ? 'display:none;' : 'display:flex;'}">
+            <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image || hasSwiper ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
             <a class="card-link" href="product.html?id=${safeId}" title="${safeNameHtml}"></a>
@@ -524,7 +560,10 @@ async function loadProducts() {
             row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
 
             items.forEach((prod, i) => {
-                row.appendChild(buildHomeCard(prod, i));
+                const card = buildHomeCard(prod, i);
+                row.appendChild(card);
+                const swiperEl = card.querySelector('.card-swiper');
+                if (swiperEl) _initCardSwiper(swiperEl, swiperEl.querySelectorAll('.card-swiper-img'));
             });
 
             wrap.appendChild(row);
@@ -548,7 +587,10 @@ async function loadProducts() {
             row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
             row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
             products.slice(0, 8).forEach((prod, i) => {
-                row.appendChild(buildHomeCard(prod, i));
+                const card = buildHomeCard(prod, i);
+                row.appendChild(card);
+                const swiperEl = card.querySelector('.card-swiper');
+                if (swiperEl) _initCardSwiper(swiperEl, swiperEl.querySelectorAll('.card-swiper-img'));
             });
             wrap.appendChild(row);
             const more = document.createElement('div');
