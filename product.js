@@ -83,6 +83,10 @@ async function loadProduct() {
     if (!product) { document.getElementById('productName').textContent = t('prodNotFound'); return; }
 
     renderProduct();
+    const variantParam = new URLSearchParams(window.location.search).get('variant');
+    if (variantParam !== null && product.variants && product.variants[variantParam]) {
+        setTimeout(() => selectVariant(parseInt(variantParam)), 100);
+    }
     renderRecentlyViewed();
     renderRelated();
     renderReviews();
@@ -146,6 +150,8 @@ function renderProduct() {
         img.alt = p.name;
         img.className = 'product-page-image';
         img.id = 'productMainImage';
+        img.loading = 'lazy';
+        img.decoding = 'async';
         img.onerror = function() { this.style.display = 'none'; const fb = document.getElementById('productImageFallback'); if (fb) fb.style.display = 'flex'; };
         container.prepend(img);
         const fb = document.getElementById('productImageFallback');

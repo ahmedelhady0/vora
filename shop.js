@@ -261,6 +261,15 @@ window.closeSearchOverlay = function() {
     document.getElementById('searchOverlay').classList.remove('active');
     document.body.style.overflow = 'auto';
 };
+function _getSearchResultInfo(p, q) {
+    const vi = (p.variants || []).findIndex(v => (v.name||'').toLowerCase().includes(q) || (v.nameEn||'').toLowerCase().includes(q));
+    if (vi >= 0) {
+        const v = p.variants[vi];
+        return { name: v.name || v.nameEn || p.name, image: v.image || p.image, price: v.price, variantIdx: vi };
+    }
+    return { name: p.name, image: p.image, price: p.price, variantIdx: -1 };
+}
+
 window.liveSearch = function(q) {
     const results = document.getElementById('searchOverlayResults');
     const trimmed = q.trim().toLowerCase();
@@ -276,16 +285,19 @@ window.liveSearch = function(q) {
         results.innerHTML = `<div class="search-empty">${t('searchNoResults')}</div>`;
         return;
     }
-    results.innerHTML = matches.slice(0, 8).map(p => `
-        <div class="search-result-item" onclick="closeSearchOverlay(); window.location.href='product.html?id=${p.id}'">
-            <div class="result-icon">${p.image ? '<img src="'+p.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
+    results.innerHTML = matches.slice(0, 8).map(p => {
+        const info = _getSearchResultInfo(p, trimmed);
+        const href = info.variantIdx >= 0 ? `product.html?id=${p.id}&variant=${info.variantIdx}` : `product.html?id=${p.id}`;
+        return `
+        <div class="search-result-item" onclick="closeSearchOverlay(); window.location.href='${href}'">
+            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
             <div class="result-info">
-                <p>${p.name}</p>
+                <p>${info.name}</p>
                 <span>${p.category || ''}</span>
             </div>
-            <span class="result-price">${p.price} ${t('currency')}</span>
-        </div>
-    `).join('');
+            <span class="result-price">${info.price} ${t('currency')}</span>
+        </div>`;
+    }).join('');
 };
 window.selectSearchResult = function(id) {
     closeSearchOverlay();
@@ -578,10 +590,10 @@ function buildProductCard(prod) {
     let imageContent;
     if (hasSwiper) {
         imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${img}" alt="${prod.name}" class="card-swiper-img" loading="lazy" onerror="this.style.display='none'">`
+            `<img src="${img}" alt="${prod.name}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
-        imageContent = `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
+        imageContent = `<img src="${prod.image}" alt="${prod.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
     } else {
         imageContent = '';
     }

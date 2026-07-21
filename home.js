@@ -325,6 +325,15 @@ window.closeSearchOverlay = function() {
     document.getElementById('searchOverlay').classList.remove('active');
     document.body.style.overflow = 'auto';
 };
+function _getSearchResultInfo(p, q) {
+    const vi = (p.variants || []).findIndex(v => (v.name||'').toLowerCase().includes(q) || (v.nameEn||'').toLowerCase().includes(q));
+    if (vi >= 0) {
+        const v = p.variants[vi];
+        return { name: v.name || v.nameEn || p.name, image: v.image || p.image, price: v.price, variantIdx: vi };
+    }
+    return { name: p.name, image: p.image, price: p.price, variantIdx: -1 };
+}
+
 window.liveSearch = function(q) {
     const results = document.getElementById('searchOverlayResults');
     const trimmed = q.trim().toLowerCase();
@@ -341,16 +350,19 @@ window.liveSearch = function(q) {
         results.innerHTML = `<div class="search-empty">${t('searchNoResults')}</div>`;
         return;
     }
-    results.innerHTML = matches.slice(0, 8).map(p => `
-        <a class="search-result-item" href="product.html?id=${p.id}" onclick="closeSearchOverlay()">
-            <div class="result-icon">${p.image ? '<img src="'+p.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
+    results.innerHTML = matches.slice(0, 8).map(p => {
+        const info = _getSearchResultInfo(p, trimmed);
+        const href = info.variantIdx >= 0 ? `product.html?id=${p.id}&variant=${info.variantIdx}` : `product.html?id=${p.id}`;
+        return `
+        <a class="search-result-item" href="${href}" onclick="closeSearchOverlay()">
+            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
             <div class="result-info">
-                <p>${p.name}</p>
+                <p>${info.name}</p>
                 <span>${p.category || ''}</span>
             </div>
-            <span class="result-price">${p.price} ${t('currency')}</span>
-        </a>
-    `).join('');
+            <span class="result-price">${info.price} ${t('currency')}</span>
+        </a>`;
+    }).join('');
 };
 
 // ===== Hero Slideshow =====
@@ -435,10 +447,10 @@ function buildHomeCard(prod, index) {
     let imageContent;
     if (hasSwiper) {
         imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${img}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" onerror="this.style.display='none'">`
+            `<img src="${img}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
-        imageContent = `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
+        imageContent = `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
     } else {
         imageContent = '';
     }
@@ -502,6 +514,30 @@ function renderHomeSkeletons(container) {
     </div>`;
 }
 
+function _renderSection(container, section, items, lang) {
+    const wrap = document.createElement('div');
+    wrap.className = 'w-full mb-8';
+    const title = document.createElement('div');
+    title.className = 'section-divider mb-5';
+    title.innerHTML = `<span>${section.icon} ${lang === 'ar' ? section.labelAr : section.labelEn}</span>`;
+    wrap.appendChild(title);
+    const row = document.createElement('div');
+    row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
+    row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
+    items.forEach((prod, i) => {
+        const card = buildHomeCard(prod, i);
+        row.appendChild(card);
+        const swiperEl = card.querySelector('.card-swiper');
+        if (swiperEl) _initCardSwiper(swiperEl, swiperEl.querySelectorAll('.card-swiper-img'));
+    });
+    wrap.appendChild(row);
+    const more = document.createElement('div');
+    more.className = 'text-center mt-4';
+    more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
+    wrap.appendChild(more);
+    container.appendChild(wrap);
+}
+
 async function loadProducts() {
     const container = document.getElementById('productsContainer');
     if (!container) return;
@@ -542,39 +578,22 @@ async function loadProducts() {
 
         let hasAny = false;
         const lang = getLang();
+        const sectionList = [];
         sections.forEach(section => {
             const items = grouped[section.key] || [];
             if (items.length === 0) return;
             hasAny = true;
-
-            const wrap = document.createElement('div');
-            wrap.className = 'w-full mb-8';
-
-            const title = document.createElement('div');
-            title.className = 'section-divider mb-5';
-            title.innerHTML = `<span>${section.icon} ${lang === 'ar' ? section.labelAr : section.labelEn}</span>`;
-            wrap.appendChild(title);
-
-            const row = document.createElement('div');
-            row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
-            row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
-
-            items.forEach((prod, i) => {
-                const card = buildHomeCard(prod, i);
-                row.appendChild(card);
-                const swiperEl = card.querySelector('.card-swiper');
-                if (swiperEl) _initCardSwiper(swiperEl, swiperEl.querySelectorAll('.card-swiper-img'));
-            });
-
-            wrap.appendChild(row);
-
-            const more = document.createElement('div');
-            more.className = 'text-center mt-4';
-            more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
-            wrap.appendChild(more);
-
-            container.appendChild(wrap);
+            sectionList.push({ section, items });
         });
+
+        // Render sections lazily: first immediately, rest with delay
+        if (sectionList.length > 0) {
+            _renderSection(container, sectionList[0].section, sectionList[0].items, lang);
+            for (let si = 1; si < sectionList.length; si++) {
+                const s = sectionList[si];
+                setTimeout(() => _renderSection(container, s.section, s.items, lang), si * 200);
+            }
+        }
 
         if (!hasAny) {
             const wrap = document.createElement('div');
@@ -815,15 +834,26 @@ function renderBrandSlider() {
     const track = document.getElementById('brandSliderTrack');
     if (!section || !track) return;
     const settings = JSON.parse(localStorage.getItem('vora_settings')) || {};
-    const brands = settings.brands || [];
-    if (brands.length === 0) { section.style.display = 'none'; return; }
+    let brands = settings.brands || [];
+    if (brands.length === 0) {
+        // Fallback: try fetching fresh settings from Firestore
+        getSettingsFromFirestore().then(cloud => {
+            if (cloud && cloud.brands && cloud.brands.length > 0) {
+                localStorage.setItem('vora_settings', JSON.stringify(cloud));
+                renderBrandSlider();
+            } else {
+                section.style.display = 'none';
+            }
+        }).catch(() => { section.style.display = 'none'; });
+        return;
+    }
     section.style.display = 'block';
     document.getElementById('brandSliderTitle').textContent = t('brandsTitle');
     const cardsHtml = brands.map(b => {
         return `
         <div class="flex flex-col items-center justify-center flex-shrink-0 w-28 sm:w-32 cursor-pointer brand-card" onclick="navigateTo('shop.html?vendor=${encodeURIComponent(b.name)}')">
             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-amber-50 to-pink-50 border-2 border-stone-100 flex items-center justify-center overflow-hidden hover:border-amber-300 hover:shadow-md transition-all">
-                ${b.image ? `<img src="${b.image}" alt="${b.name}" loading="lazy" class="w-full h-full object-cover">` : `<span class="text-2xl font-bold text-stone-300" style="font-family:'Playfair Display',serif;">${(b.name || '?')[0]}</span>`}
+                ${b.image ? `<img src="${b.image}" alt="${b.name}" loading="lazy" decoding="async" class="w-full h-full object-cover">` : `<span class="text-2xl font-bold text-stone-300" style="font-family:'Playfair Display',serif;">${(b.name || '?')[0]}</span>`}
             </div>
             <span class="text-xs font-semibold text-stone-700 mt-2 text-center">${b.name || ''}</span>
         </div>`;
