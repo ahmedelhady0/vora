@@ -525,7 +525,7 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(title);
     const row = document.createElement('div');
     row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide section-scroll';
-    row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
+    row.style.cssText = '-webkit-overflow-scrolling: touch; direction: ltr;';
     items.forEach((prod, i) => {
         const card = buildHomeCard(prod, i);
         row.appendChild(card);
@@ -539,23 +539,24 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(more);
     container.appendChild(wrap);
 
-    let scroller = null;
-    let paused = false;
-    function scrollStep() {
-        if (paused) return;
-        const maxScroll = row.scrollWidth - row.clientWidth;
-        if (maxScroll <= 0) return;
-        row.scrollLeft += 1;
-        if (row.scrollLeft >= maxScroll) {
-            row.scrollLeft = 0;
+    let paused = false, dir = 1, raf = null, skip = 0;
+    const maxScroll = () => row.scrollWidth - row.clientWidth;
+    function tick() {
+        if (!paused && maxScroll() > 0) {
+            if (skip++ % 6 === 0) {
+                row.scrollLeft += dir;
+                if (row.scrollLeft >= maxScroll()) dir = -1;
+                else if (row.scrollLeft <= 0) dir = 1;
+            }
         }
+        raf = requestAnimationFrame(tick);
     }
-    scroller = setInterval(scrollStep, 40);
+    raf = requestAnimationFrame(tick);
     row.addEventListener('mouseenter', () => { paused = true; });
     row.addEventListener('mouseleave', () => { paused = false; });
     row.addEventListener('touchstart', () => { paused = true; }, { passive: true });
     row.addEventListener('touchend', () => { paused = false; }, { passive: true });
-    _sectionScrollers.push(scroller);
+    _sectionScrollers.push(raf);
 }
 
 async function loadProducts() {
