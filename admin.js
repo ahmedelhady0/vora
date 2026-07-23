@@ -394,7 +394,8 @@ window.previewVariantImage = function(input) {
         reader.onload = function(e) {
             preview.src = e.target.result;
             preview.classList.remove('hidden');
-            row.querySelector('.variant-image-data').value = e.target.result;
+            row._variantFile = file;
+            row.querySelector('.variant-image-input').value = '';
         };
         reader.readAsDataURL(file);
     }
@@ -421,7 +422,6 @@ window.addVariantRow = function(name, nameEn, price, stock, image) {
             </div>
             <div class="flex-1 flex items-center gap-1.5">
                 <input type="file" accept="image/*" class="hidden variant-image-input" onchange="previewVariantImage(this)">
-                <input type="hidden" class="variant-image-data" value="${image || ''}">
                 <button type="button" onclick="this.closest('.variant-row').querySelector('.variant-image-input').click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? 'تغيير' : 'صورة'}</button>
                 <img class="variant-image-preview ${image ? '' : 'hidden'} w-8 h-8 rounded object-cover border border-stone-200 flex-shrink-0" src="${image || ''}">
             </div>
@@ -438,8 +438,9 @@ window.saveVariantData = function() {
         const nameEn = row.querySelector('.variant-name-en').value.trim();
         const price = parseFloat(row.querySelector('.variant-price').value);
         const stock = parseInt(row.querySelector('.variant-stock').value) || 0;
-        const image = row.querySelector('.variant-image-data').value || '';
-        if (name && price) variants.push({ name, nameEn, price, stock, image });
+        const preview = row.querySelector('.variant-image-preview');
+        const image = preview?.src && preview.src.startsWith('blob:') ? '' : (preview?.src || '');
+        if (name && price) variants.push({ name, nameEn, price, stock, image, _file: row._variantFile || null });
     });
     return variants.length > 0 ? variants : null;
 };
@@ -489,9 +490,17 @@ window.saveProduct = async function() {
     try {
         let finalImageUrl = uploadedImageData;
 
-        // إذا كان هناك ملف صورة جديد تم اختياره، نرفعه سحابياً أولاً
         if (window.selectedProductFile) {
             finalImageUrl = await uploadImageToStorage(window.selectedProductFile);
+        }
+
+        if (variants) {
+            for (const v of variants) {
+                if (v._file) {
+                    try { v.image = await uploadImageToStorage(v._file); } catch (e) { console.error("Variant upload:", e); }
+                    delete v._file;
+                }
+            }
         }
 
         const prodData = {
