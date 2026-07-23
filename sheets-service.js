@@ -63,19 +63,26 @@ async function fbGetProducts() {
 }
 
 export async function getProducts() {
-    // 1) Try Firestore first (works on GitHub Pages, shares across devices)
+    // 1) Return localStorage instantly (no await)
+    const local = STORE.products;
+    if (local.length > 0) {
+        // 2) Sync Firestore in background
+        setTimeout(async () => {
+            try {
+                const fb = await fbGetProducts();
+                if (fb.length > 0) { STORE.products = fb; apiSave('products', fb); }
+            } catch (e) {
+                local.forEach(p => { try { setDoc(doc(db, "products", p.id), p); } catch (e) {} });
+            }
+        }, 0);
+        apiSave('products', local);
+        return local;
+    }
+    // 3) If no local data, await Firestore
     try {
         const fb = await fbGetProducts();
         if (fb.length > 0) { STORE.products = fb; apiSave('products', fb); return fb; }
     } catch (e) { console.warn("Firestore read failed:", e); }
-    // 2) Fall back to localStorage
-    const local = STORE.products;
-    if (local.length > 0) {
-        // Background sync to Firestore if possible
-        local.forEach(p => { try { setDoc(doc(db, "products", p.id), p); } catch (e) {} });
-        apiSave('products', local);
-        return local;
-    }
     return [];
 }
 

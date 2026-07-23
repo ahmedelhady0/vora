@@ -102,11 +102,11 @@ async function loadSettingsFromCloud() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     initScrollNav();
-    await loadSettingsFromCloud();
+    loadSettingsFromCloud();
     setTimeout(() => {
         const loader = document.getElementById('pageLoader');
         if (loader) loader.classList.add('hidden');
-    }, 600);
+    }, 300);
     updateCartCount();
     loadHeroSettings();
     initSlideshow();

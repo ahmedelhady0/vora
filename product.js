@@ -150,7 +150,8 @@ function renderProduct() {
         img.alt = p.name;
         img.className = 'product-page-image';
         img.id = 'productMainImage';
-        img.loading = 'lazy';
+        img.loading = 'eager';
+        img.fetchPriority = 'high';
         img.decoding = 'async';
         img.onerror = function() { this.style.display = 'none'; const fb = document.getElementById('productImageFallback'); if (fb) fb.style.display = 'flex'; };
         container.prepend(img);
