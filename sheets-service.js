@@ -35,6 +35,7 @@ export async function uploadImageToStorage(fileObject) {
     const formData = new FormData();
     formData.append("file", fileObject);
     formData.append("upload_preset", CLOUD_UPLOAD_PRESET);
+    formData.append("folder", "vora/products");
     try {
         const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
         const result = await response.json();
