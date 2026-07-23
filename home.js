@@ -514,6 +514,8 @@ function renderHomeSkeletons(container) {
     </div>`;
 }
 
+let _sectionScrollers = [];
+
 function _renderSection(container, section, items, lang) {
     const wrap = document.createElement('div');
     wrap.className = 'w-full mb-8';
@@ -522,7 +524,7 @@ function _renderSection(container, section, items, lang) {
     title.innerHTML = `<span>${section.icon} ${lang === 'ar' ? section.labelAr : section.labelEn}</span>`;
     wrap.appendChild(title);
     const row = document.createElement('div');
-    row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide';
+    row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide section-scroll';
     row.style.cssText = 'scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;';
     items.forEach((prod, i) => {
         const card = buildHomeCard(prod, i);
@@ -536,6 +538,24 @@ function _renderSection(container, section, items, lang) {
     more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
     wrap.appendChild(more);
     container.appendChild(wrap);
+
+    let scroller = null;
+    let paused = false;
+    function scrollStep() {
+        if (paused) return;
+        const maxScroll = row.scrollWidth - row.clientWidth;
+        if (maxScroll <= 0) return;
+        row.scrollLeft += 1;
+        if (row.scrollLeft >= maxScroll) {
+            row.scrollLeft = 0;
+        }
+    }
+    scroller = setInterval(scrollStep, 40);
+    row.addEventListener('mouseenter', () => { paused = true; });
+    row.addEventListener('mouseleave', () => { paused = false; });
+    row.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+    row.addEventListener('touchend', () => { paused = false; }, { passive: true });
+    _sectionScrollers.push(scroller);
 }
 
 async function loadProducts() {

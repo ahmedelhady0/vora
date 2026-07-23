@@ -1305,6 +1305,13 @@ html { scroll-behavior: smooth; }
     background: rgba(194,90,128,0.05);
 }
 
+/* Section auto-scroll wrapper */
+.section-scroll {
+    position: relative;
+    mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+
 /* Number input spinner hide */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
