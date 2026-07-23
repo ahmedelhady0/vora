@@ -5,7 +5,7 @@ import {
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
 const CLOUD_NAME = "mq2mwonc";
-const CLOUD_UPLOAD_PRESET = "ml_default";
+const CLOUD_UPLOAD_PRESET = "vora_shop";
 const API_BASE = window.location.origin + "/api";
 
 const STORE = {
