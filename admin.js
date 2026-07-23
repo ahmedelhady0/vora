@@ -1,7 +1,7 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getOrders, addProduct, updateProduct, deleteProduct as deleteProductFromService, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
-import { doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
 const ALL_GOVERNORATES = [
@@ -596,17 +596,23 @@ window.duplicateProduct = async function(id) {
 
 window.deleteProduct = async function(id) {
     if (!confirm(t('adminConfirmDeleteProduct'))) return;
-    const products = await getProducts();
-    const prod = products.find(p => p.id === id);
-    showMessage(t('adminDeleting'));
+    const cache = window.__productsCache;
+    const prod = cache ? cache.find(p => p.id === id) : null;
+    // Remove from localStorage immediately for instant feedback
+    const local = JSON.parse(localStorage.getItem('vora_products')) || [];
+    const updated = local.filter(p => p.id !== id);
+    localStorage.setItem('vora_products', JSON.stringify(updated));
+    // Update cache and re-render immediately
+    if (cache) {
+        window.__productsCache = cache.filter(p => p.id !== id);
+        loadProductList();
+    }
+    if (editingProductId === id) clearForm();
+    showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
+    // Try Firestore delete in background
     try {
-        const response = await deleteProductFromService(id);
-        if (response.success) {
-            showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
-            loadProductList();
-            if (editingProductId === id) clearForm();
-        } else showMessage(`${t('error')}: ${response.error}`);
-    } catch (err) { showMessage(t('adminConnectionFailed')); }
+        await deleteDoc(doc(db, "products", id));
+    } catch (e) { console.warn("Firestore delete:", e); }
 };
 
 function clearForm() {

@@ -4,7 +4,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqpERKwbKumUlYM0CU4KAYOKrp8XXJ6c3v-Gvda1151eLN3zFnHU4--1jU1Mz1zPpPCw/exec";
-const IMGBB_API_KEY = "8621949d7967c0c66d9ab1290454d70e";
+const CLOUD_NAME = "mq2mwonc";
+const CLOUD_UPLOAD_PRESET = "ml_default";
 const API_BASE = window.location.origin + "/api";
 
 const STORE = {
@@ -32,13 +33,14 @@ async function apiSave(collection, data) {
 export async function uploadImageToStorage(fileObject) {
     if (!fileObject) return "";
     const formData = new FormData();
-    formData.append("image", fileObject);
+    formData.append("file", fileObject);
+    formData.append("upload_preset", CLOUD_UPLOAD_PRESET);
     try {
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
         const result = await response.json();
-        if (result.success) return result.data.url;
-        throw new Error(result.error.message);
-    } catch (error) { console.error("ImgBB:", error); throw error; }
+        if (result.secure_url) return result.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+        throw new Error(result.error?.message || "Cloudinary upload failed");
+    } catch (error) { console.error("Cloudinary:", error); throw error; }
 }
 
 async function fbGetProducts() {
