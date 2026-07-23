@@ -1,5 +1,5 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getSettingsFromFirestore, getUserFromFirestore } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 // استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
 
@@ -576,7 +576,7 @@ function buildProductCard(prod) {
     card.className = "product-card";
     const safeName = prod.name.replace(/'/g, "\\'");
     const safeId = prod.id.replace(/'/g, "\\'");
-    const safeImage = (prod.image || "").replace(/'/g, "\\'");
+    const safeImage = (smartImage(prod.image, 400) || "").replace(/'/g, "\\'");
 
     let badgeHtml = "";
     if (isNew) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
@@ -590,10 +590,10 @@ function buildProductCard(prod) {
     let imageContent;
     if (hasSwiper) {
         imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${img}" alt="${prod.name}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${prod.name}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
-        imageContent = `<img src="${prod.image}" alt="${prod.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
+        imageContent = `<img src="${escapeHTML(smartImage(prod.image, 400))}" alt="${prod.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
     } else {
         imageContent = '';
     }
@@ -645,7 +645,7 @@ window.quickView = function(id) {
     if (!prod) return;
     const modal = document.getElementById('quickViewModal');
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        ? `<img src="${escapeHTML(smartImage(prod.image, 400))}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
         : '';
 
     modal.querySelector('.modal-image').innerHTML = `
@@ -657,7 +657,7 @@ window.quickView = function(id) {
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
     const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">${Icon.check()} ${t('inStock')}</span>`;
-    const safeImage = (prod.image || "").replace(/'/g, "\\'");
+    const safeImage = (smartImage(prod.image, 400) || "").replace(/'/g, "\\'");
 
     modal.querySelector('.modal-info').innerHTML = `
         <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.brand || prod.category || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>

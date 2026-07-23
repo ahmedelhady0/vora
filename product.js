@@ -1,5 +1,5 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getSettingsFromFirestore, getUserFromFirestore } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 
 const BOTTLE_SVG = `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="24" y="4" width="16" height="8" rx="1.5" fill="currentColor" opacity="0.7"/><path d="M20 14 Q20 12 22 12 L42 12 Q44 12 44 14 L48 30 Q49 36 49 42 L49 56 Q49 60 45 60 L19 60 Q15 60 15 56 L15 42 Q15 36 16 30 Z" stroke="currentColor" stroke-width="2" fill="none"/><line x1="15" y1="34" x2="49" y2="34" stroke="currentColor" stroke-width="1.5" opacity="0.6"/></svg>`;
@@ -146,7 +146,7 @@ function renderProduct() {
     if (uniqueProdImages.length > 0) {
         const container = document.getElementById('productImageContainer');
         const img = document.createElement('img');
-        img.src = uniqueProdImages[0];
+        img.src = smartImage(uniqueProdImages[0], 800);
         img.alt = p.name;
         img.className = 'product-page-image';
         img.id = 'productMainImage';
@@ -168,14 +168,14 @@ function renderProduct() {
                 _currentIdx = (_currentIdx + 1) % uniqueProdImages.length;
                 mainImg.style.opacity = '0';
                 setTimeout(() => {
-                    mainImg.src = uniqueProdImages[_currentIdx];
+                    mainImg.src = smartImage(uniqueProdImages[_currentIdx], 800);
                     mainImg.style.opacity = '1';
                 }, 150);
             }, 2000);
             window._productSwiperImages = uniqueProdImages;
             window._productSwiperGoTo = function(idx) {
                 _currentIdx = idx % uniqueProdImages.length;
-                mainImg.src = uniqueProdImages[_currentIdx];
+                mainImg.src = smartImage(uniqueProdImages[_currentIdx], 800);
                 _paused = true;
                 setTimeout(() => { _paused = false; }, 4000);
             };
@@ -279,7 +279,7 @@ function renderProduct() {
         // Set initial variant image if available
         if (selectedVariant.image) {
             const mainImg = document.getElementById('productMainImage');
-            if (mainImg) mainImg.src = selectedVariant.image;
+            if (mainImg) mainImg.src = smartImage(selectedVariant.image, 800);
         }
     } else {
         variantEl.style.display = 'none';
@@ -427,11 +427,11 @@ window.selectVariant = function(index) {
             if (idx >= 0 && window._productSwiperGoTo) window._productSwiperGoTo(idx);
             else {
                 const mainImg = document.getElementById('productMainImage');
-                if (mainImg) mainImg.src = selectedVariant.image;
+                if (mainImg) mainImg.src = smartImage(selectedVariant.image, 800);
             }
         } else {
             const mainImg = document.getElementById('productMainImage');
-            if (mainImg) mainImg.src = selectedVariant.image;
+            if (mainImg) mainImg.src = smartImage(selectedVariant.image, 800);
         }
     }
     // Update stock display

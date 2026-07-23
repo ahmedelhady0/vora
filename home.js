@@ -1,5 +1,5 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getSettingsFromFirestore, getUserFromFirestore } from "./sheets-service.js";
+import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 
 const BOTTLE_SVG = `
@@ -257,7 +257,7 @@ window.quickViewHome = function(id) {
     const modal = document.getElementById('quickViewModal');
     if (!modal) return;
     const imageContent = prod.image
-        ? `<img src="${prod.image}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
+        ? `<img src="${escapeHTML(smartImage(prod.image, 400))}" alt="${prod.name}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.qv-fallback').style.display='flex';">`
         : '';
 
     modal.querySelector('.modal-image').innerHTML = `
@@ -438,7 +438,7 @@ function buildHomeCard(prod, index) {
     const outOfStock = stock <= 0;
 
     const safeNameHtml = escapeHTML(prod.name);
-    const safeImageHtml = escapeHTML(prod.image);
+    const safeImageHtml = escapeHTML(smartImage(prod.image, 400));
 
     const allCardImages = [prod.image, ...(prod.variants || []).map(v => v.image).filter(Boolean)];
     const uniqueCardImages = [...new Set(allCardImages)].filter(Boolean);
@@ -447,7 +447,7 @@ function buildHomeCard(prod, index) {
     let imageContent;
     if (hasSwiper) {
         imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${img}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
         imageContent = `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;

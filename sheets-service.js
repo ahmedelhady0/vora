@@ -30,6 +30,17 @@ async function apiSave(collection, data) {
     } catch (e) {}
 }
 
+export function smartImage(url, width = 400) {
+    if (!url) return "";
+    if (url.includes("res.cloudinary.com")) {
+        return url.replace("/upload/", `/upload/w_${width},`);
+    }
+    if (url.includes("ibb.co") || url.includes("imgbb.com") || url.includes("i.ibb.co")) {
+        return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/f_auto,q_auto,w_${width}/${url}`;
+    }
+    return url;
+}
+
 export async function uploadImageToStorage(fileObject) {
     if (!fileObject) return "";
     const formData = new FormData();
