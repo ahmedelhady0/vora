@@ -98,6 +98,16 @@ function renderProduct() {
     document.title = `VORA - ${p.name}`;
     document.getElementById('breadcrumbProduct').textContent = p.name;
 
+    // Dynamic OG tags for sharing
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogTitle) ogTitle.setAttribute('content', `VORA - ${p.name}`);
+    if (ogDesc) ogDesc.setAttribute('content', p.description || `تسوق ${p.name} من متجر VORA`);
+    if (ogImage) ogImage.setAttribute('content', p.image || 'https://vorascents.com/icons/icon.svg');
+    if (ogUrl) ogUrl.setAttribute('content', `https://vorascents.com/product.html?id=${p.id}`);
+
     // JSON-LD schema.org/Product for SEO
     const schemaPrice = p.variants && p.variants.length > 0
         ? Math.min(...p.variants.map(v => v.price))

@@ -5,46 +5,23 @@ const DYNAMIC_CACHE = CACHE_PREFIX + 'dynamic-' + CACHE_VERSION;
 const IMAGE_CACHE = CACHE_PREFIX + 'images-' + CACHE_VERSION;
 
 const STATIC_ASSETS = [
-    '/',
-    '/home.html',
-    '/shop.html',
-    '/product.html',
-    '/cart.html',
-    '/checkout.html',
-    '/about.html',
-    '/brands.html',
-    '/tracking.html',
-    '/return-policy.html',
-    '/confirmation.html',
-    '/account.html',
-    '/admin.html',
-    '/index.html',
-    '/styles.css',
-    '/translations.js',
-    '/components.js',
-    '/page-loader.js',
-    '/icons.js',
-    '/shop.js',
-    '/product.js',
-    '/home.js',
-    '/cart.js',
-    '/checkout.js',
-    '/account-page.js',
-    '/tracking-page.js',
-    '/brands-page.js',
-    '/admin.js',
-    '/auth.js',
-    '/firebase-config.js',
-    '/sheets-service.js',
-    '/confirmation-page.js',
-    '/utils.js'
+    '/home.html', '/shop.html', '/product.html', '/cart.html',
+    '/checkout.html', '/about.html', '/brands.html', '/tracking.html',
+    '/return-policy.html', '/confirmation.html', '/account.html', '/admin.html', '/index.html',
+    '/styles.css', '/translations.js', '/icons.js', '/security-utils.js',
+    '/shop.js', '/product.js', '/home.js', '/cart.js',
+    '/checkout.js', '/account-page.js', '/tracking-page.js', '/brands-page.js',
+    '/admin.js', '/auth.js', '/firebase-config.js', '/sheets-service.js', '/confirmation-page.js'
 ];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(STATIC_CACHE)
-            .then((cache) => cache.addAll(STATIC_ASSETS.map(url => new Request(url, { credentials: 'same-origin' }))))
-            .then(() => self.skipWaiting())
+        caches.open(STATIC_CACHE).then(async (cache) => {
+            for (const url of STATIC_ASSETS) {
+                try { await cache.add(new Request(url, { credentials: 'same-origin' })); } catch (e) { console.warn('SW cache miss:', url); }
+            }
+            self.skipWaiting();
+        })
     );
 });
 

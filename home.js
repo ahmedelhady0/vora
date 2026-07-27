@@ -860,7 +860,7 @@ function renderBundles() {
                 ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
                 <div class="flex items-center justify-between pt-1">
                     <span class="text-xl font-bold text-amber-600">${bundle.price} ${t('currency')}</span>
-                    <button onclick='addBundleToCart(${JSON.stringify(bundle).replace(/'/g, "\\'")})' class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition shadow-sm">${t('addToCart')}</button>
+                    <button onclick='addBundleToCart(${JSON.stringify({...bundle, _image: bundleProds[0]?.image || ''}).replace(/'/g, "\\'")})' class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition shadow-sm">${t('addToCart')}</button>
                 </div>
             </div>
         </div>`;
@@ -904,7 +904,7 @@ window.addBundleToCart = function(bundle) {
     const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
     if (bundleProds.length === 0) { showMessage(t('notifProductUnavailable')); return; }
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    const bundleItem = { id: 'bundle_' + Date.now(), name: bundle.name, price: bundle.price, qty: 1, isBundle: true, productIds: bundle.products, image: bundleProds[0]?.image || '' };
+    const bundleItem = { id: 'bundle_' + Date.now(), name: bundle.name, price: bundle.price, qty: 1, isBundle: true, productIds: bundle.products, image: bundle._image || bundleProds[0]?.image || '' };
     cart.push(bundleItem);
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
