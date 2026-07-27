@@ -830,16 +830,25 @@ function renderBundles() {
     if (bundles.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
     const lang = getLang();
-    document.getElementById('bundlesSectionTitle').textContent = t('bundlesTitle');
+    const titleEl = document.getElementById('bundlesSectionTitle');
+    if (bundles.length === 1) titleEl.textContent = bundles[0].name;
+    else titleEl.textContent = t('bundlesTitle');
     grid.innerHTML = bundles.map(bundle => {
         const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
-        const img = bundleProds.find(p => p.image)?.image || '';
+        const imgs = bundleProds.map(p => p.image).filter(Boolean);
         const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
-        const savings = total - bundle.price;
+        const savings = Math.max(0, total - bundle.price);
+        const imgHtml = imgs.length > 1
+            ? `<div class="flex items-center justify-center gap-2 p-2 h-full">${imgs.slice(0, 3).map(img =>
+                `<img src="${smartImage(img, 150)}" alt="" loading="lazy" class="h-16 w-16 md:h-20 md:w-20 rounded-lg object-cover border border-stone-200 shadow-sm flex-shrink-0">`
+              ).join('')}${imgs.length > 3 ? `<span class="text-xs text-stone-400 font-bold">+${imgs.length - 3}</span>` : ''}</div>`
+            : imgs.length === 1
+                ? `<img src="${smartImage(imgs[0], 300)}" alt="${bundle.name}" loading="lazy" class="max-w-full max-h-full object-contain p-4">`
+                : `<span class="text-5xl text-amber-600 opacity-40">${Icon.gift()}</span>`;
         return `
         <div class="bg-gradient-to-br from-amber-50 to-pink-50 rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
-            <div class="aspect-video bg-white flex items-center justify-center p-4">
-                ${img ? `<img src="${img}" alt="${bundle.name}" loading="lazy" class="max-w-full max-h-full object-contain">` : '<span class="text-5xl text-amber-600 opacity-40">${Icon.gift()}</span>'}
+            <div class="aspect-video bg-white flex items-center justify-center overflow-hidden">
+                ${imgHtml}
             </div>
             <div class="p-4 space-y-2">
                 <h3 class="font-bold text-stone-900 text-lg" style="font-family:'Playfair Display',serif;">${bundle.name}</h3>
