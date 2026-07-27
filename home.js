@@ -837,25 +837,27 @@ function renderBundles() {
         const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
         const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
         const savings = Math.max(0, total - bundle.price);
-        const firstProd = bundleProds[0];
-        const otherProds = bundleProds.slice(1);
-        const mainImg = firstProd?.image ? smartImage(firstProd.image, 400) : '';
+        const prodsWithImg = bundleProds.filter(p => p.image).slice(0, 3);
+        const extraCount = bundleProds.filter(p => p.image).length - 3;
+        const imgGrid = prodsWithImg.length === 1
+            ? `<div class="w-full h-full flex items-center justify-center bg-white"><img src="${smartImage(prodsWithImg[0].image, 400)}" alt="${escapeHTML(bundle.name)}" loading="lazy" class="max-w-full max-h-full object-contain p-6"></div>`
+            : `<div class="grid ${prodsWithImg.length === 2 ? 'grid-cols-2' : 'grid-cols-2 grid-rows-2'} h-full bg-white">
+                ${prodsWithImg.map((p, i) => `
+                  <div class="${i === 0 && prodsWithImg.length === 3 ? 'col-span-2 row-span-1' : ''} overflow-hidden flex items-center justify-center bg-white ${i > 0 ? 'border-l border-stone-100' : ''} ${prodsWithImg.length === 3 && i === 0 ? '' : ''}">
+                    <img src="${smartImage(p.image, 250)}" alt="" loading="lazy" class="w-full h-full object-cover">
+                  </div>
+                `).join('')}
+                ${extraCount > 0 ? `<div class="flex items-center justify-center bg-stone-100 text-sm font-bold text-stone-500 border-l border-stone-200">+${extraCount}</div>` : ''}
+              </div>`;
         return `
-        <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow group">
-            <div class="relative aspect-[4/3] bg-gradient-to-br from-stone-50 to-amber-50 overflow-hidden">
-                <a href="product.html?id=${firstProd?.id || ''}">
-                    ${mainImg ? `<img src="${mainImg}" alt="${escapeHTML(bundle.name)}" loading="lazy" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-amber-600/40">${Icon.gift()}</div>`}
-                </a>
-                <div class="absolute top-3 right-3 flex -space-x-2">
-                    ${otherProds.slice(0, 2).map(p => p.image ? `<img src="${smartImage(p.image, 60)}" alt="" class="w-8 h-8 rounded-full border-2 border-white shadow-sm object-cover">` : '').join('')}
-                    ${otherProds.length > 2 ? `<span class="w-8 h-8 rounded-full border-2 border-white bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">+${otherProds.length}</span>` : ''}
-                </div>
-                ${bundleProds.length > 1 ? `<div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-bold text-stone-600 px-2.5 py-1 rounded-full shadow-sm border border-stone-200">${bundleProds.length} ${t('bundleItems') || 'items'}</div>` : ''}
+        <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="aspect-[4/3] overflow-hidden bg-stone-50">
+                ${prodsWithImg.length > 0 ? imgGrid : `<div class="w-full h-full flex items-center justify-center text-5xl text-amber-600/40">${Icon.gift()}</div>`}
             </div>
             <div class="p-4 space-y-2">
                 <h3 class="font-bold text-stone-900 text-base" style="font-family:'Playfair Display',serif;">${escapeHTML(bundle.name)}</h3>
-                ${bundle.description ? `<p class="text-xs text-stone-500 leading-relaxed">${escapeHTML(bundle.description)}</p>` : ''}
-                ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg> ${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
+                ${bundle.description ? `<p class="text-xs text-stone-500 leading-relaxed">${bundle.description}</p>` : ''}
+                ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
                 <div class="flex items-center justify-between pt-1">
                     <span class="text-xl font-bold text-amber-600">${bundle.price} ${t('currency')}</span>
                     <button onclick='addBundleToCart(${JSON.stringify(bundle).replace(/'/g, "\\'")})' class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition shadow-sm">${t('addToCart')}</button>
