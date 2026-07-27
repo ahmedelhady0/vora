@@ -446,8 +446,8 @@ function buildHomeCard(prod, index) {
 
     let imageContent;
     if (hasSwiper) {
-        imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${safeNameHtml}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+        imageContent = `<div class="card-swiper">${uniqueCardImages.map((img, idx) =>
+            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${safeNameHtml}" class="card-swiper-img" loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
         imageContent = `<img src="${safeImageHtml}" alt="${safeNameHtml}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;
@@ -539,32 +539,28 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(more);
     container.appendChild(wrap);
 
-    let paused = false, dir = 1, acc = 0, tid;
-    const PX_PER_SEC = 30;
-    const INTERVAL_MS = 30;
-    const STEP = (PX_PER_SEC * INTERVAL_MS) / 1000;
-    function scrollStep() {
+    let raf, dir = 1, paused = false, acc = 0;
+    function loop() {
         if (!paused) {
-            const maxScroll = row.scrollWidth - row.clientWidth;
-            if (maxScroll > 0) {
-                acc += STEP;
+            const ms = row.scrollWidth - row.clientWidth;
+            if (ms > 0) {
+                acc += 0.5;
                 if (acc >= 1) {
-                    const move = Math.floor(acc);
-                    row.scrollBy({ left: move * dir, behavior: 'instant' });
-                    acc -= move;
+                    const m = Math.floor(acc);
+                    row.scrollBy({ left: m * dir, behavior: 'instant' });
+                    acc -= m;
+                    const sl = row.scrollLeft;
+                    if ((dir === 1 && sl >= ms - 1) || (dir === -1 && sl <= 1)) dir = -dir;
                 }
-                if (row.scrollLeft <= 1 && dir === -1) { dir = 1; acc = 0; }
-                else if (row.scrollLeft >= maxScroll - 1 && dir === 1) { dir = -1; acc = 0; }
             }
         }
-        tid = setTimeout(scrollStep, INTERVAL_MS);
+        raf = requestAnimationFrame(loop);
     }
-    tid = setTimeout(scrollStep, INTERVAL_MS);
+    raf = requestAnimationFrame(loop);
     row.addEventListener('mouseenter', () => { paused = true; });
     row.addEventListener('mouseleave', () => { paused = false; });
     row.addEventListener('touchstart', () => { paused = true; }, { passive: true });
     row.addEventListener('touchend', () => { paused = false; }, { passive: true });
-    _sectionScrollers.push(raf);
 }
 
 async function loadProducts() {

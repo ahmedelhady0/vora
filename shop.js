@@ -589,8 +589,8 @@ function buildProductCard(prod) {
 
     let imageContent;
     if (hasSwiper) {
-        imageContent = `<div class="card-swiper">${uniqueCardImages.map(img =>
-            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${prod.name}" class="card-swiper-img" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+        imageContent = `<div class="card-swiper">${uniqueCardImages.map((img, idx) =>
+            `<img src="${escapeHTML(smartImage(img, 300))}" alt="${prod.name}" class="card-swiper-img" loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async" onerror="this.style.display='none'">`
         ).join('')}</div>`;
     } else if (prod.image) {
         imageContent = `<img src="${escapeHTML(smartImage(prod.image, 400))}" alt="${prod.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.parentNode.querySelector('.fallback').style.display='flex';">`;

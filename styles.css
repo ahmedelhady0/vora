@@ -1308,9 +1308,18 @@ html { scroll-behavior: smooth; }
 /* Section auto-scroll wrapper */
 .section-scroll {
     position: relative;
-    mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
 }
+.section-scroll::before,
+.section-scroll::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 40px;
+    z-index: 2;
+    pointer-events: none;
+}
+.section-scroll::before { left: 0; background: linear-gradient(90deg, #faf8f5, transparent); }
+.section-scroll::after { right: 0; background: linear-gradient(270deg, #faf8f5, transparent); }
 
 /* Number input spinner hide */
 input[type="number"]::-webkit-inner-spin-button,
