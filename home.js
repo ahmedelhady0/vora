@@ -835,23 +835,25 @@ function renderBundles() {
     else titleEl.textContent = t('bundlesTitle');
     grid.innerHTML = bundles.map(bundle => {
         const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
-        const imgs = bundleProds.map(p => p.image).filter(Boolean);
         const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
         const savings = Math.max(0, total - bundle.price);
-        const imgHtml = imgs.length > 1
-            ? `<div class="flex items-center justify-center gap-3 p-4 h-full">${imgs.slice(0, 3).map(img =>
-                `<img src="${smartImage(img, 300)}" alt="" loading="lazy" class="h-24 w-24 md:h-28 md:w-28 rounded-xl object-cover border border-stone-200 shadow-sm flex-shrink-0">`
-              ).join('')}${imgs.length > 3 ? `<span class="text-sm text-stone-400 font-bold">+${imgs.length - 3}</span>` : ''}</div>`
-            : imgs.length === 1
-                ? `<img src="${smartImage(imgs[0], 300)}" alt="${bundle.name}" loading="lazy" class="max-w-full max-h-full object-contain p-4">`
-                : `<span class="text-5xl text-amber-600 opacity-40">${Icon.gift()}</span>`;
+        const prodHtml = bundleProds.map(p => `
+            <div class="flex flex-col items-center gap-1 flex-shrink-0 w-24 md:w-28">
+                <div class="w-full aspect-[3/4] rounded-xl overflow-hidden bg-white border border-stone-200 shadow-sm flex items-center justify-center">
+                    ${p.image ? `<img src="${smartImage(p.image, 150)}" alt="${escapeHTML(p.name)}" loading="lazy" class="w-full h-full object-cover">` : `<span class="text-2xl text-stone-300">${Icon.gift()}</span>`}
+                </div>
+                <span class="text-[10px] text-stone-600 text-center leading-tight line-clamp-2">${escapeHTML(p.name)}</span>
+            </div>
+        `).join('');
         return `
         <div class="bg-gradient-to-br from-amber-50 to-pink-50 rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow">
-            <div class="aspect-video bg-white flex items-center justify-center overflow-hidden">
-                ${imgHtml}
+            <div class="p-4">
+                <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style="-webkit-overflow-scrolling:touch;">
+                    ${prodHtml}
+                </div>
             </div>
-            <div class="p-4 space-y-2">
-                <h3 class="font-bold text-stone-900 text-lg" style="font-family:'Playfair Display',serif;">${bundle.name}</h3>
+            <div class="px-4 pb-4 space-y-2">
+                <h3 class="font-bold text-stone-900 text-lg" style="font-family:'Playfair Display',serif;">${escapeHTML(bundle.name)}</h3>
                 ${bundle.description ? `<p class="text-sm text-stone-500">${bundle.description}</p>` : ''}
                 ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
                 <div class="flex items-center justify-between pt-2">
