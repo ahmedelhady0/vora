@@ -539,21 +539,27 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(more);
     container.appendChild(wrap);
 
-    let paused = false, dir = 1, raf = null, skip = 0;
-    function tick() {
+    let paused = false, dir = 1, acc = 0, tid;
+    const PX_PER_SEC = 30;
+    const INTERVAL_MS = 30;
+    const STEP = (PX_PER_SEC * INTERVAL_MS) / 1000;
+    function scrollStep() {
         if (!paused) {
             const maxScroll = row.scrollWidth - row.clientWidth;
             if (maxScroll > 0) {
-                if (skip++ % 6 === 0) {
-                    const before = row.scrollLeft;
-                    row.scrollBy({ left: dir, behavior: 'instant' });
-                    if (row.scrollLeft === before) { dir = -dir; }
+                acc += STEP;
+                if (acc >= 1) {
+                    const move = Math.floor(acc);
+                    row.scrollBy({ left: move * dir, behavior: 'instant' });
+                    acc -= move;
                 }
+                if (row.scrollLeft <= 1 && dir === -1) { dir = 1; acc = 0; }
+                else if (row.scrollLeft >= maxScroll - 1 && dir === 1) { dir = -1; acc = 0; }
             }
         }
-        raf = requestAnimationFrame(tick);
+        tid = setTimeout(scrollStep, INTERVAL_MS);
     }
-    raf = requestAnimationFrame(tick);
+    tid = setTimeout(scrollStep, INTERVAL_MS);
     row.addEventListener('mouseenter', () => { paused = true; });
     row.addEventListener('mouseleave', () => { paused = false; });
     row.addEventListener('touchstart', () => { paused = true; }, { passive: true });
