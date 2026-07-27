@@ -525,7 +525,7 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(title);
     const row = document.createElement('div');
     row.className = 'flex gap-4 overflow-x-auto pb-2 scrollbar-hide section-scroll';
-    row.style.cssText = '-webkit-overflow-scrolling: touch; direction: ltr;';
+    row.style.cssText = '-webkit-overflow-scrolling: touch;';
     items.forEach((prod, i) => {
         const card = buildHomeCard(prod, i);
         row.appendChild(card);
@@ -540,13 +540,15 @@ function _renderSection(container, section, items, lang) {
     container.appendChild(wrap);
 
     let paused = false, dir = 1, raf = null, skip = 0;
-    const maxScroll = () => row.scrollWidth - row.clientWidth;
     function tick() {
-        if (!paused && maxScroll() > 0) {
-            if (skip++ % 6 === 0) {
-                row.scrollLeft += dir;
-                if (row.scrollLeft >= maxScroll()) dir = -1;
-                else if (row.scrollLeft <= 0) dir = 1;
+        if (!paused) {
+            const maxScroll = row.scrollWidth - row.clientWidth;
+            if (maxScroll > 0) {
+                if (skip++ % 6 === 0) {
+                    const before = row.scrollLeft;
+                    row.scrollBy({ left: dir, behavior: 'instant' });
+                    if (row.scrollLeft === before) { dir = -dir; }
+                }
             }
         }
         raf = requestAnimationFrame(tick);

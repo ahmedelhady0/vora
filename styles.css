@@ -37,7 +37,7 @@
 body {
     background: var(--bg-warm);
     color: var(--text-primary);
-    font-family: 'Alexandria', sans-serif;
+    font-family: 'Cairo', sans-serif;
     line-height: 1.7;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -69,7 +69,7 @@ nav.fixed { }
 
 /* ===== Buttons - Pill-shaped, Uppercase (Horizon-inspired) ===== */
 button, .btn, [class*="bg-gradient-to-r.from-amber"] {
-    font-family: 'Alexandria', sans-serif;
+    font-family: 'Cairo', sans-serif;
 }
 .bg-gradient-to-r.from-amber-600.to-amber-700,
 .btn-primary {
@@ -970,7 +970,7 @@ html { scroll-behavior: smooth; }
     color: white;
     font-size: 22px;
     outline: none;
-    font-family: 'Alexandria', sans-serif;
+    font-family: 'Cairo', sans-serif;
     direction: rtl;
 }
 #searchOverlay input::placeholder { color: rgba(255,255,255,0.2); }
