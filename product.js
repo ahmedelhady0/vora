@@ -25,7 +25,11 @@ async function loadSettings() {
 }
 
 function getProductId() {
-    return new URLSearchParams(window.location.search).get('id');
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) return id;
+    const match = window.location.pathname.match(/^\/p\/[^/]+\/([^/]+)$/);
+    return match ? match[1] : null;
 }
 
 function buildCard(prod, index) {
@@ -83,7 +87,7 @@ async function loadProduct() {
     if (!product) { document.getElementById('productName').textContent = t('prodNotFound'); return; }
 
     renderProduct();
-    const variantParam = new URLSearchParams(window.location.search).get('variant');
+    let variantParam = new URLSearchParams(window.location.search).get('variant');
     if (variantParam !== null && product.variants && product.variants[variantParam]) {
         setTimeout(() => selectVariant(parseInt(variantParam)), 100);
     }
