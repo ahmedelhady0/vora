@@ -986,7 +986,7 @@ function productUrl(id, name, variantIdx) {
         .replace(/[\s_]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .substring(0, 80) || 'product';
-    let url = `/item/${encodeURIComponent(slug)}/${encodeURIComponent(id)}`;
+    let url = `/item/${encodeURIComponent(id)}`;
     if (variantIdx >= 0) url += `?variant=${variantIdx}`;
     return url;
 }

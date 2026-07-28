@@ -244,7 +244,7 @@
     var _vp = new URLSearchParams(location.search).get('id');
     if (!_vp) {
         var _parts = location.pathname.split('/');
-        if (_parts.length >= 4 && _parts[1] === 'item') _vp = decodeURIComponent(_parts[3]);
+        if (_parts.length >= 3 && _parts[1] === 'item') _vp = decodeURIComponent(_parts[2]);
     }
     window._voraProdId = _vp;
     </script>
