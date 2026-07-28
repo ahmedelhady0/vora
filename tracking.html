@@ -51,6 +51,6 @@
         </div>
     </section>
     <script type="module" src="tracking-page.js"></script>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script></body>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(r=>{r.onupdatefound=()=>{if(r.installing&&r.active){caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('vora-')).map(x=>caches.delete(x)))).then(()=>location.reload())}}});}</script></body>
 </html>
 
