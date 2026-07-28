@@ -1,11 +1,11 @@
-ï»¿import Icon from './icons.js';
+import Icon from './icons.js';
 import { escapeHTML } from './security-utils.js';
 import { getUserFromFirestore } from "./sheets-service.js";
 
 window.openMobileMenu = function() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
 window.closeMobileMenu = function() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; };
 window.navigateTo = function(url) { window.closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
-window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = '/home'; };
 
 function loadAccount() {
     const user = JSON.parse(localStorage.getItem('vora_user'));
@@ -13,16 +13,16 @@ function loadAccount() {
     const content = document.getElementById('accountContent');
     if (!user) { required.style.display = 'block'; content.style.display = 'none'; return; }
     required.style.display = 'none'; content.style.display = 'block';
-    document.getElementById('displayUsername').textContent = user.username || 'â€”';
-    document.getElementById('displayEmail').textContent = user.email || 'â€”';
-    document.getElementById('displayPhone').textContent = user.phone || 'â€”';
+    document.getElementById('displayUsername').textContent = user.username || '—';
+    document.getElementById('displayEmail').textContent = user.email || '—';
+    document.getElementById('displayPhone').textContent = user.phone || '—';
 
     const orders = JSON.parse(localStorage.getItem('vora_orders')) || [];
     const list = document.getElementById('ordersList');
     if (orders.length === 0) { list.innerHTML = `<p class="text-stone-400 text-sm">${t('noOrders')}</p>`; return; }
     const lang = localStorage.getItem('vora_lang') || 'ar';
     list.innerHTML = orders.slice().reverse().map((o, i) => {
-        const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US') : o.date || 'â€”';
+        const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US') : o.date || '—';
         const status = o.status || t('statusPending');
         const total = o.total || o.subtotal || 0;
         return `
@@ -31,7 +31,7 @@ function loadAccount() {
                 <span class="text-xs text-stone-400">${date}</span>
                 <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">${status}</span>
             </div>
-            <p class="text-sm font-semibold text-stone-900">${escapeHTML(o.customerName || 'â€”')}</p>
+            <p class="text-sm font-semibold text-stone-900">${escapeHTML(o.customerName || '—')}</p>
             <p class="text-xs text-stone-500">${(() => {
                 let items = [];
                 try { items = o.itemDetails ? JSON.parse(o.itemDetails) : []; } catch(e) {}
@@ -50,7 +50,7 @@ function loadAccount() {
     if (addresses.length === 0) { addrList.innerHTML = `<p class="text-stone-400 text-sm">${t('noAddresses')}</p>`; return; }
     addrList.innerHTML = addresses.map(a => `
         <div class="border border-stone-200 rounded-lg p-3 mb-2 text-sm">
-            <p class="font-semibold text-stone-900">${escapeHTML(a.name || 'â€”')}</p>
+            <p class="font-semibold text-stone-900">${escapeHTML(a.name || '—')}</p>
             <p class="text-stone-500 text-xs">${escapeHTML(a.address || '')}${a.governorate ? ' - ' + escapeHTML(a.governorate) : ''}</p>
             <p class="text-stone-400 text-xs">${escapeHTML(a.phone || '')}</p>
         </div>

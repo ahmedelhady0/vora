@@ -1,4 +1,4 @@
-﻿import Icon from './icons.js';
+import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 
@@ -41,9 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem('vora_user'));
     if (user) {
         const userLink = document.getElementById('userNavLink');
-        if (userLink) { userLink.href = 'account.html'; userLink.title = t('navLogin'); }
+        if (userLink) { userLink.href = '/account'; userLink.title = t('navLogin'); }
         const userMob = document.getElementById('userNavMobile');
-        if (userMob) { userMob.href = 'account.html'; userMob.title = t('navLogin'); }
+        if (userMob) { userMob.href = '/account'; userMob.title = t('navLogin'); }
         if (user.role === 'admin' || user.role === 'manager') {
             const el = document.getElementById('adminNavLink');
             if (el) el.classList.remove('hidden');
@@ -137,9 +137,9 @@ window.showMessage = function(msg) {
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast-item';
-    const isSuccess = msg.includes('✓') || msg.includes('✅') || msg.includes(t('success'));
+    const isSuccess = msg.includes('?') || msg.includes('?') || msg.includes(t('success'));
     const icon = isSuccess ? 'success' : 'warning';
-    toast.innerHTML = `<div class="toast-icon ${icon}">${isSuccess ? '✓' : '!'}</div><div class="toast-text">${msg}</div>`;
+    toast.innerHTML = `<div class="toast-icon ${icon}">${isSuccess ? '?' : '!'}</div><div class="toast-text">${msg}</div>`;
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));
     setTimeout(() => {
@@ -154,14 +154,14 @@ function loadBanners() {
     if (!grid) return;
     const s = getSettings();
     const arDefaults = [
-        { tag: '🧬 جديد', title: 'أحدث العطور', subtitle: 'اكتشف تشكيلتنا الجديدة كلياً' },
-        { tag: '🔥 تخفيضات', title: 'عروض خاصة', subtitle: 'خصم يصل إلى 50% على تشكيلة محددة' },
-        { tag: '🎁 هدايا', title: 'مجموعات الهدايا', subtitle: 'هدية فاخرة تناسب كل مناسبة' }
+        { tag: '?? ????', title: '???? ??????', subtitle: '????? ???????? ??????? ?????' },
+        { tag: '?? ???????', title: '???? ????', subtitle: '??? ??? ??? 50% ??? ?????? ?????' },
+        { tag: '?? ?????', title: '??????? ???????', subtitle: '???? ????? ????? ?? ??????' }
     ];
     const defaults = [
-        { image: '', tag: t('bannerNew'), title: t('bannerNewTitle'), subtitle: t('bannerNewSub'), link: 'shop.html', tagStyle: '' },
-        { image: '', tag: t('bannerSale'), title: t('bannerSaleTitle'), subtitle: t('bannerSaleSub'), link: 'shop.html', tagStyle: 'background:linear-gradient(135deg,#dc2626,#b91c1c);' },
-        { image: '', tag: t('bannerGifts'), title: t('bannerGiftsTitle'), subtitle: t('bannerGiftsSub'), link: 'shop.html', tagStyle: '' }
+        { image: '', tag: t('bannerNew'), title: t('bannerNewTitle'), subtitle: t('bannerNewSub'), link: '/shop', tagStyle: '' },
+        { image: '', tag: t('bannerSale'), title: t('bannerSaleTitle'), subtitle: t('bannerSaleSub'), link: '/shop', tagStyle: 'background:linear-gradient(135deg,#dc2626,#b91c1c);' },
+        { image: '', tag: t('bannerGifts'), title: t('bannerGiftsTitle'), subtitle: t('bannerGiftsSub'), link: '/shop', tagStyle: '' }
     ];
     let banners = defaults;
     if (s.banners && s.banners.length === 3) {
@@ -172,7 +172,7 @@ function loadBanners() {
                 tag: isArabicDefault ? defaults[i].tag : (b.tag || defaults[i].tag),
                 title: isArabicDefault ? defaults[i].title : (b.title || defaults[i].title),
                 subtitle: isArabicDefault ? defaults[i].subtitle : (b.subtitle || defaults[i].subtitle),
-                link: b.link || 'shop.html',
+                link: b.link || '/shop',
                 tagStyle: b.tagStyle || ''
             };
         });
@@ -180,7 +180,7 @@ function loadBanners() {
     grid.innerHTML = banners.map(b => {
         const bgStyle = b.image ? `background-image:url('${b.image}');` : `background:linear-gradient(135deg, #3a1a2a, #2a0f1a);`;
         return `
-        <div class="banner-card" onclick="window.location.href='${b.link || 'shop.html'}'">
+        <div class="banner-card" onclick="window.location.href='${b.link || '/shop'}'">
             <div class="banner-bg" style="${bgStyle}"></div>
             <div class="banner-overlay"></div>
             <div class="banner-content">
@@ -217,7 +217,7 @@ document.addEventListener('langchange', () => {
     const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
     if (btn) btn.textContent = text;
-    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '?? ' + text);
 });
 
 // ===== Load Logo from Settings =====
@@ -271,10 +271,10 @@ window.quickViewHome = function(id) {
     const stockLabel = outOfStock ? `<span style="color:#dc2626;font-weight:700;font-size:13px;">${t('outOfStock')}</span>` : `<span style="color:#16a34a;font-size:13px;">${Icon.check()} ${t('inStock')}</span>`;
 
     modal.querySelector('.modal-info').innerHTML = `
-        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.vendor || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>
+        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.vendor || 'VORA'} ${prod.size ? '� '+prod.size : ''}</span>
         <h2>${prod.name}</h2>
         ${stockLabel}
-        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"★".repeat(Math.round(parseFloat(prod.rating)))+"☆".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
+        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"?".repeat(Math.round(parseFloat(prod.rating)))+"?".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
         <div class="modal-price">
             ${prod.price} ${t('currency')}
             ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
@@ -355,7 +355,7 @@ window.liveSearch = function(q) {
         const href = productUrl(p.id, p.name, info.variantIdx);
         return `
         <a class="search-result-item" href="${href}" onclick="closeSearchOverlay()">
-            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
+            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '??'}</div>
             <div class="result-info">
                 <p>${info.name}</p>
                 <span>${p.category || ''}</span>
@@ -424,7 +424,7 @@ function initBrandSlider() {
 
 function buildHomeCard(prod, index) {
     const rating = parseFloat(prod.rating) || 0;
-    const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
+    const stars = rating > 0 ? "?".repeat(Math.round(rating)) + "?".repeat(5 - Math.round(rating)) : "?????";
     const discount = prod.discount && prod.originalPrice
         ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
         : 0;
@@ -464,7 +464,7 @@ function buildHomeCard(prod, index) {
     const safeId = prod.id.replace(/'/g, "\\'");
     const safeImage = prod.image ? prod.image.replace(/'/g, "\\'") : '';
 
-    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
+    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> � ${prod.size}</span>` : '';
     const groupHtml = !outOfStock ? `
         <div class="card-product__group group-left">
             <button onclick="toggleWishlistHome('${safeId}', '${safeName}', ${prod.price})" title="${t('wishlist')}">${Icon.heart()}</button>
@@ -535,7 +535,7 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(row);
     const more = document.createElement('div');
     more.className = 'text-center mt-4';
-    more.innerHTML = `<a href="shop.html?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
+    more.innerHTML = `<a href="/shop?section=${section.key}" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
     wrap.appendChild(more);
     container.appendChild(wrap);
 
@@ -583,11 +583,11 @@ async function loadProducts() {
         }
 
         const sections = [
-        { key: 'new-arrivals', labelAr: t('catNew'), labelEn: 'New Arrivals', icon: '🆕' },
-        { key: 'best-sellers', labelAr: t('catBestsellers'), labelEn: 'Best Sellers', icon: '🏆' },
-            { key: 'for-him', labelAr: 'For Him', labelEn: 'For Him', icon: '👔' },
-            { key: 'for-her', labelAr: 'For Her', labelEn: 'For Her', icon: '👗' },
-            { key: 'unisex', labelAr: 'Unisex', labelEn: 'Unisex', icon: '🔄' }
+        { key: 'new-arrivals', labelAr: t('catNew'), labelEn: 'New Arrivals', icon: '??' },
+        { key: 'best-sellers', labelAr: t('catBestsellers'), labelEn: 'Best Sellers', icon: '??' },
+            { key: 'for-him', labelAr: 'For Him', labelEn: 'For Him', icon: '??' },
+            { key: 'for-her', labelAr: 'For Her', labelEn: 'For Her', icon: '??' },
+            { key: 'unisex', labelAr: 'Unisex', labelEn: 'Unisex', icon: '??' }
         ];
 
         const grouped = {};
@@ -639,7 +639,7 @@ async function loadProducts() {
             wrap.appendChild(row);
             const more = document.createElement('div');
             more.className = 'text-center mt-4';
-            more.innerHTML = `<a href="shop.html?section=best-sellers" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
+            more.innerHTML = `<a href="/shop?section=best-sellers" class="inline-block text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-600/30 hover:bg-amber-50 rounded-full px-5 py-2 transition">${t('homeDiscoverMore')}</a>`;
             wrap.appendChild(more);
             container.appendChild(wrap);
         }
@@ -702,7 +702,7 @@ function updateCartCount() {
     const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
     if (btn) btn.textContent = text;
-    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '?? ' + text);
 }
 
 window.openCartDrawer = function() {
@@ -724,7 +724,7 @@ window.goToCheckout = function() {
         showMessage(`${Icon.warning()} ${t('notifCartEmpty')}`);
         return;
     }
-    window.location.href = 'checkout.html';
+    window.location.href = '/checkout';
 };
 
 function renderCartDrawer() {
@@ -769,7 +769,7 @@ function renderCartDrawer() {
                     <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
-                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
+                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">-</button>
                     <span class="w-8 text-center font-bold text-stone-900 text-sm">${item.qty}</span>
                     <button onclick="changeDrawerQty(${index}, 1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">+</button>
                 </div>
@@ -806,7 +806,7 @@ window.removeDrawerItem = function(index) {
 window.logout = function() {
     localStorage.removeItem('vora_user');
     localStorage.removeItem('vora_cart');
-    window.location.href = "home.html";
+    window.location.href = "/home";
 };
 
 window.subscribeNewsletter = function() {
@@ -889,7 +889,7 @@ function renderBrandSlider() {
     document.getElementById('brandSliderTitle').textContent = t('brandsTitle');
     const cardsHtml = brands.map(b => {
         return `
-        <div class="flex flex-col items-center justify-center flex-shrink-0 w-28 sm:w-32 cursor-pointer brand-card" onclick="navigateTo('shop.html?vendor=${encodeURIComponent(b.name)}')">
+        <div class="flex flex-col items-center justify-center flex-shrink-0 w-28 sm:w-32 cursor-pointer brand-card" onclick="navigateTo('/shop?vendor=${encodeURIComponent(b.name)}')">
             <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-amber-50 to-pink-50 border-2 border-stone-100 flex items-center justify-center overflow-hidden hover:border-amber-300 hover:shadow-md transition-all">
                 ${b.image ? `<img src="${b.image}" alt="${b.name}" loading="lazy" decoding="async" class="w-full h-full object-cover">` : `<span class="text-2xl font-bold text-stone-300" style="font-family:'Playfair Display',serif;">${(b.name || '?')[0]}</span>`}
             </div>
@@ -931,18 +931,18 @@ function updateUserNav() {
     const desktopEl = document.getElementById('userNavLink');
     const mobileEl = document.getElementById('userNavMobile');
     if (user && user.username) {
-        const name = user.username.length > 10 ? user.username.substring(0, 10) + '…' : user.username;
+        const name = user.username.length > 10 ? user.username.substring(0, 10) + '�' : user.username;
         if (desktopEl) {
             desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`;
-            desktopEl.href = 'home.html';
+            desktopEl.href = '/home';
         }
         if (mobileEl) {
             mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`;
-            mobileEl.href = 'home.html';
+            mobileEl.href = '/home';
         }
     } else {
-        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'login.html'; }
-        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'login.html'; }
+        if (desktopEl) { desktopEl.innerHTML = '??'; desktopEl.href = '/login'; }
+        if (mobileEl) { mobileEl.innerHTML = '??'; mobileEl.href = '/login'; }
     }
 }
 

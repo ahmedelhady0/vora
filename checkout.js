@@ -1,16 +1,16 @@
-﻿import Icon from './icons.js';
+import Icon from './icons.js';
 import { placeOrder, getSettingsFromFirestore } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 import { showMessage, hideMessage } from "./firebase-config.js";
 
 const DEFAULT_SHIPPING = {
-    "القاهرة": 50, "الجيزة": 50, "الإسكندرية": 70, "الدقهلية": 80,
-    "الشرقية": 80, "القليوبية": 60, "كفر الشيخ": 80, "الغربية": 80,
-    "المنوفية": 80, "البحيرة": 80, "الإسماعيلية": 90, "السويس": 90,
-    "بني سويف": 100, "الفيوم": 100, "المنيا": 120, "أسيوط": 130,
-    "سوهاج": 130, "قنا": 140, "الأقصر": 150, "أسوان": 160,
-    "البحر الأحمر": 150, "الوادي الجديد": 200, "مطروح": 150,
-    "شمال سيناء": 180, "جنوب سيناء": 180, "دمياط": 80, "بورسعيد": 90
+    "???????": 50, "??????": 50, "??????????": 70, "????????": 80,
+    "???????": 80, "?????????": 60, "??? ?????": 80, "???????": 80,
+    "????????": 80, "???????": 80, "???????????": 90, "??????": 90,
+    "??? ????": 100, "??????": 100, "??????": 120, "?????": 130,
+    "?????": 130, "???": 140, "??????": 150, "?????": 160,
+    "????? ??????": 150, "?????? ??????": 200, "?????": 150,
+    "???? ?????": 180, "???? ?????": 180, "?????": 80, "???????": 90
 };
 
 let stripe, elements, cardElement;
@@ -56,7 +56,7 @@ function loadCartItems() {
     let total = 0;
     let itemsCount = 0;
     if (cart.length === 0) {
-        orderItems.innerHTML = '<p class="text-stone-500 py-4">السلة فارغة</p>';
+        orderItems.innerHTML = '<p class="text-stone-500 py-4">????? ?????</p>';
         updateTotals(0, 0);
         return;
     }
@@ -67,11 +67,11 @@ function loadCartItems() {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'flex justify-between items-center py-2 border-b border-stone-100 last:border-0';
         const displayName = item.variantLabel ? `${escapeHTML(item.name)} (${escapeHTML(item.variantLabel)})` : escapeHTML(item.name);
-        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${displayName}</p><p class="text-sm text-stone-500">${item.qty} × ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
+        itemDiv.innerHTML = `<div><p class="font-semibold text-stone-900">${displayName}</p><p class="text-sm text-stone-500">${item.qty} � ${item.price} ${t('currency')}</p></div><p class="font-bold text-amber-600">${itemTotal} ${t('currency')}</p>`;
         orderItems.appendChild(itemDiv);
         const sidebarDiv = document.createElement('div');
         sidebarDiv.className = 'flex justify-between text-sm py-2 border-b border-stone-100 last:border-0';
-        sidebarDiv.innerHTML = `<span class="text-stone-600">${displayName} ×${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
+        sidebarDiv.innerHTML = `<span class="text-stone-600">${displayName} �${item.qty}</span><span class="font-semibold text-stone-900">${itemTotal} ${t('currency')}</span>`;
         sidebarItems.appendChild(sidebarDiv);
     });
     itemCount.textContent = itemsCount;
@@ -155,7 +155,7 @@ window.applyCoupon = function() {
     } else {
         appliedDiscount = 0;
         msg.className = 'text-xs mt-1 text-red-600';
-        msg.textContent = `❌ ${t('checkoutCouponInvalid')}`;
+        msg.textContent = `? ${t('checkoutCouponInvalid')}`;
         msg.classList.remove('hidden');
         document.getElementById('discountRow').style.display = 'none';
         updateTotalsWithDiscount();
@@ -191,8 +191,8 @@ function setupPaymentMethodListeners() {
 
 window.submitOrder = async function() {
     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-    if (!validateForm()) { showMessage('⚠️ يرجى ملء جميع الحقول بشكل صحيح'); return; }
-    showLoading(true, 'جاري معالجة طلبك...');
+    if (!validateForm()) { showMessage('?? ???? ??? ???? ?????? ???? ????'); return; }
+    showLoading(true, '???? ?????? ????...');
     try {
         const gov = document.getElementById('governorate').value;
         const rates = getShippingRates();
@@ -242,11 +242,11 @@ window.submitOrder = async function() {
             return;
         }
         localStorage.removeItem('vora_cart');
-        showMessage(`✅ ${t('checkoutSuccess')}`);
-        setTimeout(() => { window.location.href = 'confirmation.html'; }, 1500);
+        showMessage(`? ${t('checkoutSuccess')}`);
+        setTimeout(() => { window.location.href = '/confirmation'; }, 1500);
     } catch (error) {
         console.error('Error:', error);
-        showMessage(`❌ ${t('checkoutError')}`);
+        showMessage(`? ${t('checkoutError')}`);
     } finally { showLoading(false); }
 };
 

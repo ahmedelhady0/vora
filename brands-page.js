@@ -1,10 +1,10 @@
-﻿import Icon from './icons.js';
+import Icon from './icons.js';
 import { getUserFromFirestore } from "./sheets-service.js";
 
 window.openMobileMenu = function() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
 window.closeMobileMenu = function() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; };
 window.navigateTo = function(url) { window.closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
-window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = '/home'; };
 
 function renderBrands() {
     const products = JSON.parse(localStorage.getItem('vora_products')) || [];
@@ -16,7 +16,7 @@ function renderBrands() {
         const img = prod ? prod.image : '';
         const count = products.filter(p => (p.vendor || 'VORA').trim() === v).length;
         return `
-            <a href="shop.html?vendor=${encodeURIComponent(v)}" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-300">
+            <a href="/shop?vendor=${encodeURIComponent(v)}" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-300">
                 <div class="aspect-square bg-gradient-to-br from-amber-50 to-pink-50 flex items-center justify-center p-4">
                     ${img ? `<img src="${img}" alt="${v}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">` : `<span class="text-5xl text-amber-600 opacity-40">${Icon.store()}</span>`}
                 </div>

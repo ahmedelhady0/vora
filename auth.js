@@ -1,4 +1,4 @@
-﻿import { showMessage, hideMessage, usernameToEmail, auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase-config.js";
+import { showMessage, hideMessage, usernameToEmail, auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "./firebase-config.js";
 import { getUserFromFirestore, registerUser } from "./sheets-service.js";
 
 function getUsers() {
@@ -47,7 +47,7 @@ window.signIn = async function() {
             role: fbUser?.role || 'customer'
         }));
         hideMessage();
-        window.location.href = "home.html";
+        window.location.href = "/home";
         return;
     } catch (e) {
         console.warn("Firebase Auth unavailable, trying local:", e);
@@ -61,7 +61,7 @@ window.signIn = async function() {
             email: users[user].email || usernameToEmail(user)
         }));
         hideMessage();
-        window.location.href = "home.html";
+        window.location.href = "/home";
     } else {
         showMessage(t('authInvalid'));
     }
@@ -80,7 +80,7 @@ window.signUp = async function() {
             uid: cred.user.uid, email, username: user, role: 'customer'
         }));
         showMessage(t('authCreated'));
-        setTimeout(() => { hideMessage(); window.location.href = "home.html"; }, 1500);
+        setTimeout(() => { hideMessage(); window.location.href = "/home"; }, 1500);
         return;
     } catch (e) {
         console.warn("Firebase signup unavailable, trying local:", e);
@@ -98,7 +98,7 @@ window.signUp = async function() {
 window.signOutUser = async function() {
     try { await signOut(auth); } catch (e) { /* ignore */ }
     localStorage.removeItem('vora_user');
-    window.location.href = "login.html";
+    window.location.href = "/login";
 };
 
 window.hideMessage = hideMessage;

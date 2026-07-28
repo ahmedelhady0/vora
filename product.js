@@ -1,4 +1,4 @@
-﻿import Icon from './icons.js';
+import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
 
@@ -32,7 +32,7 @@ function getProductId() {
 
 function buildCard(prod, index) {
     const rating = parseFloat(prod.rating) || 0;
-    const stars = rating > 0 ? "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating)) : "☆☆☆☆☆";
+    const stars = rating > 0 ? "?".repeat(Math.round(rating)) + "?".repeat(5 - Math.round(rating)) : "?????";
     const discount = prod.discount && prod.originalPrice ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0;
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
@@ -44,7 +44,7 @@ function buildCard(prod, index) {
     if (index === 0) badgeHtml += `<span class="badge badge-new">${t('newBadge')}</span>`;
     if (discount > 0) badgeHtml += `<span class="badge badge-sale">-${discount}%</span>`;
     if (outOfStock) badgeHtml += `<span class="badge badge-out">${t('outOfStockBadge')}</span>`;
-    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
+    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> � ${prod.size}</span>` : '';
 
     const card = document.createElement('div');
     card.className = "product-card";
@@ -106,7 +106,7 @@ function renderProduct() {
     const ogImage = document.querySelector('meta[property="og:image"]');
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogTitle) ogTitle.setAttribute('content', `VORA - ${p.name}`);
-    if (ogDesc) ogDesc.setAttribute('content', p.description || `تسوق ${p.name} من متجر VORA`);
+    if (ogDesc) ogDesc.setAttribute('content', p.description || `???? ${p.name} ?? ???? VORA`);
     if (ogImage) ogImage.setAttribute('content', p.image || 'https://vorascents.com/icons/icon.svg');
     if (ogUrl) ogUrl.setAttribute('content', `https://vorascents.com${productUrl(p.id, p.name)}`);
 
@@ -201,7 +201,7 @@ function renderProduct() {
     const rating = parseFloat(p.rating) || 0;
     const starsEl = document.getElementById('productRating');
     if (rating > 0) {
-        starsEl.innerHTML = `<span class="stars" style="color:#f59e0b;font-size:18px;">${"★".repeat(Math.round(rating))+"☆".repeat(5-Math.round(rating))}</span><span class="text-sm text-stone-400">(${p.ratingCount || 0})</span>`;
+        starsEl.innerHTML = `<span class="stars" style="color:#f59e0b;font-size:18px;">${"?".repeat(Math.round(rating))+"?".repeat(5-Math.round(rating))}</span><span class="text-sm text-stone-400">(${p.ratingCount || 0})</span>`;
     }
 
     document.getElementById('productDescription').textContent = p.description || '';
@@ -383,7 +383,7 @@ function renderReviews() {
                 <span class="name">${r.name}</span>
                 <span class="date">${r.date}</span>
             </div>
-            <div class="stars">${"★".repeat(r.rating)+"☆".repeat(5-r.rating)}</div>
+            <div class="stars">${"?".repeat(r.rating)+"?".repeat(5-r.rating)}</div>
             <p class="text">${r.text}</p>
         </div>
     `).join('');
@@ -395,7 +395,7 @@ window.setReviewStar = function(n) {
     container.innerHTML = '';
     for (let i = 1; i <= 5; i++) {
         const s = document.createElement('span');
-        s.textContent = i <= n ? '★' : '☆';
+        s.textContent = i <= n ? '?' : '?';
         s.className = i <= n ? 'text-amber-500 cursor-pointer hover:scale-110 transition' : 'cursor-pointer hover:scale-110 transition';
         s.onclick = () => setReviewStar(i);
         container.appendChild(s);
@@ -417,7 +417,7 @@ window.submitReview = function() {
     document.getElementById('reviewStarRating').innerHTML = '';
     for (let i = 1; i <= 5; i++) {
         const s = document.createElement('span');
-        s.textContent = '☆';
+        s.textContent = '?';
         s.className = 'cursor-pointer hover:scale-110 transition';
         s.onclick = () => setReviewStar(i);
         document.getElementById('reviewStarRating').appendChild(s);
@@ -559,13 +559,13 @@ window.addToCartFromPage = function() {
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     const displayName = product.name + (variantLabel ? ` (${variantLabel})` : '');
-    showMessage(`${Icon.check()} تمت إضافة "${displayName}" إلى السلة`);
+    showMessage(`${Icon.check()} ??? ????? "${displayName}" ??? ?????`);
 };
 
 window.buyNow = function() {
     if (!product) return;
     addToCartFromPage();
-    setTimeout(() => { window.location.href = 'checkout.html'; }, 300);
+    setTimeout(() => { window.location.href = '/checkout'; }, 300);
 };
 
 window.toggleAdditionalInfo = function(el) {
@@ -603,12 +603,12 @@ function updateUserNav() {
     const desktopEl = document.getElementById('userNavLink');
     const mobileEl = document.getElementById('userNavMobile');
     if (user && user.username) {
-        const name = user.username.length > 10 ? user.username.substring(0, 10) + '…' : user.username;
-        if (desktopEl) { desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`; desktopEl.href = 'home.html'; }
-        if (mobileEl) { mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`; mobileEl.href = 'home.html'; }
+        const name = user.username.length > 10 ? user.username.substring(0, 10) + '�' : user.username;
+        if (desktopEl) { desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`; desktopEl.href = '/home'; }
+        if (mobileEl) { mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`; mobileEl.href = '/home'; }
     } else {
-        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'login.html'; }
-        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'login.html'; }
+        if (desktopEl) { desktopEl.innerHTML = '??'; desktopEl.href = '/login'; }
+        if (mobileEl) { mobileEl.innerHTML = '??'; mobileEl.href = '/login'; }
     }
     if (user && (user.role === 'admin' || user.role === 'manager')) {
         document.getElementById('adminNavLink')?.classList.remove('hidden');
@@ -628,7 +628,7 @@ function updateUserNav() {
 window.openMobileMenu = function() { document.getElementById('mobileMenu').classList.add('open'); document.getElementById('mobileMenuOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
 window.closeMobileMenu = function() { document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('mobileMenuOverlay').classList.remove('show'); document.body.style.overflow = 'auto'; };
 window.navigateTo = function(url) { closeMobileMenu(); setTimeout(() => { window.location.href = url; }, 150); };
-window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = 'home.html'; };
+window.logout = function() { localStorage.removeItem('vora_user'); window.location.href = '/home'; };
 
 window.showMessage = function(msg) {
     const box = document.getElementById('messageBox');
@@ -637,7 +637,7 @@ window.showMessage = function(msg) {
     if (box && text) {
         text.innerHTML = msg;
         if (iconEl) {
-            const isSuccess = msg.includes(t('success')) || msg.includes('✅');
+            const isSuccess = msg.includes(t('success')) || msg.includes('?');
             iconEl.innerHTML = isSuccess ? Icon.check() : Icon.warning();
             iconEl.className = 'flex justify-center text-4xl mb-2 ' + (isSuccess ? 'text-green-600' : 'text-red-500');
         }
@@ -660,15 +660,15 @@ window.closeCartDrawer = function() {
 };
 window.goToCheckout = function() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
-    if (cart.length === 0) { showMessage(`⚠️ ${t('prodCartEmpty')}`); return; }
-    window.location.href = 'checkout.html';
+    if (cart.length === 0) { showMessage(`?? ${t('prodCartEmpty')}`); return; }
+    window.location.href = '/checkout';
 };
 function renderCartDrawer() {
     const cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const body = document.getElementById('cartDrawerBody');
     const footer = document.getElementById('cartDrawerFooter');
     if (cart.length === 0) {
-        body.innerHTML = `<div class="text-center py-16 space-y-4"><div class="text-6xl">🛍️</div><p class="font-bold text-stone-900 text-lg">${t('cartEmptyTitle')}</p><p class="text-stone-600 text-sm">${t('cartEmptyHint')}</p></div>`;
+        body.innerHTML = `<div class="text-center py-16 space-y-4"><div class="text-6xl">???</div><p class="font-bold text-stone-900 text-lg">${t('cartEmptyTitle')}</p><p class="text-stone-600 text-sm">${t('cartEmptyHint')}</p></div>`;
         footer.classList.add('hidden'); return;
     }
     footer.classList.remove('hidden');
@@ -693,7 +693,7 @@ function renderCartDrawer() {
                     <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
-                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
+                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">-</button>
                     <span class="w-8 text-center font-bold text-stone-900 text-sm">${item.qty}</span>
                     <button onclick="changeDrawerQty(${index}, 1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">+</button>
                 </div>
@@ -727,7 +727,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadSettings();
     updateUserNav();
     setTimeout(() => { const loader = document.getElementById('pageLoader'); if (loader) loader.classList.add('hidden'); }, 400);
-    document.querySelectorAll('.lang-toggle-btn').forEach(el => { const text = getLang() === 'ar' ? 'EN' : 'AR'; el.textContent = '🌐 ' + text; });
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => { const text = getLang() === 'ar' ? 'EN' : 'AR'; el.textContent = '?? ' + text; });
     document.getElementById('langToggle').textContent = getLang() === 'ar' ? 'EN' : 'AR';
     loadProduct();
     updateCartCount();
