@@ -978,9 +978,23 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
 });
 
+// Product URL helper - generates clean SEO-friendly URLs: /p/ID/product-name
+function productUrl(id, name, variantIdx) {
+    const slug = (name || 'product')
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 80) || 'product';
+    let url = `/p/${encodeURIComponent(id)}/${encodeURIComponent(slug)}`;
+    if (variantIdx >= 0) url += `?variant=${variantIdx}`;
+    return url;
+}
+
 // Expose globally for other scripts
 window.t = t;
 window.setLang = setLang;
 window.getLang = getLang;
 window.toggleLang = toggleLang;
 window.applyTranslations = applyTranslations;
+window.productUrl = productUrl;

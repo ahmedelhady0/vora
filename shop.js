@@ -287,7 +287,7 @@ window.liveSearch = function(q) {
     }
     results.innerHTML = matches.slice(0, 8).map(p => {
         const info = _getSearchResultInfo(p, trimmed);
-        const href = info.variantIdx >= 0 ? `product.html?id=${p.id}&variant=${info.variantIdx}` : `product.html?id=${p.id}`;
+        const href = productUrl(p.id, p.name, info.variantIdx);
         return `
         <div class="search-result-item" onclick="closeSearchOverlay(); window.location.href='${href}'">
             <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
@@ -614,20 +614,20 @@ function buildProductCard(prod) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image || hasSwiper ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
+            <a class="card-link" href="${productUrl(prod.id, prod.name)}" title="${prod.name}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
                     ? (prod.variants && prod.variants.length > 0
-                        ? `<a href="product.html?id=${safeId}" class="add-cart-btn" style="display:flex;align-items:center;justify-content:center;gap:4px;">${Icon.cart()} ${t('viewOptions')}</a>`
+                        ? `<a href="${productUrl(prod.id, prod.name)}" class="add-cart-btn" style="display:flex;align-items:center;justify-content:center;gap:4px;">${Icon.cart()} ${t('viewOptions')}</a>`
                         : `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">${Icon.cart()} ${t('addToCart')}</button>`)
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${escapeHTML(prod.name)}</span></a>
+                <div class="card-vendor"><a href="${productUrl(prod.id, prod.name)}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="${productUrl(prod.id, prod.name)}"><span class="text">${escapeHTML(prod.name)}</span></a>
                 ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
                 <div class="card-desc">${stockLabel}</div>
                 <div class="card-price">

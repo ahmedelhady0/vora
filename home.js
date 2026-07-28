@@ -352,7 +352,7 @@ window.liveSearch = function(q) {
     }
     results.innerHTML = matches.slice(0, 8).map(p => {
         const info = _getSearchResultInfo(p, trimmed);
-        const href = info.variantIdx >= 0 ? `product.html?id=${p.id}&variant=${info.variantIdx}` : `product.html?id=${p.id}`;
+        const href = productUrl(p.id, p.name, info.variantIdx);
         return `
         <a class="search-result-item" href="${href}" onclick="closeSearchOverlay()">
             <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
@@ -478,7 +478,7 @@ function buildHomeCard(prod, index) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image || hasSwiper ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="product.html?id=${safeId}" title="${safeNameHtml}"></a>
+            <a class="card-link" href="${productUrl(prod.id, prod.name)}" title="${safeNameHtml}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
@@ -488,8 +488,8 @@ function buildHomeCard(prod, index) {
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="product.html?id=${safeId}">${escapeHTML(prod.vendor || 'VORA')}</a>${sizeHtml}</div>
-                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${safeNameHtml}</span></a>
+                <div class="card-vendor"><a href="${productUrl(prod.id, prod.name)}">${escapeHTML(prod.vendor || 'VORA')}</a>${sizeHtml}</div>
+                <a class="card-title" href="${productUrl(prod.id, prod.name)}"><span class="text">${safeNameHtml}</span></a>
                 <div class="rating-row"><span class="stars">${stars}</span></div>
                 <div class="card-price">
                     <span class="price-current">${prod.price} ${t('currency')}</span>
