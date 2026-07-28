@@ -25,11 +25,9 @@ async function loadSettings() {
 }
 
 function getProductId() {
+    if (window._voraProdId) return window._voraProdId;
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (id) return id;
-    const match = window.location.pathname.match(/^\/p\/[^/]+\/([^/]+)$/);
-    return match ? match[1] : null;
+    return params.get('id');
 }
 
 function buildCard(prod, index) {

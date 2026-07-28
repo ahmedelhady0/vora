@@ -241,6 +241,15 @@
              <button onclick="hideMessage()" class="w-full py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition" data-i18n="okBtn"></button>
         </div>
     </div>
+    <script>
+    // Extract product ID from URL pathname (/p/:slug/:id) before module scripts load
+    var _vp = new URLSearchParams(location.search).get('id');
+    if (!_vp) {
+        var _parts = location.pathname.split('/');
+        if (_parts.length >= 4 && _parts[1] === 'p') _vp = decodeURIComponent(_parts[3]);
+    }
+    window._voraProdId = _vp;
+    </script>
     <script type="module" src="product.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script></body>
 </html>
