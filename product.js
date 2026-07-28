@@ -605,8 +605,8 @@ function updateUserNav() {
         if (desktopEl) { desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`; desktopEl.href = 'home.html'; }
         if (mobileEl) { mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`; mobileEl.href = 'home.html'; }
     } else {
-        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'index.html'; }
-        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'index.html'; }
+        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'login.html'; }
+        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'login.html'; }
     }
     if (user && (user.role === 'admin' || user.role === 'manager')) {
         document.getElementById('adminNavLink')?.classList.remove('hidden');

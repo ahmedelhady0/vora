@@ -58,5 +58,5 @@ export function usernameToEmail(username) {
 window.signOutUser = async function() {
     try { await signOut(auth); } catch (e) { console.warn(e); }
     localStorage.removeItem('vora_user');
-    window.location.href = "index.html";
+    window.location.href = "login.html";
 };

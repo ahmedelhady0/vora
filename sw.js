@@ -7,7 +7,7 @@ const IMAGE_CACHE = CACHE_PREFIX + 'images-' + CACHE_VERSION;
 const STATIC_ASSETS = [
     '/home.html', '/shop.html', '/product.html', '/cart.html',
     '/checkout.html', '/about.html', '/brands.html', '/tracking.html',
-    '/return-policy.html', '/confirmation.html', '/account.html', '/admin.html', '/index.html',
+    '/return-policy.html', '/confirmation.html', '/account.html', '/admin.html', '/login.html',
     '/styles.css', '/translations.js', '/icons.js', '/security-utils.js',
     '/shop.js', '/product.js', '/home.js', '/cart.js',
     '/checkout.js', '/account-page.js', '/tracking-page.js', '/brands-page.js',

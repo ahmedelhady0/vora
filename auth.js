@@ -98,7 +98,7 @@ window.signUp = async function() {
 window.signOutUser = async function() {
     try { await signOut(auth); } catch (e) { /* ignore */ }
     localStorage.removeItem('vora_user');
-    window.location.href = "index.html";
+    window.location.href = "login.html";
 };
 
 window.hideMessage = hideMessage;

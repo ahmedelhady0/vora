@@ -914,8 +914,8 @@ function updateUserNav() {
             mobileEl.href = 'home.html';
         }
     } else {
-        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'index.html'; }
-        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'index.html'; }
+        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'login.html'; }
+        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'login.html'; }
     }
 }
 
