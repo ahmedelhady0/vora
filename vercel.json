@@ -1,6 +1,6 @@
 {
     "redirects": [
-        { "source": "/test", "destination": "/home.html", "permanent": false }
+        { "source": "/item/:id", "destination": "/product.html?id=:id", "permanent": false }
     ],
     "rewrites": [
         { "source": "/favicon.ico", "destination": "/favicon.svg" },
