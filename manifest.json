@@ -2,7 +2,7 @@
     "name": "VORA Perfume Shop",
     "short_name": "VORA",
     "description": "Premium perfume shop - discover your signature scent",
-    "start_url": "/home.html",
+    "start_url": "/home",
     "display": "standalone",
     "background_color": "#f8c8dc",
     "theme_color": "#c25a80",
