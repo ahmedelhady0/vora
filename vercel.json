@@ -1,7 +1,7 @@
 {
-    "cleanUrls": true,
     "rewrites": [
         { "source": "/p/:slug/:id", "destination": "/product.html?id=:id" },
-        { "source": "/favicon.ico", "destination": "/favicon.svg" }
+        { "source": "/favicon.ico", "destination": "/favicon.svg" },
+        { "source": "/:path", "destination": "/:path.html" }
     ]
 }
