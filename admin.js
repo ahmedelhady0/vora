@@ -675,10 +675,29 @@ function clearForm() {
     clearVariants();
 }
 
+window.filterProductList = function() {
+    loadProductList();
+};
+
 async function loadProductList() {
     const container = document.getElementById('productList');
-    let products = await getProducts();
-    window.__productsCache = products;
+    let allProducts = await getProducts();
+    window.__productsCache = allProducts;
+    
+    // Populate vendor dropdown
+    const vendorSelect = document.getElementById('vendorFilter');
+    const vendors = [...new Set(allProducts.map(p => p.vendor || '').filter(Boolean))].sort();
+    const currentVal = vendorSelect.value;
+    vendorSelect.innerHTML = '<option value="">الكل</option>' + vendors.map(v => `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    vendorSelect.value = currentVal || '';
+    
+    // Apply search/filter
+    const searchQuery = (document.getElementById('productSearch').value || '').trim().toLowerCase();
+    const vendorFilter = vendorSelect.value;
+    let products = allProducts;
+    if (searchQuery) products = products.filter(p => (p.name || '').toLowerCase().includes(searchQuery));
+    if (vendorFilter) products = products.filter(p => p.vendor === vendorFilter);
+    
     const rawCount = products.length;
     const seenId = {}, seenName = {};
     const dupNames = [];
