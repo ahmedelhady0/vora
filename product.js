@@ -105,8 +105,8 @@ function renderProduct() {
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogTitle) ogTitle.setAttribute('content', `VORA - ${p.name}`);
     if (ogDesc) ogDesc.setAttribute('content', p.description || `تسوق ${p.name} من متجر VORA`);
-    if (ogImage) ogImage.setAttribute('content', p.image || 'https://vorascents.com/icons/icon.svg');
-    if (ogUrl) ogUrl.setAttribute('content', `https://vorascents.com/product.html?id=${p.id}`);
+    if (ogImage) ogImage.setAttribute('content', p.image || 'https://www.vorascents.com/icons/icon.svg');
+    if (ogUrl) ogUrl.setAttribute('content', `https://www.vorascents.com/product?id=${p.id}`);
 
     // JSON-LD schema.org/Product for SEO
     const schemaPrice = p.variants && p.variants.length > 0

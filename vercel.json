@@ -1,3 +1,14 @@
 {
-    "cleanUrls": true
+    "cleanUrls": true,
+    "redirects": [
+        {
+            "source": "/(.*)",
+            "has": [{ "type": "host", "value": "vorascents.com" }],
+            "destination": "https://www.vorascents.com/$1",
+            "statusCode": 301
+        }
+    ],
+    "rewrites": [
+        { "source": "/favicon.ico", "destination": "/favicon.svg" }
+    ]
 }

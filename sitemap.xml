@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://www.vorascents.com/</loc><priority>1.0</priority></url>
+    <url><loc>https://www.vorascents.com/shop</loc><priority>0.8</priority></url>
+    <url><loc>https://www.vorascents.com/about</loc><priority>0.6</priority></url>
+    <url><loc>https://www.vorascents.com/brands</loc><priority>0.6</priority></url>
+    <url><loc>https://www.vorascents.com/cart</loc><priority>0.5</priority></url>
+    <url><loc>https://www.vorascents.com/checkout</loc><priority>0.5</priority></url>
+    <url><loc>https://www.vorascents.com/account</loc><priority>0.4</priority></url>
+    <url><loc>https://www.vorascents.com/tracking</loc><priority>0.4</priority></url>
+    <url><loc>https://www.vorascents.com/return-policy</loc><priority>0.4</priority></url>
+    <url><loc>https://www.vorascents.com/login</loc><priority>0.3</priority></url>
+</urlset>
