@@ -63,13 +63,16 @@ async function fbGetProducts() {
 }
 
 export async function getProducts() {
+    const deleted = JSON.parse(localStorage.getItem('vora_deleted')) || [];
+    const filterDeleted = arr => arr.filter(p => !deleted.includes(p.id));
     // 1) Return localStorage instantly (no await)
-    const local = STORE.products;
+    const local = filterDeleted(STORE.products);
     if (local.length > 0) {
+        if (local.length !== STORE.products.length) STORE.products = local;
         // 2) Sync Firestore in background
         setTimeout(async () => {
             try {
-                const fb = await fbGetProducts();
+                const fb = filterDeleted(await fbGetProducts());
                 if (fb.length > 0) { STORE.products = fb; apiSave('products', fb); }
             } catch (e) {
                 local.forEach(p => { try { setDoc(doc(db, "products", p.id), p); } catch (e) {} });
@@ -80,7 +83,7 @@ export async function getProducts() {
     }
     // 3) If no local data, await Firestore
     try {
-        const fb = await fbGetProducts();
+        const fb = filterDeleted(await fbGetProducts());
         if (fb.length > 0) { STORE.products = fb; apiSave('products', fb); return fb; }
     } catch (e) { console.warn("Firestore read failed:", e); }
     return [];
@@ -130,6 +133,12 @@ export async function deleteProduct(id) {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'deleteProduct', id })
     }));
+    // Track deleted IDs to prevent background sync from restoring them
+    try {
+        const deleted = JSON.parse(localStorage.getItem('vora_deleted')) || [];
+        if (!deleted.includes(id)) deleted.push(id);
+        localStorage.setItem('vora_deleted', JSON.stringify(deleted));
+    } catch (e) {}
     return { success: true };
 }
 
