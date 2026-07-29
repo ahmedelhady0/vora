@@ -1,7 +1,7 @@
-import Icon from './icons.js';
+﻿import Icon from './icons.js';
 import { getProducts, getSettingsFromFirestore, getUserFromFirestore, smartImage } from "./sheets-service.js";
 import { escapeHTML } from "./security-utils.js";
-// ??????? ????? ???? ???? ?????? ???????? ?? ??? ????????? ??????? ????
+// استيراد أدوات فاير ستور وقاعدة البيانات من ملف الإعدادات المتوفر لديك
 
 
 const BOTTLE_SVG = `
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderProducts();
         updateBreadcrumbs();
         const text = getLang() === 'ar' ? 'EN' : 'AR';
-        document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '?? ' + text);
+        document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
     });
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
@@ -214,8 +214,8 @@ window.showMessage = function(msg) {
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast-item';
-    const isSuccess = msg.includes('?') || msg.includes('?') || msg.includes(t('success'));
-    toast.innerHTML = `<div class="toast-icon ${isSuccess ? 'success' : 'warning'}">${isSuccess ? '?' : '!'}</div><div class="toast-text">${msg}</div>`;
+    const isSuccess = msg.includes('✓') || msg.includes('✅') || msg.includes(t('success'));
+    toast.innerHTML = `<div class="toast-icon ${isSuccess ? 'success' : 'warning'}">${isSuccess ? '✓' : '!'}</div><div class="toast-text">${msg}</div>`;
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));
     setTimeout(() => {
@@ -287,10 +287,10 @@ window.liveSearch = function(q) {
     }
     results.innerHTML = matches.slice(0, 8).map(p => {
         const info = _getSearchResultInfo(p, trimmed);
-        const href = productUrl(p.id, p.name, info.variantIdx);
+        const href = info.variantIdx >= 0 ? `product.html?id=${p.id}&variant=${info.variantIdx}` : `product.html?id=${p.id}`;
         return `
         <div class="search-result-item" onclick="closeSearchOverlay(); window.location.href='${href}'">
-            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '??'}</div>
+            <div class="result-icon">${info.image ? '<img src="'+info.image+'" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">' : '🧴'}</div>
             <div class="result-info">
                 <p>${info.name}</p>
                 <span>${p.category || ''}</span>
@@ -331,11 +331,11 @@ function applySectionFilter() {
 }
 
 const SECTION_META = {
-    'new-arrivals': { icon: '??', labelAr: t('catNew'), labelEn: 'New Arrivals' },
-    'best-sellers': { icon: '??', labelAr: t('catBestsellers'), labelEn: 'Best Sellers' },
-    'for-him': { icon: '??', labelAr: t('catForHim'), labelEn: 'For Him' },
-    'for-her': { icon: '??', labelAr: t('catForHer'), labelEn: 'For Her' },
-    'unisex': { icon: '??', labelAr: t('catUnisex'), labelEn: 'Unisex' }
+    'new-arrivals': { icon: '🆕', labelAr: t('catNew'), labelEn: 'New Arrivals' },
+    'best-sellers': { icon: '🏆', labelAr: t('catBestsellers'), labelEn: 'Best Sellers' },
+    'for-him': { icon: '👔', labelAr: t('catForHim'), labelEn: 'For Him' },
+    'for-her': { icon: '👗', labelAr: t('catForHer'), labelEn: 'For Her' },
+    'unisex': { icon: '🔄', labelAr: t('catUnisex'), labelEn: 'Unisex' }
 };
 
 function updateBreadcrumbs() {
@@ -350,11 +350,11 @@ function updateBreadcrumbs() {
     if (s && SECTION_META[s]) {
         const sec = SECTION_META[s];
         const secLabel = lang === 'ar' ? sec.labelAr : sec.labelEn;
-        el.innerHTML = `<a href="/home" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">�</span><a href="/shop" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">�</span><span class="text-stone-600 font-medium">${secLabel}</span>`;
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><a href="shop.html" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${secLabel}</span>`;
     } else if (v) {
-        el.innerHTML = `<a href="/home" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">�</span><a href="/shop" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">�</span><span class="text-stone-600 font-medium">${v}</span>`;
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><a href="shop.html" class="hover:text-amber-600 transition">${shopLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${v}</span>`;
     } else {
-        el.innerHTML = `<a href="/home" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">�</span><span class="text-stone-600 font-medium">${shopLabel}</span>`;
+        el.innerHTML = `<a href="home.html" class="hover:text-amber-600 transition">${homeLabel}</a><span class="mx-1">›</span><span class="text-stone-600 font-medium">${shopLabel}</span>`;
     }
 }
 
@@ -567,7 +567,7 @@ function buildProductCard(prod) {
     const discountPct = prod.discountPercent || (prod.discount && prod.originalPrice
         ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) : 0);
     const rating = parseFloat(prod.rating) || 0;
-    const stars = "?".repeat(Math.round(rating)) + "?".repeat(5 - Math.round(rating));
+    const stars = "★".repeat(Math.round(rating)) + "☆".repeat(5 - Math.round(rating));
     const isNew = (prod.sections || []).includes('new-arrivals');
     const stock = prod.stock ?? 50;
     const outOfStock = stock <= 0;
@@ -600,7 +600,7 @@ function buildProductCard(prod) {
 
     const stockLabel = outOfStock ? '' : `<span style="color:#16a34a;font-size:10px;font-weight:600;">${Icon.check()} ${t('inStock')}</span>`;
 
-    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> � ${prod.size}</span>` : '';
+    const sizeHtml = prod.size ? `<span style="font-weight:400;color:#9c7c8c;"> • ${prod.size}</span>` : '';
     const groupHtml = !outOfStock ? `
         <div class="card-product__group group-left">
             <button onclick="toggleWishlist('${safeId}', '${safeName}', ${prod.price})" title="${t('wishlist')}">${Icon.heart()}</button>
@@ -614,20 +614,20 @@ function buildProductCard(prod) {
             <div class="fallback w-full h-full flex items-center justify-center text-amber-600 opacity-70" style="${prod.image || hasSwiper ? 'display:none;' : 'display:flex;'}">
                 ${BOTTLE_SVG}
             </div>
-            <a class="card-link" href="${productUrl(prod.id, prod.name)}" title="${prod.name}"></a>
+            <a class="card-link" href="product.html?id=${safeId}" title="${prod.name}"></a>
             ${groupHtml}
             <div class="card-action-overlay">
                 ${!outOfStock
                     ? (prod.variants && prod.variants.length > 0
-                        ? `<a href="${productUrl(prod.id, prod.name)}" class="add-cart-btn" style="display:flex;align-items:center;justify-content:center;gap:4px;">${Icon.cart()} ${t('viewOptions')}</a>`
+                        ? `<a href="product.html?id=${safeId}" class="add-cart-btn" style="display:flex;align-items:center;justify-content:center;gap:4px;">${Icon.cart()} ${t('viewOptions')}</a>`
                         : `<button class="add-cart-btn" onclick="addToCart('${safeId}', '${safeName}', ${prod.price}, '${safeImage}')">${Icon.cart()} ${t('addToCart')}</button>`)
                     : `<div class="out-of-stock-label">${t('outOfStock')}</div>`}
             </div>
         </div>
         <div class="card-information">
             <div class="card-information__wrapper text-center">
-                <div class="card-vendor"><a href="${productUrl(prod.id, prod.name)}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
-                <a class="card-title" href="${productUrl(prod.id, prod.name)}"><span class="text">${escapeHTML(prod.name)}</span></a>
+                <div class="card-vendor"><a href="product.html?id=${safeId}">${prod.vendor || 'VORA'}</a>${sizeHtml}</div>
+                <a class="card-title" href="product.html?id=${safeId}"><span class="text">${escapeHTML(prod.name)}</span></a>
                 ${rating > 0 ? `<div class="rating-row"><span class="stars">${stars}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
                 <div class="card-desc">${stockLabel}</div>
                 <div class="card-price">
@@ -660,10 +660,10 @@ window.quickView = function(id) {
     const safeImage = (smartImage(prod.image, 400) || "").replace(/'/g, "\\'");
 
     modal.querySelector('.modal-info').innerHTML = `
-        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.brand || prod.category || 'VORA'} ${prod.size ? '� '+prod.size : ''}</span>
+        <span class="text-amber-600 text-xs font-bold tracking-widest uppercase">${prod.brand || prod.category || 'VORA'} ${prod.size ? '• '+prod.size : ''}</span>
         <h2>${prod.name}</h2>
         ${stockLabel}
-        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"?".repeat(Math.round(parseFloat(prod.rating)))+"?".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
+        ${parseFloat(prod.rating) > 0 ? `<div class="rating-row"><span class="stars">${"★".repeat(Math.round(parseFloat(prod.rating)))+"☆".repeat(5-Math.round(parseFloat(prod.rating)))}</span><span class="count">(${prod.ratingCount || 0})</span></div>` : ''}
         <div class="modal-price">
             ${prod.price} ${t('currency')}
             ${prod.discount && prod.originalPrice ? `<span style="font-size:14px;color:#9c7c8c;text-decoration:line-through;font-weight:400;">${prod.originalPrice} ${t('currency')}</span>` : ''}
@@ -748,7 +748,7 @@ window.addToCart = function(id, name, price, image) {
     let cart = JSON.parse(localStorage.getItem('vora_cart')) || [];
     const itemIndex = cart.findIndex(item => item.id === id);
     
-    // ??? ?? ??? ????? ?????? ??????? ???? ???? ?? ???????? ???????? ???????
+    // إذا لم يتم تمرير الصورة مباشرة، نبحث عنها في المصفوفة الرئيسية كاحتياط
     if (!image) {
         const prod = allProducts.find(p => p.id === id);
         image = prod ? prod.image : '';
@@ -757,7 +757,7 @@ window.addToCart = function(id, name, price, image) {
     if (itemIndex > -1) {
         cart[itemIndex].qty += 1;
     } else {
-        // ????? ??? image ??????? ?? ??? LocalStorage ?????
+        // إضافة حقل image لتخزينه في الـ LocalStorage للسلة
         cart.push({ id, name, price, image: image || '', qty: 1 });
     }
     localStorage.setItem('vora_cart', JSON.stringify(cart));
@@ -775,7 +775,7 @@ function updateCartCount() {
     const text = getLang() === 'ar' ? 'EN' : 'AR';
     const btn = document.getElementById('langToggle');
     if (btn) btn.textContent = text;
-    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '?? ' + text);
+    document.querySelectorAll('.lang-toggle-btn').forEach(el => el.textContent = '🌐 ' + text);
 }
 
 window.openCartDrawer = function() {
@@ -797,7 +797,7 @@ window.goToCheckout = function() {
         showMessage(`${Icon.warning()} ${t('notifCartEmpty')}`);
         return;
     }
-    window.location.href = '/checkout';
+    window.location.href = 'checkout.html';
 };
 
 function renderCartDrawer() {
@@ -824,7 +824,7 @@ function renderCartDrawer() {
         total += item.price * item.qty;
         const subtotal = item.price * item.qty;
 
-        // ?????? ????? ???? ???? ?????? ???????? ??????? ?? ??? SVG ???????
+        // التحقق الذكي لعرض صورة المنتج الحقيقية المخزنة أو الـ SVG كاحتياط
         const itemSrc = item.image || (allProducts.find(p => p.id === item.id)?.image) || '';
         const drawerImage = itemSrc 
             ? `<img src="${itemSrc}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover rounded-lg">` 
@@ -844,7 +844,7 @@ function renderCartDrawer() {
                     <p class="text-xs text-stone-500">${item.price} ${t('currency')}</p>
                 </div>
                 <div class="flex items-center gap-1 bg-stone-100 rounded-lg w-fit">
-                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">-</button>
+                    <button onclick="changeDrawerQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">−</button>
                     <span class="w-8 text-center font-bold text-stone-900 text-sm">${item.qty}</span>
                     <button onclick="changeDrawerQty(${index}, 1)" class="w-7 h-7 flex items-center justify-center hover:bg-stone-200 rounded transition text-sm font-bold">+</button>
                 </div>
@@ -881,7 +881,7 @@ window.removeDrawerItem = function(index) {
 window.logout = function() {
     localStorage.removeItem('vora_user');
     localStorage.removeItem('vora_cart');
-    window.location.href = "/home";
+    window.location.href = "home.html";
 };
 
 function trackRecentlyViewed(id) {
@@ -904,18 +904,18 @@ function updateUserNav() {
     const desktopEl = document.getElementById('userNavLink');
     const mobileEl = document.getElementById('userNavMobile');
     if (user && user.username) {
-        const name = user.username.length > 10 ? user.username.substring(0, 10) + '�' : user.username;
+        const name = user.username.length > 10 ? user.username.substring(0, 10) + '…' : user.username;
         if (desktopEl) {
             desktopEl.innerHTML = `<span class="text-sm font-semibold text-stone-700 hover:text-amber-600">${name}</span>`;
-            desktopEl.href = '/home';
+            desktopEl.href = 'home.html';
         }
         if (mobileEl) {
             mobileEl.innerHTML = `<span class="text-sm font-semibold text-white/80">${name}</span>`;
-            mobileEl.href = '/home';
+            mobileEl.href = 'home.html';
         }
     } else {
-        if (desktopEl) { desktopEl.innerHTML = '??'; desktopEl.href = '/login'; }
-        if (mobileEl) { mobileEl.innerHTML = '??'; mobileEl.href = '/login'; }
+        if (desktopEl) { desktopEl.innerHTML = '👤'; desktopEl.href = 'login.html'; }
+        if (mobileEl) { mobileEl.innerHTML = '👤'; mobileEl.href = 'login.html'; }
     }
 }
 

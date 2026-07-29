@@ -1,9 +1,3 @@
 {
-    "redirects": [
-        { "source": "/item/:id", "destination": "/product.html?id=:id", "permanent": false }
-    ],
-    "rewrites": [
-        { "source": "/favicon.ico", "destination": "/favicon.svg" },
-        { "source": "/:path", "destination": "/:path.html" }
-    ]
+    "cleanUrls": true
 }

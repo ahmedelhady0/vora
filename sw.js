@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'vora-';
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = CACHE_PREFIX + 'static-' + CACHE_VERSION;
 const DYNAMIC_CACHE = CACHE_PREFIX + 'dynamic-' + CACHE_VERSION;
 const IMAGE_CACHE = CACHE_PREFIX + 'images-' + CACHE_VERSION;

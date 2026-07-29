@@ -1,25 +1,25 @@
-import Icon from './icons.js';
+﻿import Icon from './icons.js';
 import { getProducts, getOrders, addProduct, updateProduct, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
 import { doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
 const ALL_GOVERNORATES = [
-    "???????", "??????", "??????????", "????????", "???????", "?????????",
-    "??? ?????", "???????", "????????", "???????", "???????????", "??????",
-    "??? ????", "??????", "??????", "?????", "?????", "???", "??????",
-    "?????", "????? ??????", "?????? ??????", "?????", "???? ?????",
-    "???? ?????", "?????", "???????"
+    "القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "القليوبية",
+    "كفر الشيخ", "الغربية", "المنوفية", "البحيرة", "الإسماعيلية", "السويس",
+    "بني سويف", "الفيوم", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر",
+    "أسوان", "البحر الأحمر", "الوادي الجديد", "مطروح", "شمال سيناء",
+    "جنوب سيناء", "دمياط", "بورسعيد"
 ];
 
 const DEFAULT_SHIPPING = {
-    "???????": 50, "??????": 50, "??????????": 70, "????????": 80,
-    "???????": 80, "?????????": 60, "??? ?????": 80, "???????": 80,
-    "????????": 80, "???????": 80, "???????????": 90, "??????": 90,
-    "??? ????": 100, "??????": 100, "??????": 120, "?????": 130,
-    "?????": 130, "???": 140, "??????": 150, "?????": 160,
-    "????? ??????": 150, "?????? ??????": 200, "?????": 150,
-    "???? ?????": 180, "???? ?????": 180, "?????": 80, "???????": 90
+    "القاهرة": 50, "الجيزة": 50, "الإسكندرية": 70, "الدقهلية": 80,
+    "الشرقية": 80, "القليوبية": 60, "كفر الشيخ": 80, "الغربية": 80,
+    "المنوفية": 80, "البحيرة": 80, "الإسماعيلية": 90, "السويس": 90,
+    "بني سويف": 100, "الفيوم": 100, "المنيا": 120, "أسيوط": 130,
+    "سوهاج": 130, "قنا": 140, "الأقصر": 150, "أسوان": 160,
+    "البحر الأحمر": 150, "الوادي الجديد": 200, "مطروح": 150,
+    "شمال سيناء": 180, "جنوب سيناء": 180, "دمياط": 80, "بورسعيد": 90
 };
 
 let userData;
@@ -30,7 +30,7 @@ if (userData && (userData.uid || userData.username)) {
     getUserFromFirestore(lookup).then(liveUser => {
         if (liveUser && liveUser.role !== 'admin' && liveUser.role !== 'manager') {
             localStorage.removeItem('vora_user');
-            window.location.href = "/home";
+            window.location.href = "home.html";
         } else if (!liveUser && userData.uid) {
             // Auto-create Firestore user doc with admin role for the current user
             setDoc(doc(db, "users", userData.uid), {
@@ -48,8 +48,8 @@ if (userData && (userData.uid || userData.username)) {
 }
 
 let editingProductId = null; 
-let uploadedImageData = ""; // ?????? ????? ?????? ?????? ??? ???????
-window.selectedProductFile = null; // ????? ???? ??? ?????? ??????? ??????
+let uploadedImageData = ""; // سيحتفظ برابط الصورة الحالي عند التعديل
+window.selectedProductFile = null; // سيخزن كائن ملف الصورة المرفوع حالياً
 
 let uploadedHeroImage = "";
 let uploadedLogo = "";
@@ -65,15 +65,15 @@ window.previewHeroImage = async function(e) {
     reader.onload = function(ev) {
         document.getElementById('heroPreviewImg').src = ev.target.result;
         document.getElementById('heroImagePreview').classList.remove('hidden');
-        document.getElementById('heroUploadPlaceholder').innerHTML = '? ???? ?????...';
+        document.getElementById('heroUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
     try {
         uploadedHeroImage = await uploadImageToStorage(file);
-        document.getElementById('heroUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('heroUploadPlaceholder').innerHTML = '📁 تغيير الصورة';
     } catch (err) {
         showMessage(t('adminUploadFailed'));
-        document.getElementById('heroUploadPlaceholder').innerHTML = '?? ???? ???? ???? ???????';
+        document.getElementById('heroUploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة الزجاجة';
     }
 };
 
@@ -85,12 +85,12 @@ window.previewLogo = async function(e) {
     reader.onload = function(ev) {
         document.getElementById('logoPreviewImg').src = ev.target.result;
         document.getElementById('logoPreview').classList.remove('hidden');
-        document.getElementById('logoUploadPlaceholder').innerHTML = '? ???? ?????...';
+        document.getElementById('logoUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
     try {
         uploadedLogo = await uploadImageToStorage(file);
-        document.getElementById('logoUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     } catch (err) {
         showMessage(t('adminLogoUploadFailed'));
     }
@@ -104,12 +104,12 @@ window.previewLoginLogo = async function(e) {
     reader.onload = function(ev) {
         document.getElementById('loginLogoPreviewImg').src = ev.target.result;
         document.getElementById('loginLogoPreview').classList.remove('hidden');
-        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '? ???? ?????...';
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
     try {
         uploadedLoginLogo = await uploadImageToStorage(file);
-        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     } catch (err) {
         showMessage(t('adminLogoUploadFailed'));
     }
@@ -119,7 +119,7 @@ window.removeHeroImage = function() {
     uploadedHeroImage = "";
     document.getElementById('heroImagePreview').classList.add('hidden');
     document.getElementById('heroPreviewImg').src = "";
-    document.getElementById('heroUploadPlaceholder').innerHTML = '?? ???? ???? ???? ???????';
+    document.getElementById('heroUploadPlaceholder').innerHTML = '📁 اضغط لرفع صورة الزجاجة';
 };
 
 window.addSlideshowImages = function(e) {
@@ -151,7 +151,7 @@ function renderSlideshowAdmin() {
     if (!container) return;
     container.innerHTML = slideshowImages.map((img, i) => `
         <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-stone-200 group flex-shrink-0 bg-stone-100 flex items-center justify-center">
-            ${img ? `<img src="${img}" class="w-full h-full object-cover">` : `<span class="text-xs text-stone-400">?</span>`}
+            ${img ? `<img src="${img}" class="w-full h-full object-cover">` : `<span class="text-xs text-stone-400">⏳</span>`}
             <button onclick="removeSlideshowImage(${i})" class="absolute top-1 left-1 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition hover:bg-red-700">${Icon.close()}</button>
             <span class="absolute bottom-1 right-1 text-[10px] bg-black/60 text-white px-1.5 rounded-full">${i+1}</span>
         </div>
@@ -172,13 +172,13 @@ window.previewBannerImage = async function(index, e) {
         const preview = document.getElementById(`bannerPreview${index}`);
         if (preview) { preview.src = ev.target.result; preview.classList.remove('hidden'); }
         const label = document.getElementById(`bannerUploadLabel${index}`);
-        if (label) label.innerHTML = '? ???? ?????...';
+        if (label) label.innerHTML = '⏳ جاري الرفع...';
     };
     reader.readAsDataURL(file);
     try {
         uploadedBannerImages[index] = await uploadImageToStorage(file);
         const label = document.getElementById(`bannerUploadLabel${index}`);
-        if (label) label.innerHTML = '?? ????? ??????';
+        if (label) label.innerHTML = '📁 تغيير الصورة';
     } catch (err) {
         showMessage(t('adminUploadFailed'));
     }
@@ -189,44 +189,44 @@ function renderBannersSettings() {
     if (!container) return;
     const s = JSON.parse(localStorage.getItem('vora_settings')) || {};
     const banners = s.banners || [
-        { tag: '?? ????', title: '???? ??????', subtitle: '????? ???????? ??????? ?????', link: '/shop', tagStyle: '' },
-        { tag: '?? ???????', title: '???? ????', subtitle: '??? ??? ??? 50% ??? ?????? ?????', link: '/shop', tagStyle: 'background:linear-gradient(135deg,#dc2626,#b91c1c);' },
-        { tag: '?? ?????', title: '??????? ???????', subtitle: '???? ????? ????? ?? ??????', link: '/shop', tagStyle: '' }
+        { tag: '🧬 جديد', title: 'أحدث العطور', subtitle: 'اكتشف تشكيلتنا الجديدة كلياً', link: 'shop.html', tagStyle: '' },
+        { tag: '🔥 تخفيضات', title: 'عروض خاصة', subtitle: 'خصم يصل إلى 50% على تشكيلة محددة', link: 'shop.html', tagStyle: 'background:linear-gradient(135deg,#dc2626,#b91c1c);' },
+        { tag: '🎁 هدايا', title: 'مجموعات الهدايا', subtitle: 'هدية فاخرة تناسب كل مناسبة', link: 'shop.html', tagStyle: '' }
     ];
     container.innerHTML = banners.map((b, i) => {
         const hasImg = uploadedBannerImages[i] || b.image;
         return `
         <div class="border border-stone-200 rounded-lg p-4 mb-3">
-            <h4 class="font-bold text-stone-800 text-sm mb-3">?????? ${i+1}</h4>
+            <h4 class="font-bold text-stone-800 text-sm mb-3">البانر ${i+1}</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">???? ???????</label>
+                    <label class="block text-xs font-medium text-stone-600 mb-1">صورة الخلفية</label>
                     <div class="flex items-center gap-3">
                         <label class="flex-1 cursor-pointer">
                             <input type="file" accept="image/*" class="hidden" onchange="previewBannerImage(${i}, event)">
-                            <div id="bannerUploadLabel${i}" class="w-full px-3 py-2 border-2 border-dashed border-stone-300 rounded-lg text-center text-xs text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">${hasImg ? '?? ????? ??????' : '?? ??? ????'}</div>
+                            <div id="bannerUploadLabel${i}" class="w-full px-3 py-2 border-2 border-dashed border-stone-300 rounded-lg text-center text-xs text-stone-400 hover:border-amber-500 hover:text-amber-600 transition">${hasImg ? '📁 تغيير الصورة' : '📁 رفع صورة'}</div>
                         </label>
                         <img id="bannerPreview${i}" src="${hasImg ? (uploadedBannerImages[i] || b.image) : ''}" class="${hasImg ? '' : 'hidden'} w-14 h-14 rounded-lg object-cover border border-stone-200 flex-shrink-0">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">?? ????? (Tag)</label>
-                    <input type="text" id="bannerTag${i}" value="${b.tag || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="${Icon.hot()} ????">
+                    <label class="block text-xs font-medium text-stone-600 mb-1">نص الوسم (Tag)</label>
+                    <input type="text" id="bannerTag${i}" value="${b.tag || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="${Icon.hot()} جديد">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">???????</label>
-                    <input type="text" id="bannerTitle${i}" value="${b.title || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="???? ??????">
+                    <label class="block text-xs font-medium text-stone-600 mb-1">العنوان</label>
+                    <input type="text" id="bannerTitle${i}" value="${b.title || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="أحدث العطور">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">???? ??????</label>
-                    <input type="text" id="bannerSubtitle${i}" value="${b.subtitle || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="????? ???????? ???????">
+                    <label class="block text-xs font-medium text-stone-600 mb-1">النص الفرعي</label>
+                    <input type="text" id="bannerSubtitle${i}" value="${b.subtitle || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اكتشف تشكيلتنا الجديدة">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">?????? (??? ?????)</label>
-                    <input type="text" id="bannerLink${i}" value="${b.link || '/shop'}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="/shop">
+                    <label class="block text-xs font-medium text-stone-600 mb-1">الرابط (عند الضغط)</label>
+                    <input type="text" id="bannerLink${i}" value="${b.link || 'shop.html'}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="shop.html">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-stone-600 mb-1">??? ????? CSS (???????)</label>
+                    <label class="block text-xs font-medium text-stone-600 mb-1">نمط الوسم CSS (اختياري)</label>
                     <input type="text" id="bannerTagStyle${i}" value="${b.tagStyle || ''}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="background:linear-gradient(135deg,#dc2626,#b91c1c);">
                 </div>
             </div>
@@ -271,7 +271,7 @@ async function loadAdminOrders() {
             const row = document.createElement('tr');
             row.className = "border-b border-stone-100 hover:bg-stone-50";
             row.innerHTML = `
-                <td class="p-3 font-mono text-[10px] text-stone-400">${escapeHTML(order.orderId || '�')}</td>
+                <td class="p-3 font-mono text-[10px] text-stone-400">${escapeHTML(order.orderId || '—')}</td>
                 <td class="p-3 text-stone-500 text-xs whitespace-nowrap">${escapeHTML(order.date || '')}</td>
                 <td class="p-3 font-semibold text-stone-900 text-xs">${escapeHTML(order.customerName)}</td>
                 <td class="p-3 text-stone-600 text-xs" dir="ltr">${escapeHTML(order.customerPhone)}</td>
@@ -282,11 +282,11 @@ async function loadAdminOrders() {
                 </td>
                 <td class="p-3">
                     <select onchange="updateOrderField('${order.orderId}','status',this.value)" class="text-xs border border-stone-200 rounded px-2 py-1 bg-white">
-                        <option value="??? ????????" ${order.status === '??? ????????' ? 'selected' : ''}>${t('statusPending')}</option>
-                        <option value="??? ???????" ${order.status === '??? ???????' ? 'selected' : ''}>${t('statusProcessing')}</option>
-                        <option value="?? ?????" ${order.status === '?? ?????' ? 'selected' : ''}>${t('statusShipped')}</option>
-                        <option value="?? ???????" ${order.status === '?? ???????' ? 'selected' : ''}>${t('statusDelivered')}</option>
-                        <option value="????" ${order.status === '????' ? 'selected' : ''}>${t('statusCancelled')}</option>
+                        <option value="قيد المراجعة" ${order.status === 'قيد المراجعة' ? 'selected' : ''}>${t('statusPending')}</option>
+                        <option value="قيد التجهيز" ${order.status === 'قيد التجهيز' ? 'selected' : ''}>${t('statusProcessing')}</option>
+                        <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>${t('statusShipped')}</option>
+                        <option value="تم التسليم" ${order.status === 'تم التسليم' ? 'selected' : ''}>${t('statusDelivered')}</option>
+                        <option value="ملغي" ${order.status === 'ملغي' ? 'selected' : ''}>${t('statusCancelled')}</option>
                     </select>
                 </td>
                 <td class="p-3">
@@ -324,7 +324,7 @@ window.updateOrderField = function(orderId, field, value) {
 };
 
 window.copyTrackingLink = function(orderId) {
-    const link = window.location.origin + '/tracking?orderId=' + orderId;
+    const link = window.location.origin + '/tracking.html?orderId=' + orderId;
     navigator.clipboard.writeText(link).then(() => showMessage(t('adminTrackingCopied')));
 };
 
@@ -338,12 +338,12 @@ window.showOrderDetails = function(orderId) {
     if (items.length > 0) {
         items.forEach((item, i) => {
             itemsHtml += `<div class="flex justify-between items-center py-2 border-b border-stone-100 last:border-0">
-                <div><span class="font-semibold text-stone-900">${escapeHTML(item.name)}</span> <span class="text-stone-500 text-sm">�${item.qty}</span></div>
-                <span class="font-bold text-amber-600">${item.price * item.qty} ?.?</span>
+                <div><span class="font-semibold text-stone-900">${escapeHTML(item.name)}</span> <span class="text-stone-500 text-sm">×${item.qty}</span></div>
+                <span class="font-bold text-amber-600">${item.price * item.qty} ج.م</span>
             </div>`;
         });
     } else {
-        itemsHtml = `<p class="text-stone-500 text-sm">${escapeHTML(order.items || '�')}</p>`;
+        itemsHtml = `<p class="text-stone-500 text-sm">${escapeHTML(order.items || '—')}</p>`;
     }
     document.getElementById('orderDetailsBody').innerHTML = `
         <div class="space-y-2 text-sm">
@@ -351,10 +351,10 @@ window.showOrderDetails = function(orderId) {
             <div class="flex justify-between"><span class="text-stone-500">${t('orderCustomer')}:</span><span class="text-stone-900">${escapeHTML(order.customerName)}</span></div>
             <div class="flex justify-between"><span class="text-stone-500">${t('orderPhone')}:</span><span class="text-stone-900">${escapeHTML(order.customerPhone)}</span></div>
             <div class="flex justify-between"><span class="text-stone-500">${t('orderAddress')}:</span><span class="text-stone-900">${escapeHTML(order.customerAddress)}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">${t('orderGovernorate')}:</span><span class="text-stone-900">${escapeHTML(order.governorate || '�')}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">${t('orderDate')}:</span><span class="text-stone-900">${escapeHTML(order.date || '�')}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">${t('orderPayment')}:</span><span class="text-stone-900">${escapeHTML(order.paymentMethod || '�')}</span></div>
-            <div class="flex justify-between"><span class="text-stone-500">${t('orderTracking')}:</span><span class="text-stone-900">${escapeHTML(order.trackingId || '�')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderGovernorate')}:</span><span class="text-stone-900">${escapeHTML(order.governorate || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderDate')}:</span><span class="text-stone-900">${escapeHTML(order.date || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderPayment')}:</span><span class="text-stone-900">${escapeHTML(order.paymentMethod || '—')}</span></div>
+            <div class="flex justify-between"><span class="text-stone-500">${t('orderTracking')}:</span><span class="text-stone-900">${escapeHTML(order.trackingId || '—')}</span></div>
             <div class="flex justify-between"><span class="text-stone-500">${t('orderStatus')}:</span><span class="text-stone-900">${escapeHTML(order.status)}</span></div>
         </div>
         <div class="border-t border-stone-200 pt-4">
@@ -371,7 +371,7 @@ window.closeOrderDetails = function() {
     document.getElementById('orderDetailsModal').classList.add('hidden');
 };
 
-// ?????? ????? ???? ?????? ?????? ??????? ??????
+// معاينة محلية ذكية وسريعة للصورة المحددة للمنتج
 window.previewImage = function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -379,10 +379,10 @@ window.previewImage = function(e) {
         showMessage(t('adminImgTooLarge10MB'));
         return;
     }
-    window.selectedProductFile = file; // ????? ????? ?????? ????? ??? ?????
+    window.selectedProductFile = file; // تخزين الملف مؤقتاً لرفعه عند الحفظ
     document.getElementById('previewImg').src = URL.createObjectURL(file);
     document.getElementById('imagePreview').classList.remove('hidden');
-    document.getElementById('uploadPlaceholder').innerHTML = '?? ????? ??????';
+    document.getElementById('uploadPlaceholder').innerHTML = '📁 تغيير الصورة';
 };
 
 window.previewVariantImage = function(input) {
@@ -407,22 +407,22 @@ window.addVariantRow = function(name, nameEn, price, stock, image) {
     row.className = 'variant-row border border-stone-200 rounded-lg p-3 space-y-2';
     row.innerHTML = `
         <div class="flex gap-2 items-start">
-            <input type="text" class="variant-name flex-1 min-w-0 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="????? (????)" value="${name || ''}">
+            <input type="text" class="variant-name flex-1 min-w-0 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="الاسم (عربي)" value="${name || ''}">
             <input type="text" class="variant-name-en flex-1 min-w-0 px-3 py-1.5 border border-stone-300 rounded-lg text-xs" placeholder="Name (English)" value="${nameEn || ''}">
             <button type="button" onclick="this.closest('.variant-row').remove()" class="text-red-500 hover:text-red-700 flex-shrink-0 text-lg leading-none px-1">&times;</button>
         </div>
         <div class="flex gap-2 items-center">
             <div class="w-20">
-                <label class="text-[10px] text-stone-400 block leading-tight">?????</label>
+                <label class="text-[10px] text-stone-400 block leading-tight">السعر</label>
                 <input type="number" class="variant-price w-full px-2 py-1 border border-stone-300 rounded text-xs" placeholder="0" value="${price || ''}">
             </div>
             <div class="w-20">
-                <label class="text-[10px] text-stone-400 block leading-tight">???????</label>
+                <label class="text-[10px] text-stone-400 block leading-tight">المخزون</label>
                 <input type="number" class="variant-stock w-full px-2 py-1 border border-stone-300 rounded text-xs" value="${stock ?? 50}">
             </div>
             <div class="flex-1 flex items-center gap-1.5">
                 <input type="file" accept="image/*" class="hidden variant-image-input" onchange="previewVariantImage(this)">
-                <button type="button" onclick="this.closest('.variant-row').querySelector('.variant-image-input').click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? '?????' : '????'}</button>
+                <button type="button" onclick="this.closest('.variant-row').querySelector('.variant-image-input').click()" class="px-2.5 py-1 text-[10px] border border-dashed border-stone-300 rounded hover:border-amber-500 hover:text-amber-600 transition flex-shrink-0">${image ? 'تغيير' : 'صورة'}</button>
                 <img class="variant-image-preview ${image ? '' : 'hidden'} w-8 h-8 rounded object-cover border border-stone-200 flex-shrink-0" src="${image || ''}">
             </div>
         </div>
@@ -660,7 +660,7 @@ async function loadProductList() {
     }
     container.innerHTML = products.map(prod => {
         const img = prod.image ? `<img src="${escapeHTML(prod.image)}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">${Icon.pkg()}</div>`;
-        const stock = prod.stock ?? '�';
+        const stock = prod.stock ?? '—';
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
         const discountBadge = prod.discount && prod.discountPercent ? `<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">-${prod.discountPercent}%</span>` : '';
         
@@ -669,12 +669,12 @@ async function loadProductList() {
             ${img}
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold text-stone-900 truncate">${escapeHTML(prod.name)} ${discountBadge}</p>
-                <p class="text-xs text-stone-400">${escapeHTML(prod.category || prod.vendor || '�')} � ${prod.price} EGP � <span class="${stockClass} font-semibold">${stock === 0 ? t('adminOutOfStockLabel') : stock + ' ' + t('adminPiecesLabel')}</span></p>
+                <p class="text-xs text-stone-400">${escapeHTML(prod.category || prod.vendor || '—')} • ${prod.price} EGP • <span class="${stockClass} font-semibold">${stock === 0 ? t('adminOutOfStockLabel') : stock + ' ' + t('adminPiecesLabel')}</span></p>
             </div>
             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="?????">${Icon.edit()}</button>
-                <button onclick="duplicateProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded transition" title="???">${Icon.clip()}</button>
-                <button onclick="deleteProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded transition" title="???">${Icon.trash()}</button>
+                <button onclick="editProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-100 rounded transition" title="تعديل">${Icon.edit()}</button>
+                <button onclick="duplicateProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded transition" title="نسخ">${Icon.clip()}</button>
+                <button onclick="deleteProduct('${prod.id}')" class="px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded transition" title="حذف">${Icon.trash()}</button>
             </div>
         </div>`;
     }).join("");
@@ -710,21 +710,21 @@ async function loadSettings() {
         uploadedHeroImage = s.heroImage;
         document.getElementById('heroPreviewImg').src = s.heroImage;
         document.getElementById('heroImagePreview').classList.remove('hidden');
-        document.getElementById('heroUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('heroUploadPlaceholder').innerHTML = '📁 تغيير الصورة';
     }
     
     if (s.logo) {
         uploadedLogo = s.logo;
         document.getElementById('logoPreviewImg').src = s.logo;
         document.getElementById('logoPreview').classList.remove('hidden');
-        document.getElementById('logoUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('logoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     }
 
     if (s.loginLogo) {
         uploadedLoginLogo = s.loginLogo;
         document.getElementById('loginLogoPreviewImg').src = s.loginLogo;
         document.getElementById('loginLogoPreview').classList.remove('hidden');
-        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '?? ????? ??????';
+        document.getElementById('loginLogoUploadPlaceholder').innerHTML = '📁 تغيير الشعار';
     }
     
     if (s.slideshowImages) slideshowImages = s.slideshowImages;
@@ -751,7 +751,7 @@ function initShippingRates() {
 
 function initCodGrid() {
     const grid = document.getElementById('codGrid');
-    const codGovs = JSON.parse(localStorage.getItem('vora_cod_governorates')) || ["???????", "??????", "??????????"];
+    const codGovs = JSON.parse(localStorage.getItem('vora_cod_governorates')) || ["القاهرة", "الجيزة", "الإسكندرية"];
     grid.innerHTML = ALL_GOVERNORATES.map(gov => `
         <label class="flex items-center gap-2 p-2 bg-stone-50 rounded-lg cursor-pointer hover:bg-amber-50 transition">
             <input type="checkbox" id="cod_${gov}" value="${gov}" ${codGovs.includes(gov) ? 'checked' : ''} class="w-4 h-4 text-amber-600">
@@ -777,7 +777,7 @@ function renderCoupons() {
     }
     container.innerHTML = entries.map(([code, discount], i) => `
         <div class="flex items-center gap-2">
-            <input type="text" value="${code}" id="coupon_code_${i}" class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center font-bold uppercase" placeholder="?????" dir="ltr">
+            <input type="text" value="${code}" id="coupon_code_${i}" class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center font-bold uppercase" placeholder="الكود" dir="ltr">
             <input type="number" value="${discount}" id="coupon_discount_${i}" class="w-20 px-3 py-2 border border-stone-300 rounded-lg text-sm text-center" placeholder="%" min="0" max="100">
             <span class="text-xs text-stone-400">%</span>
             <button onclick="removeCoupon(${i})" class="text-red-500 hover:text-red-700 px-2">${Icon.close()}</button>
@@ -822,11 +822,11 @@ function renderBundles() {
                 <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} ${t('adminDeleteLabel')}</button>
             </div>
             <div class="grid grid-cols-2 gap-2">
-                <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="??? ?????">
-                <input type="number" value="${b.price || ''}" id="bundle_price_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="?????">
+                <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض">
+                <input type="number" value="${b.price || ''}" id="bundle_price_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="السعر">
             </div>
-            <input type="text" value="${(b.products || []).join(',')}" id="bundle_products_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="?????? ???????? (?????? ??????)">
-            <textarea id="bundle_desc_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="??? ?????">${b.description || ''}</textarea>
+            <input type="text" value="${(b.products || []).join(',')}" id="bundle_products_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="معرفات المنتجات (مفصولة بفواصل)">
+            <textarea id="bundle_desc_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="وصف العرض">${b.description || ''}</textarea>
         </div>
     `).join('');
 }
@@ -867,10 +867,10 @@ function renderBrands() {
                 <button onclick="removeBrand(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} ${t('adminDeleteLabel')}</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input type="text" value="${b.name || ''}" id="brand_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="??? ??????? (????: Dior)">
+                <input type="text" value="${b.name || ''}" id="brand_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم البراند (مثال: Dior)">
                 <div class="flex items-center gap-2">
                     <input type="file" accept="image/*" class="hidden" id="brand_file_${i}" onchange="previewBrandImage(${i}, this)">
-                    <button onclick="document.getElementById('brand_file_${i}').click()" class="px-3 py-2 border border-stone-300 rounded-lg text-sm text-stone-500 hover:text-amber-600 hover:border-amber-500 transition">${Icon.image()} ?????? ????</button>
+                    <button onclick="document.getElementById('brand_file_${i}').click()" class="px-3 py-2 border border-stone-300 rounded-lg text-sm text-stone-500 hover:text-amber-600 hover:border-amber-500 transition">${Icon.image()} اختيار صورة</button>
                     ${b.image ? `<img src="${b.image}" class="w-10 h-10 rounded object-cover border">` : ''}
                     <input type="hidden" id="brand_image_${i}" value="${b.image || ''}">
                 </div>
@@ -941,7 +941,7 @@ window.saveSettings = async function() {
             tag: document.getElementById(`bannerTag${i}`)?.value.trim() || '',
             title: document.getElementById(`bannerTitle${i}`)?.value.trim() || '',
             subtitle: document.getElementById(`bannerSubtitle${i}`)?.value.trim() || '',
-            link: document.getElementById(`bannerLink${i}`)?.value.trim() || '/shop',
+            link: document.getElementById(`bannerLink${i}`)?.value.trim() || 'shop.html',
             tagStyle: document.getElementById(`bannerTagStyle${i}`)?.value.trim() || ''
         }))
     };

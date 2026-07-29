@@ -18,13 +18,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://res.cloudinary.com">
     <title data-i18n="checkoutPageTitle"></title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/translations.js" charset="utf-8"></script>
-    <script type="module" src="/icons.js"></script>
+    <script src="translations.js" charset="utf-8"></script>
+    <script type="module" src="icons.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="bg-gradient-to-b from-stone-50 to-amber-50">
@@ -36,7 +36,7 @@
                 <div class="w-8 h-8 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold">V</div>
                 <span class="font-bold text-stone-900">VORA</span>
             </div>
-            <button onclick="window.location.href='/home'" class="text-stone-600 hover:text-stone-900" data-i18n="backBtn"></button>
+            <button onclick="window.location.href='home.html'" class="text-stone-600 hover:text-stone-900" data-i18n="backBtn"></button>
         </div>
     </div>
 
@@ -222,6 +222,6 @@
         </div>
     </div>
 
-    <script type="module" src="/checkout.js"></script>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(r=>{r.onupdatefound=()=>{if(r.installing&&r.active){caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('vora-')).map(x=>caches.delete(x)))).then(()=>location.reload())}}});}</script></body>
+    <script type="module" src="checkout.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script></body>
 </html>

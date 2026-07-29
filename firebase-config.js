@@ -1,12 +1,12 @@
-// firebase-config.js
+﻿// firebase-config.js
 
-// 1. ??????? ???????? ??? ??? CDN ????? ?????? ?? ???????
+// 1. استيراد المكتبات عبر الـ CDN لتعمل مباشرة في المتصفح
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import Icon from './icons.js';
 
-// 2. ??????? ????? VORA ???????? ??????? ??
+// 2. إعدادات مشروع VORA الحقيقية والخاصة بك
 const firebaseConfig = {
   apiKey: "AIzaSyBiNwI8GkdVXhsKrQ3kczbpAwhn5QPn4nU",
   authDomain: "vora-1bc51.firebaseapp.com",
@@ -16,17 +16,17 @@ const firebaseConfig = {
   appId: "1:394205183331:web:dba1a0ac900e90682de756"
 };
 
-// 3. ????? ??????? ?????? ????????
+// 3. تهيئة التطبيق وقاعدة البيانات
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
 
-// 4. ?????? ???????? ??????? ?????? ?????? (????? ??? ?? ????? ??? ???? ???????)
+// 4. الدوال المساعدة الحالية الخاصة بنظامك (أبقها كما هي لضمان عمل بقية الصفحات)
 function setMessageIcon(text) {
     const iconEl = document.getElementById('messageIcon');
     if (!iconEl) return;
-    const isSuccess = text.includes('?') || text.includes('?');
+    const isSuccess = text.includes('✅') || text.includes('✓');
     const iconSvg = isSuccess ? Icon.check() : Icon.warning();
     iconEl.innerHTML = iconSvg;
     iconEl.className = 'flex justify-center text-4xl mb-2 ' + (isSuccess ? 'text-green-500' : 'text-red-500');
@@ -58,5 +58,5 @@ export function usernameToEmail(username) {
 window.signOutUser = async function() {
     try { await signOut(auth); } catch (e) { console.warn(e); }
     localStorage.removeItem('vora_user');
-    window.location.href = "/login";
+    window.location.href = "login.html";
 };

@@ -6,15 +6,15 @@ const Components = {
     renderNav() {
         const lang = localStorage.getItem('vora_lang') || 'ar';
         const isRTL = lang === 'ar';
-        const isAdmin = document.body.classList.contains('admin-page') || window.location.pathname.includes('/admin');
-        const isAccount = window.location.pathname.includes('/account');
+        const isAdmin = document.body.classList.contains('admin-page') || window.location.pathname.includes('admin.html');
+        const isAccount = window.location.pathname.includes('account.html');
         
         return `
 <nav class="fixed top-0 left-0 right-0 z-50 bg-[#f8c8dc]/95 backdrop-blur-md border-b border-[#d88aa8]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
         <!-- Mobile: Left - Profile + Menu -->
         <div class="flex md:hidden items-center gap-2">
-            <a href="/login" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavMobile">
+            <a href="login.html" class="text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavMobile">
                 <svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
@@ -31,7 +31,7 @@ const Components = {
         
         <!-- Center: VORA + Subtitle -->
         <div class="flex flex-col items-center md:items-start md:flex-1">
-            <a href="/home" id="navLogo" class="text-center md:text-right">
+            <a href="home.html" id="navLogo" class="text-center md:text-right">
                 <span class="text-2xl font-bold text-stone-900 tracking-widest" style="font-family:'Playfair Display',serif;">VORA</span>
             </a>
             <span class="text-[11px] text-stone-500 md:hidden -mt-0.5" style="font-family:'Playfair Display',serif;font-style:italic;letter-spacing:0.5px;">the essence of radiance</span>
@@ -39,17 +39,17 @@ const Components = {
         
         <!-- Desktop: Nav Links -->
         <div class="hidden md:flex items-center gap-8">
-            <a href="/home" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome"></a>
-            <a href="/shop" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop"></a>
-            <a href="/brands" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navBrands">
+            <a href="home.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navHome"></a>
+            <a href="shop.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navShop"></a>
+            <a href="brands.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navBrands">
                 <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
                     <path d="M3 9 6 3h12l3 6"/>
                     <path d="M9 21v-6h6v6"/>
                 </svg>
             </a>
-            <a href="/about" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout"></a>
-            <a href="/admin" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">
+            <a href="about.html" class="text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAbout"></a>
+            <a href="admin.html" id="adminNavLink" class="hidden text-stone-600 hover:text-amber-600 transition font-medium text-sm" data-i18n="navAdmin">
                 <svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -66,7 +66,7 @@ const Components = {
                 </svg>
             </button>
             <button onclick="toggleLang()" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs font-bold px-2 py-1 border border-stone-300 rounded" id="langToggle" data-i18n="langToggle">EN</button>
-            <a href="/login" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavLink">
+            <a href="login.html" class="hidden md:inline text-stone-700 hover:text-amber-600 transition text-xs" data-i18n="footerAccount" title="حساب المستخدم" id="userNavLink">
                 <svg class="w-2.5 h-2.5 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
@@ -87,18 +87,18 @@ const Components = {
         <span class="text-sm font-bold text-white/40 tracking-widest uppercase" data-i18n="menuTitle">القائمة</span>
         <button onclick="closeMobileMenu()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="menu-link" onclick="navigateTo('/login')" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</div>
-    <div class="menu-link" onclick="navigateTo('/home')" data-i18n="menuHome"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</div>
-    <div class="menu-link" onclick="navigateTo('/shop')" data-i18n="menuShop"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Shop</div>
-    <div class="menu-link" onclick="navigateTo('/shop?section=best-sellers')" data-i18n="menuOffers"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> Special offers</div>
-    <div class="menu-link" onclick="navigateTo('/brands')" data-i18n="menuBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> Shop by brand</div>
-    <div class="menu-link" onclick="navigateTo('/shop?section=new-arrivals')" data-i18n="menuNewArrivals"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New arrival</div>
-    <div class="menu-link" onclick="navigateTo('/about')" data-i18n="menuAbout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> About</div>
+    <div class="menu-link" onclick="navigateTo('login.html')" data-i18n="menuProfile"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</div>
+    <div class="menu-link" onclick="navigateTo('home.html')" data-i18n="menuHome"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</div>
+    <div class="menu-link" onclick="navigateTo('shop.html')" data-i18n="menuShop"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Shop</div>
+    <div class="menu-link" onclick="navigateTo('shop.html?section=best-sellers')" data-i18n="menuOffers"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg> Special offers</div>
+    <div class="menu-link" onclick="navigateTo('brands.html')" data-i18n="menuBrands"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9 6 3h12l3 6"/><path d="M9 21v-6h6v6"/></svg> Shop by brand</div>
+    <div class="menu-link" onclick="navigateTo('shop.html?section=new-arrivals')" data-i18n="menuNewArrivals"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> New arrival</div>
+    <div class="menu-link" onclick="navigateTo('about.html')" data-i18n="menuAbout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> About</div>
     <div class="menu-link" onclick="closeMobileMenu(); setTimeout(()=>{ var f=document.getElementById('footer'); if(f) f.scrollIntoView({behavior:'smooth'}); },100);" data-i18n="menuContact"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Contact</div>
-    <a href="/admin" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</a>
+    <a href="admin.html" id="adminNavMobile" class="hidden" onclick="closeMobileMenu()"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</a>
     <div class="border-t border-white/10 my-2"></div>
-    <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('/login')" data-i18n="menuSignIn"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v14"/><path d="m19 17-4-4"/><path d="M16 21v-4"/></svg> Sign in</div>
-    <div class="menu-link text-white/60" onclick="navigateTo('/login')" data-i18n="menuCreateAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Create an account</div>
+    <div class="menu-link text-amber-400/80 font-semibold" onclick="navigateTo('login.html')" data-i18n="menuSignIn"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v14"/><path d="m19 17-4-4"/><path d="M16 21v-4"/></svg> Sign in</div>
+    <div class="menu-link text-white/60" onclick="navigateTo('login.html')" data-i18n="menuCreateAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Create an account</div>
     <button onclick="toggleLang(); closeMobileMenu();" class="lang-toggle-btn w-full text-right px-6 py-2.5 text-white/50 hover:text-white transition text-xs font-medium" data-i18n="langToggle"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> EN</button>
     <div class="menu-link" style="color:rgba(255,255,255,0.2);font-size:12px;margin-top:2px;" onclick="logout(); closeMobileMenu();" data-i18n="menuLogout"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout</div>
 </div>
@@ -132,12 +132,12 @@ const Components = {
             <div>
                 <h4 class="text-white font-semibold text-xs mb-2" data-i18n="footerQuickLinks">روابط سريعة</h4>
                 <ul class="space-y-1.5 text-xs">
-                    <li><a href="/home" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
-                    <li><a href="/shop" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
-                    <li><a href="/admin" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
-                    <li><a href="/return-policy" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy">سياسة الإرجاع</a></li>
-                    <li><a href="/tracking" class="hover:text-[var(--primary)] transition" data-i18n="footerTrack"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> تتبع الطلب</a></li>
-                    <li><a href="/account" class="hover:text-[var(--primary)] transition" data-i18n="footerAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> الحساب</a></li>
+                    <li><a href="home.html" class="hover:text-[var(--primary)] transition" data-i18n="navHome">الرئيسية</a></li>
+                    <li><a href="shop.html" class="hover:text-[var(--primary)] transition" data-i18n="navShop">المتجر</a></li>
+                    <li><a href="admin.html" class="hover:text-[var(--primary)] transition" data-i18n="navAdmin">الإدارة</a></li>
+                    <li><a href="return-policy.html" class="hover:text-[var(--primary)] transition" id="footerReturnPolicy" data-i18n="returnPolicy">سياسة الإرجاع</a></li>
+                    <li><a href="tracking.html" class="hover:text-[var(--primary)] transition" data-i18n="footerTrack"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16 2 16M18 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M10 10 h4 v4 h-4 z"/></svg> تتبع الطلب</a></li>
+                    <li><a href="account.html" class="hover:text-[var(--primary)] transition" data-i18n="footerAccount"><svg class="w-4 h-4 inline-block align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> الحساب</a></li>
                 </ul>
             </div>
             <div>

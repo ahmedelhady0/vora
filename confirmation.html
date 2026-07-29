@@ -1,40 +1,40 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="5TjUlrY5ChGVYKXmdJNcSxb_xFpX9BBJXuB1Yc-KxuM" />
-    <meta name="description" content="????? ????? - ???? VORA">
-    <meta name="keywords" content="????? ???, order confirmation">
+    <meta name="description" content="تأكيد الطلب - متجر VORA">
+    <meta name="keywords" content="تأكيد طلب, order confirmation">
     <link rel="canonical" href="https://vorascents.com/confirmation.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="VORA Perfume Shop">
     <meta property="og:url" content="https://vorascents.com/confirmation.html">
     <meta property="og:image" content="https://vorascents.com/icons/icon.svg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="og:title" content="????? ????? - ???? VORA - VORA Perfume Shop">
-    <meta property="og:description" content="????? ????? - ???? VORA">
+    <meta property="og:title" content="تأكيد الطلب - متجر VORA - VORA Perfume Shop">
+    <meta property="og:description" content="تأكيد الطلب - متجر VORA">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://res.cloudinary.com">
     <title data-i18n="orderSuccess"></title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/translations.js" charset="utf-8"></script>
-    <script type="module" src="/icons.js"></script>
+    <script src="translations.js" charset="utf-8"></script>
+    <script type="module" src="icons.js"></script>
 </head>
 <body class="bg-gradient-to-b from-stone-50 to-amber-50 min-h-screen">
 
     <nav class="bg-white border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 py-5 flex justify-between items-center">
-            <a href="/home" class="flex items-center gap-2">
+            <a href="home.html" class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-gradient-to-br from-amber-600 to-amber-700 rounded-lg flex items-center justify-center text-white font-bold text-sm">V</div>
                 <span class="text-xl font-bold text-stone-900 tracking-wider">VORA</span>
             </a>
-            <a href="/home" class="text-stone-600 hover:text-amber-600 transition text-sm font-semibold" data-i18n="navHome"></a>
+            <a href="home.html" class="text-stone-600 hover:text-amber-600 transition text-sm font-semibold" data-i18n="navHome"></a>
         </div>
     </nav>
 
@@ -65,15 +65,15 @@
             </div>
 
              <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                 <a href="/home" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transition" data-i18n="backBtn">
+                 <a href="home.html" class="flex-1 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold hover:shadow-lg transition" data-i18n="backBtn">
                  </a>
-                 <a href="/shop" class="flex-1 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition" data-i18n="cartContinue">
+                 <a href="shop.html" class="flex-1 py-3 border-2 border-amber-600 text-amber-600 rounded-lg font-semibold hover:bg-amber-50 transition" data-i18n="cartContinue">
                  </a>
              </div>
         </div>
     </div>
 
-    <script type="module" src="/confirmation-page.js"></script>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(r=>{r.onupdatefound=()=>{if(r.installing&&r.active){caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('vora-')).map(x=>caches.delete(x)))).then(()=>location.reload())}}});}</script></body>
+    <script type="module" src="confirmation-page.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}</script></body>
 </html>
 

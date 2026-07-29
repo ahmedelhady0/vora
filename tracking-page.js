@@ -1,4 +1,4 @@
-import Icon from './icons.js';
+﻿import Icon from './icons.js';
 
 window.trackOrder = function(e) {
     e.preventDefault();
@@ -18,7 +18,7 @@ window.trackOrder = function(e) {
 
 function renderOrderStatus(order) {
     const lang = localStorage.getItem('vora_lang') || 'ar';
-    const arStatuses = ['??? ????????', '??? ???????', '?? ?????', '?? ???????'];
+    const arStatuses = ['قيد المراجعة', 'قيد التجهيز', 'تم الشحن', 'تم التسليم'];
     const enStatuses = ['Pending Review', 'Processing', 'Shipped', 'Delivered'];
     const currentIdx = arStatuses.indexOf(order.status);
     const step = Math.max(0, currentIdx);
@@ -61,7 +61,7 @@ function renderOrderStatus(order) {
                 </div>
             </div>
         </div>
-        <a href="/home" class="block text-center text-amber-600 hover:text-amber-700 text-sm font-semibold mt-2">${Icon.arrowR()} ${t('orderBackHome')}</a>
+        <a href="home.html" class="block text-center text-amber-600 hover:text-amber-700 text-sm font-semibold mt-2">${Icon.arrowR()} ${t('orderBackHome')}</a>
     `;
 }
 
