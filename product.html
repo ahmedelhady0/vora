@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="5TjUlrY5ChGVYKXmdJNcSxb_xFpX9BBJXuB1Yc-KxuM" />
     <meta name="description" content="VORA Perfume - ?????? ??????">
@@ -17,13 +16,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://res.cloudinary.com">
     <title id="productPageTitle">VORA</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="translations.js" charset="utf-8"></script>
-    <script type="module" src="icons.js"></script>
+    <script src="/translations.js" charset="utf-8"></script>
+    <script type="module" src="/icons.js"></script>
     <style>
         .product-page-image { width:100%; max-width:500px; aspect-ratio:3/4; object-fit:cover; border-radius:24px; background:#fef6f9; }
         .breadcrumb { display:flex; flex-wrap:wrap; align-items:center; gap:4px; font-size:13px; }
@@ -248,7 +247,7 @@
     }
     window._voraProdId = _vp;
     </script>
-    <script type="module" src="product.js"></script>
+    <script type="module" src="/product.js"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(r=>{r.onupdatefound=()=>{if(r.installing&&r.active){caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('vora-')).map(x=>caches.delete(x)))).then(()=>location.reload())}}});}</script></body>
 </html>
 
