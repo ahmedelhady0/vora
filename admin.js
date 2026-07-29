@@ -614,10 +614,20 @@ window.deleteProduct = async function(id) {
     const cache = window.__productsCache;
     const prod = cache ? cache.find(p => p.id === id) : null;
     if (editingProductId === id) clearForm();
-    showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
-    await deleteProduct(id);
+    const prodName = (prod?.name || '').trim().toLowerCase();
+    let toDelete = [id];
+    if (prodName && cache) {
+        const allSame = cache.filter(p => (p.name || '').trim().toLowerCase() === prodName);
+        if (allSame.length > 1) {
+            toDelete = allSame.map(p => p.id);
+        }
+    }
+    showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}${toDelete.length > 1 ? ` (${toDelete.length} نسخة)` : ''}`);
+    for (const did of toDelete) {
+        await deleteProduct(did);
+    }
     if (cache) {
-        window.__productsCache = cache.filter(p => p.id !== id);
+        window.__productsCache = cache.filter(p => !toDelete.includes(p.id));
         loadProductList();
     }
 };
