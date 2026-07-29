@@ -389,7 +389,7 @@
         prodReviewRating: 'اختر تقييماً بالنجوم',
         prodReviewText: 'اكتب رأيك في المنتج',
         prodReviewSuccess: 'تم إرسال تقييمك بنجاح!',
-        prodAddedToCart: 'تمت الإضافة إلى السلة!',
+        prodAddedToCart: 'تمت إضافة "{name}" إلى السلة',
         prodCartEmpty: 'السلة فارغة. أضف منتجات أولاً',
         // WhatsApp inquiry
         whatsappInquiry: 'مرحباً! أود الاستفسار عن',
@@ -843,7 +843,7 @@
         prodReviewRating: 'Please select a star rating',
         prodReviewText: 'Write your review',
         prodReviewSuccess: 'Your review has been submitted!',
-        prodAddedToCart: 'Added to cart!',
+        prodAddedToCart: 'Added "{name}" to cart',
         prodCartEmpty: 'Cart is empty. Add products first.',
         // WhatsApp inquiry
         whatsappInquiry: 'Hello! I would like to inquire about',
@@ -904,7 +904,7 @@
         // Bundle
         bundleSavings: 'Save {savings} {currency}',
         // Home
-        homeDiscoverMore: '← Discover More',
+        homeDiscoverMore: 'Discover More →',
         homeLoadError: 'Error loading products',
         // Shop additional
         shopClearFilter: 'Clear Filter',
@@ -928,7 +928,7 @@
 };
 
 function getLang() {
-    return localStorage.getItem('vora_lang') || 'ar';
+    return localStorage.getItem('vora_lang') || 'en';
 }
 
 function setLang(lang) {

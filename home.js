@@ -539,7 +539,8 @@ function _renderSection(container, section, items, lang) {
     wrap.appendChild(more);
     container.appendChild(wrap);
 
-    let raf, dir = 1, paused = false, acc = 0;
+    let raf, paused = false, acc = 0;
+    let dir = document.dir === 'rtl' ? -1 : 1;
     function loop() {
         if (!paused) {
             const ms = row.scrollWidth - row.clientWidth;
@@ -550,7 +551,10 @@ function _renderSection(container, section, items, lang) {
                     row.scrollBy({ left: m * dir, behavior: 'instant' });
                     acc -= m;
                     const sl = row.scrollLeft;
-                    if ((dir === 1 && sl >= ms - 1) || (dir === -1 && sl <= 1)) dir = -dir;
+                    const atEnd = document.dir === 'rtl' ? (sl <= -(ms - 1)) : (sl >= ms - 1);
+                    const atStart = document.dir === 'rtl' ? (sl >= -1) : (sl <= 1);
+                    if (dir === 1 && atEnd) dir = -dir;
+                    if (dir === -1 && atStart) dir = -dir;
                 }
             }
         }
@@ -831,9 +835,12 @@ function renderBundles() {
     section.style.display = 'block';
     const lang = getLang();
     const titleEl = document.getElementById('bundlesSectionTitle');
-    if (bundles.length === 1) titleEl.textContent = bundles[0].name;
-    else titleEl.textContent = t('bundlesTitle');
+    if (bundles.length === 1) {
+        titleEl.textContent = lang === 'en' && bundles[0].nameEn ? bundles[0].nameEn : bundles[0].name;
+    } else titleEl.textContent = t('bundlesTitle');
     grid.innerHTML = bundles.map(bundle => {
+        const bundleName = lang === 'en' && bundle.nameEn ? bundle.nameEn : bundle.name;
+        const bundleDesc = lang === 'en' && bundle.descEn ? bundle.descEn : (bundle.description || '');
         const bundleProds = bundle.products.map(id => src.find(p => p.id === id)).filter(Boolean);
         const total = bundleProds.reduce((s, p) => s + (parseFloat(p.price) || 0), 0);
         const savings = Math.max(0, total - bundle.price);
@@ -855,8 +862,8 @@ function renderBundles() {
                 ${prodsWithImg.length > 0 ? imgGrid : `<div class="w-full h-full flex items-center justify-center text-5xl text-amber-600/40">${Icon.gift()}</div>`}
             </div>
             <div class="p-4 space-y-2">
-                <h3 class="font-bold text-stone-900 text-base" style="font-family:'Playfair Display',serif;">${escapeHTML(bundle.name)}</h3>
-                ${bundle.description ? `<p class="text-xs text-stone-500 leading-relaxed">${bundle.description}</p>` : ''}
+                <h3 class="font-bold text-stone-900 text-base" style="font-family:'Playfair Display',serif;">${escapeHTML(bundleName)}</h3>
+                ${bundleDesc ? `<p class="text-xs text-stone-500 leading-relaxed">${bundleDesc}</p>` : ''}
                 ${savings > 0 ? `<p class="text-xs text-green-600 font-semibold">${t('bundleSavings').replace('{savings}', savings).replace('{currency}', t('currency'))}</p>` : ''}
                 <div class="flex items-center justify-between pt-1">
                     <span class="text-xl font-bold text-amber-600">${bundle.price} ${t('currency')}</span>

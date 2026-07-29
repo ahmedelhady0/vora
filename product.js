@@ -557,7 +557,7 @@ window.addToCartFromPage = function() {
     localStorage.setItem('vora_cart', JSON.stringify(cart));
     updateCartCount();
     const displayName = product.name + (variantLabel ? ` (${variantLabel})` : '');
-    showMessage(`${Icon.check()} تمت إضافة "${displayName}" إلى السلة`);
+    showMessage(`${Icon.check()} ${t('prodAddedToCart').replace('{name}', displayName)}`);
 };
 
 window.buyNow = function() {

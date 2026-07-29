@@ -897,18 +897,23 @@ function renderBundles() {
                 <button onclick="removeBundle(${i})" class="text-red-500 hover:text-red-700 text-xs px-2">${Icon.close()} ${t('adminDeleteLabel')}</button>
             </div>
             <div class="grid grid-cols-2 gap-2">
-                <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض">
-                <input type="number" value="${b.price || ''}" id="bundle_price_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="السعر">
+                <input type="text" value="${b.name || ''}" id="bundle_name_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="اسم العرض (عربي)">
+                <input type="text" value="${b.nameEn || ''}" id="bundle_nameEn_${i}" class="px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="Offer name (English)">
             </div>
+            <div class="flex gap-2 mt-2">
+                <input type="number" value="${b.price || ''}" id="bundle_price_${i}" class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="السعر">
+            </div>
+            <div class="space-y-2 mt-2">
             <input type="text" value="${(b.products || []).join(',')}" id="bundle_products_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm" placeholder="معرفات المنتجات (مفصولة بفواصل)">
-            <textarea id="bundle_desc_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="وصف العرض">${b.description || ''}</textarea>
+            <textarea id="bundle_desc_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="وصف العرض (عربي)">${b.description || ''}</textarea>
+            <textarea id="bundle_descEn_${i}" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm h-16 resize-none" placeholder="Offer description (English)">${b.descEn || ''}</textarea>
         </div>
     `).join('');
 }
 
 window.addBundleField = function() {
     const bundles = window._bundleData || [];
-    bundles.push({ name: '', price: '', products: [], description: '' });
+    bundles.push({ name: '', nameEn: '', price: '', products: [], description: '', descEn: '' });
     window._bundleData = bundles;
     renderBundles();
 };
@@ -1036,12 +1041,14 @@ window.saveSettings = async function() {
     const bundles = [];
     bundleNames.forEach((el, i) => {
         const name = el.value.trim();
+        const nameEn = document.getElementById(`bundle_nameEn_${i}`)?.value.trim() || '';
         const price = parseFloat(document.getElementById(`bundle_price_${i}`)?.value) || 0;
         const productsStr = document.getElementById(`bundle_products_${i}`)?.value || '';
-        const products = productsStr.split(',').map(s => s.trim()).filter(Boolean);
         const description = document.getElementById(`bundle_desc_${i}`)?.value.trim() || '';
-        if (name && price > 0 && products.length > 0) {
-            bundles.push({ name, price, products, description });
+        const descEn = document.getElementById(`bundle_descEn_${i}`)?.value.trim() || '';
+        if (name && price > 0) {
+            const products = productsStr.split(',').map(s => s.trim()).filter(Boolean);
+            bundles.push({ name, nameEn, price, products, description, descEn });
         }
     });
     settings.bundles = bundles;
