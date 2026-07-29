@@ -1,7 +1,7 @@
 ﻿import Icon from './icons.js';
-import { getProducts, getOrders, addProduct, updateProduct, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
+import { getProducts, getOrders, addProduct, updateProduct, deleteProduct, uploadImageToStorage, getSettingsFromFirestore, saveSettingsToFirestore, getUserFromFirestore } from "./sheets-service.js";
 import { showMessage, hideMessage, db } from "./firebase-config.js";
-import { doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { escapeHTML } from "./security-utils.js";
 
 const ALL_GOVERNORATES = [
@@ -457,6 +457,10 @@ window.clearVariants = function() {
 };
 
 window.saveProduct = async function() {
+    if (window.__savingProduct) return;
+    window.__savingProduct = true;
+    const btn = document.getElementById('saveProductBtn');
+    btn.disabled = true;
     const name = document.getElementById('prodName').value.trim();
     const size = document.getElementById('prodSize').value;
     const price = parseFloat(document.getElementById('prodPrice').value);
@@ -534,6 +538,8 @@ window.saveProduct = async function() {
     } catch (err) { 
         showMessage(t('adminSaveFailed')); 
     }
+    window.__savingProduct = false;
+    btn.disabled = false;
 };
 
 window.editProduct = function(id) {
@@ -607,21 +613,31 @@ window.deleteProduct = async function(id) {
     if (!confirm(t('adminConfirmDeleteProduct'))) return;
     const cache = window.__productsCache;
     const prod = cache ? cache.find(p => p.id === id) : null;
-    // Remove from localStorage immediately for instant feedback
-    const local = JSON.parse(localStorage.getItem('vora_products')) || [];
-    const updated = local.filter(p => p.id !== id);
-    localStorage.setItem('vora_products', JSON.stringify(updated));
-    // Update cache and re-render immediately
+    if (editingProductId === id) clearForm();
+    showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
+    await deleteProduct(id);
     if (cache) {
         window.__productsCache = cache.filter(p => p.id !== id);
         loadProductList();
     }
-    if (editingProductId === id) clearForm();
-    showMessage(`${Icon.check()} ${t('adminDeleted').replace('{name}', prod?.name || id)}`);
-    // Try Firestore delete in background
-    try {
-        await deleteDoc(doc(db, "products", id));
-    } catch (e) { console.warn("Firestore delete:", e); }
+};
+
+window.cleanupDuplicates = async function() {
+    if (!confirm(t('adminConfirmDeleteProduct'))) return;
+    const products = await getProducts();
+    const seen = {};
+    const dups = [];
+    products.forEach(p => {
+        const key = (p.name || '').trim().toLowerCase();
+        if (seen[key]) { dups.push(p); return; }
+        seen[key] = true;
+    });
+    if (dups.length === 0) { showMessage(t('noProducts')); return; }
+    showMessage(`${Icon.check()} جاري حذف ${dups.length} منتج مكرر...`);
+    for (const p of dups) {
+        await deleteProduct(p.id);
+    }
+    await loadProductList();
 };
 
 function clearForm() {
@@ -651,14 +667,43 @@ function clearForm() {
 
 async function loadProductList() {
     const container = document.getElementById('productList');
-    const products = await getProducts();
+    let products = await getProducts();
     window.__productsCache = products;
+    const rawCount = products.length;
+    const seenId = {}, seenName = {};
+    const dupNames = [];
+    const nameCount = {};
+    products.forEach(p => {
+        const n = (p.name || '').trim().toLowerCase();
+        nameCount[n] = (nameCount[n] || 0) + 1;
+    });
+    products = products.filter(p => {
+        if (seenId[p.id]) return false;
+        seenId[p.id] = true;
+        const nameKey = (p.name || '').trim().toLowerCase();
+        if (nameKey && seenName[nameKey]) {
+            if (!dupNames.includes(nameKey)) dupNames.push(nameKey);
+            return false;
+        }
+        if (nameKey) seenName[nameKey] = true;
+        return true;
+    });
+    const dupCount = rawCount - products.length;
+    
+    let html = '';
+    if (dupCount > 0) {
+        html += `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3 text-sm flex items-center gap-2">
+                <span class="text-amber-700">⚠️ ${t('adminDupFound').replace('{count}', dupCount)}</span>
+                <button onclick="cleanupDuplicates()" class="mr-auto px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-bold hover:bg-red-600 transition">${t('adminDeleteAllDup')}</button>
+            </div>`;
+    }
     
     if (products.length === 0) {
-        container.innerHTML = `<p class="text-center text-stone-400 py-8 text-sm">${t('noProducts')}</p>`;
+        container.innerHTML = html || `<p class="text-center text-stone-400 py-8 text-sm">${t('noProducts')}</p>`;
         return;
     }
-    container.innerHTML = products.map(prod => {
+    html += products.map(prod => {
         const img = prod.image ? `<img src="${escapeHTML(prod.image)}" class="w-10 h-10 rounded object-cover border border-stone-200">` : `<div class="w-10 h-10 rounded bg-stone-100 flex items-center justify-center text-amber-600 text-xs">${Icon.pkg()}</div>`;
         const stock = prod.stock ?? '—';
         const stockClass = stock === 0 ? 'text-red-600' : (stock <= 5 ? 'text-orange-500' : 'text-green-600');
@@ -678,6 +723,7 @@ async function loadProductList() {
             </div>
         </div>`;
     }).join("");
+    container.innerHTML = html;
 }
 
 async function loadSettings() {
